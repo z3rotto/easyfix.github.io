@@ -411,6 +411,7 @@
     </div>
 
     <script>
+<script>
 document.addEventListener('DOMContentLoaded', function() {
     // --- Elements ---
     const textTab = document.getElementById('text-tab');
@@ -423,13 +424,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const processText = document.getElementById('process-text');
     const resultsSection = document.getElementById('results-section');
     const originalTextHighlighted = document.getElementById('original-text-highlighted');
-    const correctedText = document.getElementById('corrected-text');
+    const correctedText = document.getElementById('corrected-text'); // Riquadro principale per output
     const detectedLang = document.getElementById('detected-lang');
     const originalCount = document.getElementById('original-count');
     const correctedCount = document.getElementById('corrected-count');
     const clearBtn = document.getElementById('clear-btn');
     const newTextBtn = document.getElementById('new-text-btn');
-    const copyBtn = document.getElementById('copy-btn');
+    const copyBtn = document.getElementById('copy-btn'); // Pulsante copia per riquadro principale
     const saveSettings = document.getElementById('save-settings');
     const toast = document.getElementById('toast');
     const toastMessage = document.getElementById('toast-message');
@@ -444,9 +445,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const defaultToneSelect = document.getElementById('default-tone');
 
     // --- API Configuration ---
-    const API_KEY = "AIzaSyDWnH7YEbBDG3Ph5JLbUyZVS_RBSb4uxgs"; // <-- INSERISCI LA TUA CHIAVE API QUI
+    const API_KEY = "AIzaSyDWnH7YEbBDG3Ph5JLbUyZVS_RBSb4uxgs"; // <-- INSERISCI LA TUA CHIAVE API VALIDA QUI
     const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`;
-    const SUPPORTED_LANGS = ['it', 'en', 'es', 'fr', 'de', 'ru', 'pt']; // Lingue supportate dall'app
+    const SUPPORTED_LANGS = ['it', 'en', 'es', 'fr', 'de', 'ru', 'pt']; // Lingue supportate
 
     // --- UI Translations ---
     const uiTranslations = {
@@ -460,115 +461,121 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // --- Event Listeners ---
-    textTab.addEventListener('click', () => switchTab(textTab, settingsTab, textContent, settingsContent));
-    settingsTab.addEventListener('click', () => switchTab(settingsTab, textTab, settingsContent, textContent));
+    if (textTab && settingsTab && textContent && settingsContent) {
+        textTab.addEventListener('click', () => switchTab(textTab, settingsTab, textContent, settingsContent));
+        settingsTab.addEventListener('click', () => switchTab(settingsTab, textTab, settingsContent, textContent));
+    }
 
-    // Assicurati che gli elementi toggle esistano prima di aggiungere listener
     const correctionsToggleBtn = document.getElementById('corrections-toggle');
-    const historyToggleBtn = document.getElementById('history-toggle');
-
     if (correctionsToggleBtn) {
         correctionsToggleBtn.addEventListener('click', function() {
             const explanationBox = document.getElementById('corrections-explanation');
             const toggleIcon = document.getElementById('toggle-icon');
             if (!explanationBox || !toggleIcon) return;
             toggleIcon.classList.toggle('rotate-icon');
-            if (explanationBox.classList.contains('hidden')) {
-                explanationBox.classList.remove('hidden');
-                setTimeout(() => { explanationBox.classList.add('slide-down'); explanationBox.classList.remove('slide-up'); }, 10);
+            explanationBox.classList.toggle('hidden'); // Semplice toggle
+            // Rimuovi animazioni complesse per ora
+            explanationBox.style.transition = 'max-height 0.3s ease-in-out';
+            if (!explanationBox.classList.contains('hidden')) {
+                explanationBox.style.maxHeight = explanationBox.scrollHeight + "px";
             } else {
-                explanationBox.classList.add('slide-up'); explanationBox.classList.remove('slide-down');
-                setTimeout(() => { explanationBox.classList.add('hidden'); }, 300);
+                explanationBox.style.maxHeight = '0';
             }
         });
-    } else {
-        console.warn("Elemento 'corrections-toggle' non trovato.");
     }
 
+    const historyToggleBtn = document.getElementById('history-toggle');
     if (historyToggleBtn) {
         historyToggleBtn.addEventListener('click', function() {
             const historyPanel = document.getElementById('history-panel');
             const toggleIcon = document.getElementById('history-toggle-icon');
              if (!historyPanel || !toggleIcon) return;
             toggleIcon.classList.toggle('rotate-icon');
-            if (historyPanel.classList.contains('hidden')) {
-                historyPanel.classList.remove('hidden');
-                setTimeout(() => { historyPanel.classList.add('slide-down'); historyPanel.classList.remove('slide-up'); loadHistoryItems(); }, 10);
+            historyPanel.classList.toggle('hidden');
+            if (!historyPanel.classList.contains('hidden')) {
+                loadHistoryItems();
+                 historyPanel.style.transition = 'max-height 0.3s ease-in-out';
+                 historyPanel.style.maxHeight = historyPanel.scrollHeight + "px";
             } else {
-                historyPanel.classList.add('slide-up'); historyPanel.classList.remove('slide-down');
-                setTimeout(() => { historyPanel.classList.add('hidden'); }, 300);
+                 historyPanel.style.maxHeight = '0';
             }
         });
-    } else {
-         console.warn("Elemento 'history-toggle' non trovato.");
     }
 
-
-    if (processBtn) {
-        processBtn.addEventListener('click', handleProcessClick);
-    } else {
-        console.error("Pulsante 'process-btn' non trovato!");
-    }
+    if (processBtn) processBtn.addEventListener('click', handleProcessClick);
+    else console.error("Pulsante 'process-btn' non trovato!");
 
     if (clearBtn) {
         clearBtn.addEventListener('click', () => {
-            inputText.value = ''; resultsSection.classList.add('hidden');
-            originalTextHighlighted.textContent = ''; correctedText.textContent = '';
-            originalCount.textContent = '0 parole'; correctedCount.textContent = '0 parole';
-             // Nascondi anche i pannelli espandibili quando si pulisce
-             hideExpandablePanels();
+            if(inputText) inputText.value = '';
+            if(resultsSection) resultsSection.classList.add('hidden');
+            if(originalTextHighlighted) originalTextHighlighted.textContent = '';
+            if(correctedText) correctedText.textContent = '';
+            if(originalCount) originalCount.textContent = '0 parole';
+            if(correctedCount) correctedCount.textContent = '0 parole';
+            hideExpandablePanels();
         });
     }
 
     if (newTextBtn) {
         newTextBtn.addEventListener('click', () => {
-            inputText.value = ''; resultsSection.classList.add('hidden');
-            originalTextHighlighted.textContent = ''; correctedText.textContent = '';
-            originalCount.textContent = '0 parole'; correctedCount.textContent = '0 parole';
-            inputText.focus();
-             // Nascondi anche i pannelli espandibili per nuovo testo
-             hideExpandablePanels();
+            if(inputText) inputText.value = '';
+            if(resultsSection) resultsSection.classList.add('hidden');
+            if(originalTextHighlighted) originalTextHighlighted.textContent = '';
+            if(correctedText) correctedText.textContent = '';
+            if(originalCount) originalCount.textContent = '0 parole';
+            if(correctedCount) correctedCount.textContent = '0 parole';
+            hideExpandablePanels();
+            inputText?.focus();
         });
     }
 
-    if (copyBtn) {
-        copyBtn.addEventListener('click', () => {
-            const contentToCopy = correctedText.textContent;
-            if (contentToCopy && !contentToCopy.startsWith('Errore:')) {
-                navigator.clipboard.writeText(contentToCopy).then(() => {
-                    showToast('Testo copiato negli appunti!');
-                }, (err) => {
-                    console.error("Errore copia:", err); showToast('Errore copia', 'red-500');
-                });
-            } else {
-                showToast('Nessun testo valido da copiare', 'yellow-500');
-            }
-        });
+    // Funzione universale per copiare testo
+    function copyTextToClipboard(text) {
+        if (!text) { showToast('Nessun testo da copiare', 'yellow-500'); return; }
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(() => showToast('Testo copiato!'))
+            .catch(err => { console.error("Errore API Clipboard:", err); fallbackCopyMethod(text); });
+        } else { fallbackCopyMethod(text); }
     }
 
-    if (saveSettings) {
-        saveSettings.addEventListener('click', () => {
-            showToast('Impostazioni salvate (simulato)!');
+    function fallbackCopyMethod(text) {
+        try {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed"; textArea.style.opacity = "0";
+            document.body.appendChild(textArea);
+            textArea.focus(); textArea.select();
+            const successful = document.execCommand('copy');
+            document.body.removeChild(textArea);
+            if (successful) showToast('Testo copiato!');
+            else showToast('Copia fallita', 'red-500');
+        } catch (err) { console.error("Errore fallback copia:", err); showToast('Errore copia', 'red-500'); }
+    }
+
+    if(copyBtn) copyBtn.addEventListener('click', () => copyTextToClipboard(correctedText?.textContent || ''));
+
+    if(saveSettings) saveSettings.addEventListener('click', () => {
+        showToast('Impostazioni salvate (simulato)!');
+        if (textTab && settingsTab && textContent && settingsContent) {
             switchTab(textTab, settingsTab, textContent, settingsContent);
-        });
-    }
+        }
+    });
 
-    // --- Funzioni ---
+    // --- Functions ---
     function switchTab(activeTab, inactiveTab, activeContent, inactiveContent) {
-        activeTab.classList.add('border-blue-500', 'text-gray-700'); activeTab.classList.remove('text-gray-500', 'border-transparent');
-        inactiveTab.classList.add('text-gray-500', 'border-transparent'); inactiveTab.classList.remove('border-blue-500', 'text-gray-700');
-        activeContent.classList.remove('hidden'); inactiveContent.classList.add('hidden');
+        activeTab?.classList.add('border-blue-500', 'text-gray-700'); activeTab?.classList.remove('text-gray-500', 'border-transparent');
+        inactiveTab?.classList.add('text-gray-500', 'border-transparent'); inactiveTab?.classList.remove('border-blue-500', 'text-gray-700');
+        activeContent?.classList.remove('hidden'); inactiveContent?.classList.add('hidden');
     }
 
-    function countWords(text) {
-        return text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
-    }
+    function countWords(text) { return text?.trim() === '' ? 0 : text.trim().split(/\s+/).length; }
 
     function showToast(message, bgColor = 'green-500') {
         if (!toast || !toastMessage) return;
         toastMessage.textContent = message;
-        toast.className = `fixed bottom-4 right-4 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 flex items-center opacity-0 translate-y-10`;
-        toast.classList.add(`bg-${bgColor}`); void toast.offsetWidth;
+        toast.className = `fixed bottom-4 right-4 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 flex items-center opacity-0 translate-y-10 bg-${bgColor}`;
+        void toast.offsetWidth; // Force reflow
         toast.classList.remove('opacity-0', 'translate-y-10'); toast.classList.add('opacity-100', 'translate-y-0');
         setTimeout(() => { toast.classList.remove('opacity-100', 'translate-y-0'); toast.classList.add('opacity-0', 'translate-y-10'); }, 3000);
     }
@@ -577,12 +584,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!processingSpinner || !processText || !processBtn) return;
         const message = getTranslation(messageKey);
         if (isLoading) {
-            processingSpinner.classList.remove('hidden');
-            processText.innerHTML = message + '<span class="loading-dots"></span>';
+            processingSpinner.classList.remove('hidden'); processText.innerHTML = message + '<span class="loading-dots"></span>';
             processBtn.disabled = true; processBtn.classList.add('opacity-50', 'cursor-not-allowed');
         } else {
-            processingSpinner.classList.add('hidden');
-            processText.textContent = getTranslation('processBtn');
+            processingSpinner.classList.add('hidden'); processText.textContent = getTranslation('processBtn');
             processBtn.disabled = false; processBtn.classList.remove('opacity-50', 'cursor-not-allowed');
         }
     }
@@ -592,229 +597,118 @@ document.addEventListener('DOMContentLoaded', function() {
         return uiTranslations[currentLang]?.[key] || uiTranslations['it']?.[key] || key;
     }
 
-    // --- Funzione per Rilevare Lingua con Gemini ---
+    // Funzione per Rilevare Lingua con Gemini
     async function detectLanguageWithGeminiAPI(text) {
         console.log("Chiamo API Gemini per rilevare la lingua...");
-        const prompt = `Identifica la lingua principale del seguente testo. Rispondi SOLO con il codice lingua a due lettere (ISO 639-1) tra i seguenti: ${SUPPORTED_LANGS.join(', ')}. Se la lingua non è tra quelle elencate o non sei sicuro, rispondi con 'und'.
-
-Testo: "${text}"
-
-Lingua (solo codice ISO 639-1 o 'und'):`;
-
-        const requestBody = {
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: {
-                temperature: 0.0,
-                maxOutputTokens: 5
-            }
-        };
-
-        try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(requestBody),
-            });
-
-            if (!response.ok) {
-                throw new Error(`Errore API rilevamento lingua (${response.status})`);
-            }
-
-            const data = await response.json();
-            console.log("Risposta API rilevamento lingua:", data);
-
-            if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
-                let detectedCode = data.candidates[0].content.parts[0].text.trim().toLowerCase();
-                detectedCode = detectedCode.substring(0, 2);
-
-                console.log("API Gemini ha rilevato:", detectedCode);
-                if (SUPPORTED_LANGS.includes(detectedCode)) {
-                    return detectedCode;
-                } else {
-                    console.warn("Codice lingua API non supportato/incerto, fallback a 'it'");
-                    return 'it';
-                }
-            } else {
-                throw new Error("Risposta API rilevamento lingua non valida.");
-            }
-        } catch (error) {
-            console.error("Errore durante rilevamento lingua con API:", error);
-            throw error;
+        if (!text || text.trim().length < 5) {
+            console.log("Testo troppo breve, uso lingua preferita o default.");
+            return preferredLangSelect ? preferredLangSelect.value : 'it';
         }
+        const prompt = `Identifica la lingua principale (ISO 639-1) tra ${SUPPORTED_LANGS.join(', ')} per: "${text}". Rispondi SOLO con il codice lingua o 'und'.`;
+        const requestBody = { contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.0, maxOutputTokens: 5 } };
+        try {
+            const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(requestBody) });
+            if (!response.ok) throw new Error(`Errore API rilevamento lingua (${response.status})`);
+            const data = await response.json();
+            const detectedCode = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim().toLowerCase().substring(0, 2);
+            console.log("API Gemini ha rilevato:", detectedCode);
+            if (SUPPORTED_LANGS.includes(detectedCode)) return detectedCode;
+            console.warn("Codice lingua API non supportato/incerto, fallback a 'it'");
+            return 'it';
+        } catch (error) { console.error("Errore durante rilevamento lingua con API:", error); throw error; }
     }
-    // --- FINE Funzione ---
 
+    // Funzione Principale
     async function handleProcessClick() {
         console.log("handleProcessClick avviato");
-        const textToProcess = inputText.value.trim();
-        if (!textToProcess) { showToast('Inserisci testo', 'red-500'); return; }
-
-        // Assicurati che la sezione risultati sia visibile PRIMA di iniziare, ma pulita
-        if (resultsSection) resultsSection.classList.add('hidden'); // Nascondi brevemente per "pulire"
-        originalTextHighlighted.textContent = textToProcess; // Mostra subito originale non evidenziato
-        correctedText.textContent = ''; // Pulisci risultato precedente
-        originalCount.textContent = countWords(textToProcess) + ' parole';
-        correctedCount.textContent = '0 parole';
-        // Nascondi pannelli espandibili all'inizio di ogni elaborazione
-        hideExpandablePanels();
-        // Pulisci lista correzioni precedenti
-         const correctionsList = document.getElementById('corrections-list');
-         const noCorrMsg = document.getElementById('no-corrections-message');
-         if (correctionsList) correctionsList.innerHTML = '';
-         if (noCorrMsg) noCorrMsg.style.display = 'block'; // Mostra msg di default
-
-
-        setLoadingState(true, 'loading'); // Rilevamento lingua...
-
-        let language = 'it'; // Default
         try {
-            // **STEP 1: Rilevamento lingua via API**
-            language = await detectLanguageWithGeminiAPI(textToProcess);
-            setDetectedLanguageUI(language);
+            const textToProcess = inputText.value.trim();
+            if (!textToProcess) throw new Error('Inserisci un testo da processare');
 
-        } catch (error) {
-            console.error("Fallito rilevamento lingua con API:", error);
-            showToast(`${getTranslation('langDetectError')}: ${error.message}. Uso default 'it'.`, 'red-500');
-            language = 'it';
-            setDetectedLanguageUI(language);
-            // Mostra comunque la sezione risultati con l'originale e l'errore
-            if (resultsSection) resultsSection.classList.remove('hidden');
-            correctedText.textContent = `Errore rilevamento lingua: ${error.message}`;
-            setLoadingState(false);
-            return;
-        }
+            if (resultsSection) resultsSection.classList.add('hidden');
+            originalTextHighlighted.textContent = textToProcess;
+            correctedText.textContent = '';
+            originalCount.textContent = countWords(textToProcess) + ' parole';
+            correctedCount.textContent = '0 parole';
+            hideExpandablePanels();
+            const correctionsList = document.getElementById('corrections-list');
+            if (correctionsList) correctionsList.innerHTML = '';
 
-        // **STEP 2: Elaborazione testo con lingua rilevata**
-        setLoadingState(true, 'processing'); // Elaborazione...
-        try {
-            console.log(`Chiamo API per elaborare testo in: ${language}`);
-            const resultText = await processTextWithAI(textToProcess, language);
-            console.log("Risultato elaborazione:", resultText);
+            setLoadingState(true, 'loading'); // Rilevamento...
 
-            // **VALIDAZIONE FINALE RINFORZATA**
-            const isValid = await validateResultLanguage(textToProcess, resultText, language);
-
-            // Mostra sempre la sezione risultati, indipendentemente dalla validazione
-             if (resultsSection) {
-                 resultsSection.classList.remove('hidden');
-             }
-
-            if (!isValid) {
-                 console.error("VALIDAZIONE FALLITA: Rilevata traduzione o risultato non valido.");
-                 correctedText.textContent = textToProcess; // Ripristina originale nel box risultato
-                 showToast(getTranslation('langMismatchError'), "red-500");
-                 // Mostra originale anche nel box highlight senza modifiche
-                 originalTextHighlighted.textContent = textToProcess;
-                 // Aggiorna conteggio parole per il box risultato (che ora contiene l'originale)
-                  if (correctedCount) { correctedCount.textContent = countWords(textToProcess) + ' parole'; }
-            } else {
-                // Se valido, procedi a mostrare il risultato e le differenze
-                correctedText.textContent = resultText;
-
-                if (typeof Diff !== 'undefined') {
-                    // Questa funzione popola #original-text-highlighted e #corrections-list
-                    displayDifferences(textToProcess, resultText, language);
-                } else {
-                    // Se Diff non è definito, mostra almeno l'originale senza highlight
-                    originalTextHighlighted.textContent = textToProcess;
-                }
-
-                if (correctedCount) {
-                    correctedCount.textContent = countWords(correctedText.textContent) + ' parole';
-                }
-                showToast(getTranslation('success'));
-                saveToHistory(textToProcess, correctedText.textContent);
+            let language = preferredLangSelect ? preferredLangSelect.value : 'it'; // Usa preferenza come fallback
+            try {
+                language = await detectLanguageWithGeminiAPI(textToProcess);
+                setDetectedLanguageUI(language);
+            } catch (error) {
+                console.error("Fallito rilevamento lingua:", error);
+                showToast(`${getTranslation('langDetectError')}. Uso '${language}'.`, 'yellow-500');
+                setDetectedLanguageUI(language);
             }
 
-             // Scrolla alla sezione risultati in ogni caso dopo l'elaborazione
-             if (resultsSection) {
-                  resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-             }
+            setLoadingState(true, 'processing'); // Elaborazione...
+            console.log(`Chiamo API per elaborare testo in: ${language}`);
+
+            // Chiamata API per elaborare
+            const result = await processTextWithAI(textToProcess, language);
+            console.log("Risultato AI:", result);
+
+            const { text: resultText, isRephrase, tone, explanation: explanationText, alternatives } = result;
+            if (!resultText) throw new Error("L'API non ha restituito testo.");
+
+            // Validazione finale
+            const isValid = await validateResultLanguage(textToProcess, resultText, language);
+            if (resultsSection) resultsSection.classList.remove('hidden'); // Mostra sezione risultati
+
+            if (!isValid) {
+                 console.error("VALIDAZIONE FALLITA: Lingua/Similarità non valida.");
+                 correctedText.textContent = textToProcess; // Ripristina originale
+                 showToast(getTranslation('langMismatchError'), "red-500");
+                 originalTextHighlighted.textContent = textToProcess; // Mostra originale senza highlight
+                 if (correctedCount) correctedCount.textContent = countWords(textToProcess) + ' parole';
+                 hideExpandablePanels(); // Nascondi analisi/correzioni
+            } else {
+                // Risultato valido: mostra tutto
+                correctedText.textContent = resultText; // Mostra risultato nel riquadro principale
+
+                if (typeof Diff !== 'undefined') {
+                    displayDifferences(textToProcess, resultText, language, isRephrase); // Passa isRephrase
+                } else {
+                    originalTextHighlighted.textContent = textToProcess; // Fallback senza diff
+                }
+
+                if (correctedCount) correctedCount.textContent = countWords(resultText) + ' parole';
+
+                if (isRephrase) {
+                    displayRephraseAnalysis(tone, explanationText, alternatives);
+                    // Assicurati che le correzioni semplici siano nascoste
+                     const correctionsToggle = document.getElementById('corrections-toggle');
+                     const correctionsExplanation = document.getElementById('corrections-explanation');
+                     if(correctionsToggle) correctionsToggle.classList.add('hidden');
+                     if(correctionsExplanation) correctionsExplanation.classList.add('hidden');
+                }
+
+                showToast(getTranslation('success'));
+                saveToHistory(textToProcess, resultText, isRephrase, tone, explanationText, alternatives);
+            }
+
+             if (resultsSection) resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
         } catch (error) {
             console.error('Errore elaborazione testo:', error);
-            // Mostra errore nella sezione risultati
-            originalTextHighlighted.textContent = textToProcess;
+            if (resultsSection) resultsSection.classList.remove('hidden');
+            originalTextHighlighted.textContent = inputText.value.trim(); // Mostra originale
             correctedText.textContent = `Errore: ${error.message}`;
-            if (correctedCount) { correctedCount.textContent = '0 parole'; }
-            if (resultsSection) resultsSection.classList.remove('hidden'); // Mostra sezione per vedere errore
+            if (correctedCount) correctedCount.textContent = '0 parole';
             showToast(getTranslation('error') + `: ${error.message || 'Errore sconosciuto'}`, 'red-500');
+            hideExpandablePanels();
         } finally {
             setLoadingState(false);
             console.log("handleProcessClick terminato");
         }
     }
 
-    // Funzione per mostrare le differenze
-    function displayDifferences(originalText, correctedText, language) {
-        const diff = Diff.diffWords(originalText, correctedText, { ignoreWhitespace: false });
-        let originalHighlightedHTML = '';
-        let corrections = [];
-        let currentRemoved = '';
-
-        diff.forEach((part) => {
-            const escapedValue = part.value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;").replace(/\n/g, '<br>');
-            if (part.added) {
-                if (currentRemoved) { corrections.push({ original: currentRemoved, corrected: part.value }); currentRemoved = ''; }
-            } else if (part.removed) {
-                originalHighlightedHTML += `<span class="diff-removed">${escapedValue}</span>`;
-                currentRemoved = part.value;
-            } else {
-                originalHighlightedHTML += escapedValue;
-                currentRemoved = '';
-            }
-        });
-         // Aggiungi eventuali rimozioni finali non seguite da aggiunte
-         if (currentRemoved) {
-             corrections.push({ original: currentRemoved, corrected: '' });
-         }
-
-        originalTextHighlighted.innerHTML = originalHighlightedHTML;
-
-        // Popola spiegazioni
-        const correctionsList = document.getElementById('corrections-list');
-        const noCorrMsg = document.getElementById('no-corrections-message');
-        if (correctionsList) {
-            correctionsList.innerHTML = '';
-            if (corrections.length > 0) {
-                 if (noCorrMsg) noCorrMsg.style.display = 'none';
-                corrections.forEach((correction) => {
-                    let explanation = generateExplanation(correction.original, correction.corrected, language);
-                    const correctionItem = document.createElement('div');
-                    correctionItem.className = 'correction-item p-2 mb-2 border-l-4 border-yellow-400 bg-yellow-50 dark:bg-yellow-900/30 dark:border-yellow-600';
-                    correctionItem.innerHTML = `<div><span class="correction-original text-red-600 dark:text-red-400 line-through">${correction.original.replace(/\n/g, '<br>')}</span> → <span class="correction-corrected text-green-600 dark:text-green-400">${correction.corrected.replace(/\n/g, '<br>')}</span></div><div class="correction-explanation text-sm italic text-gray-600 dark:text-gray-400 mt-1">${explanation}</div>`;
-                    correctionsList.appendChild(correctionItem);
-                });
-            } else {
-                if (noCorrMsg) {
-                    noCorrMsg.style.display = 'block';
-                } else {
-                     const newNoCorrMsg = document.createElement('p');
-                     newNoCorrMsg.id = 'no-corrections-message';
-                     newNoCorrMsg.className = 'text-gray-500 dark:text-gray-400 text-sm italic';
-                     newNoCorrMsg.textContent = 'Nessuna correzione specifica trovata.';
-                     correctionsList.appendChild(newNoCorrMsg);
-                }
-            }
-        } else {
-            console.error("Elemento 'corrections-list' non trovato.");
-        }
-    }
-
-    // Funzione per nascondere pannelli
-    function hideExpandablePanels() {
-        const explanationBox = document.getElementById('corrections-explanation');
-        const historyPanel = document.getElementById('history-panel');
-        // Aggiungi classe hidden e resetta icona
-        if (explanationBox) explanationBox.classList.add('hidden');
-        const toggleIconCorr = document.getElementById('toggle-icon');
-        if (toggleIconCorr) toggleIconCorr.classList.remove('rotate-icon');
-
-        if (historyPanel) historyPanel.classList.add('hidden');
-        const toggleIconHist = document.getElementById('history-toggle-icon');
-        if (toggleIconHist) toggleIconHist.classList.remove('rotate-icon');
-    }
-
+    // Funzione per elaborare testo con AI (Prompt e Config AGGIORNATI)
     async function processTextWithAI(text, language) {
         const isProofreading = proofreadingCheck ? proofreadingCheck.checked : true;
         const isRephrase = rephraseCheck ? rephraseCheck.checked : false;
@@ -823,206 +717,245 @@ Lingua (solo codice ISO 639-1 o 'und'):`;
         const styleSample = sampleTextInput ? sampleTextInput.value.trim() : '';
         const tone = defaultToneSelect ? defaultToneSelect.value : 'neutral';
 
-        // **Prompt che include le opzioni selezionate**
-        let systemPrompt = `Sei un esperto correttore di testi NELLA LINGUA ${getLanguageName(language).toUpperCase()}.
-**REGOLA CRITICA E ASSOLUTA: NON DEVI MAI TRADURRE IL TESTO IN ALTRE LINGUE.**
-La risposta DEVE ESSERE OBBLIGATORIAMENTE IN ${getLanguageName(language)}.
+        console.log("Opzioni per AI:", { isProofreading, isRephrase, isStyleMatch, tone });
 
-**ISTRUZIONI DETTAGLIATE:**
-1.  **Lingua di Lavoro:** ${getLanguageName(language)} (NON CAMBIARE MAI).`;
-
-        // Aggiungi istruzioni basate sulle checkbox
-        if (isProofreading) {
-             systemPrompt += `\n2.  **Correzione Grammaticale/Ortografica:** ATTIVA. Correggi errori evidenti.`;
-        } else {
-             systemPrompt += `\n2.  **Correzione Grammaticale/Ortografica:** DISATTIVATA. NON correggere errori.`;
-        }
+        let promptBase = `Sei un assistente linguistico esperto in ${getLanguageName(language)}.\n\n`;
+        let expectedFormatInstructions = "";
+        let genConfigParams = {};
 
         if (isRephrase) {
-             systemPrompt += `\n3.  **Riformulazione:** ATTIVA. Riformula per chiarezza/fluidità, mantenendo il significato e la lingua. Tono: ${tone}.`;
+            // --- PROMPT PER RIFORMULAZIONE ---
+            promptBase += `COMPITO: ${isProofreading ? "Correggi E POI riformula" : "Riformula SENZA correggere"} il testo fornito.\n
+ISTRUZIONI CRITICHE:
+1.  ‼️ NON TRADURRE MAI IN ALTRE LINGUE ‼️
+2.  ‼️ MANTIENI SEMPRE LA LINGUA ORIGINALE (${getLanguageName(language)}) ‼️
+3.  ${isProofreading ? "Correggi errori grammaticali e ortografici PRIMA di riformulare." : "NON correggere errori, solo riformula."}
+4.  Riformula il testo secondo lo STILE e il TONO richiesti in modo CHIARO e DECISO.
+5.  Mantieni il significato e le informazioni ESSENZIALI del testo originale.
+6.  Sii CREATIVO nella riformulazione, specialmente per toni specifici.
+
+`;
+            promptBase += `TONO RICHIESTO: ${tone.toUpperCase()} (APPLICA QUESTO TONO IN MODO EVIDENTE)\n`;
+             switch (tone) {
+                 case 'formal': promptBase += `- Usa registro elevato, impersonale, evita colloquialismi.\n`; break;
+                 case 'friendly': promptBase += `- Sii caloroso, positivo, incoraggiante, come parlando a un amico.\n`; break;
+                 case 'professional': promptBase += `- Sii preciso, chiaro, conciso, autorevole. Usa termini appropriati.\n`; break;
+                 case 'casual': promptBase += `- Usa linguaggio rilassato, quotidiano, colloquiale ma chiaro.\n`; break;
+                 case 'sarcastic': promptBase += `- DEVI ESSERE SARCASTICO! Usa ironia pungente, finto entusiasmo, esagerazione ironica. Il sarcasmo deve essere palese.\n`; break;
+                 default: promptBase += `- Sii oggettivo, imparziale, basati sui fatti.\n`; break;
+             }
+             promptBase += "\n";
+
+            if (isStyleMatch && (styleDesc || styleSample)) {
+                promptBase += `STILE PERSONALIZZATO (DA PRIORITIZZARE):\n`;
+                if (styleDesc) promptBase += `- Descrizione: ${styleDesc}\n`;
+                if (styleSample) promptBase += `- Esempio: "${styleSample}"\n`;
+                promptBase += `- Adatta la riformulazione a questo stile.\n\n`;
+            }
+
+            expectedFormatInstructions = `
+FORMATO RISPOSTA OBBLIGATORIO (USA ESATTAMENTE QUESTI SEPARATORI):
+---TESTO_RIFORMULATO_START---
+[Testo principale riformulato qui]
+---TESTO_RIFORMULATO_END---
+
+---SPIEGAZIONE_START---
+[Breve spiegazione (max 2-3 frasi) del perché hai scelto questa riformulazione]
+---SPIEGAZIONE_END---
+
+---ALTERNATIVE_START---
+1. [Prima alternativa concisa e diversa]
+2. [Seconda alternativa concisa e diversa]
+3. [Terza alternativa concisa e diversa]
+---ALTERNATIVE_END---`;
+
+            // Config per Riformulazione (più creativo)
+            genConfigParams = {
+                temperature: (tone === 'sarcastic') ? 0.9 : 0.75,
+                topP: (tone === 'sarcastic') ? 0.95 : 0.9,
+                topK: (tone === 'sarcastic') ? 50 : 40,
+            };
+
         } else {
-             systemPrompt += `\n3.  **Riformulazione:** DISATTIVATA. NON riformulare.`;
+            // --- PROMPT PER SOLA CORREZIONE (Semplificato) ---
+            promptBase += `COMPITO PRINCIPALE: Correggi gli errori grammaticali, ortografici e di punteggiatura nel seguente testo in ${getLanguageName(language)}.\n
+REGOLE IMPORTANTI:
+1.  Mantieni la lingua originale (${getLanguageName(language)}). NON TRADURRE.
+2.  Non modificare lo stile, il tono o la struttura delle frasi se non strettamente necessario per la correzione.
+3.  Effettua solo le correzioni indispensabili.\n\n`;
+            expectedFormatInstructions = `
+FORMATO RISPOSTA: Restituisci SOLO il testo corretto, senza alcuna etichetta, prefisso, suffisso o commento.`;
+
+            // Config per Correzione (più preciso)
+             genConfigParams = {
+                temperature: 0.15, // Basso per precisione
+                topP: 0.8,      // Leggermente più alto per permettere correzioni comuni
+                topK: 15,       // Moderato
+            };
         }
 
-        systemPrompt += `\n4.  **Stile e Tono Originali:** Mantieni il più possibile, a meno che la riformulazione o l'adattamento stile siano attivi.`;
-
-        if (isStyleMatch) {
-             systemPrompt += `\n5.  **Adattamento Stile:** ATTIVO. Adatta allo stile seguente: Descrizione='${styleDesc || 'N/A'}', Esempio='${styleSample || 'N/A'}'`;
-        } else {
-             systemPrompt += `\n5.  **Adattamento Stile:** DISATTIVO.`;
-        }
-
-
-        systemPrompt += `\n\n**ESEMPI DI COME DEVI RISPONDERE (IN ${getLanguageName(language).toUpperCase()}):**
-${getLanguageExamples(language)}
-
-**TESTO DA ELABORARE (NON TRADURRE ASSOLUTAMENTE):**
+        promptBase += `TESTO ORIGINALE (${getLanguageName(language)}):
 "${text}"
 
-**FORMATO DELLA TUA RISPOSTA (OBBLIGATORIO):**
-Rispondi SOLO con il testo elaborato in ${getLanguageName(language).toUpperCase()}.
-NON includere NESSUN commento, NESSUNA spiegazione, NESSUNA etichetta, NESSUNA formattazione aggiuntiva (come virgolette all'inizio/fine). SOLO il testo puro.`;
+RISPOSTA (${getLanguageName(language)}):${expectedFormatInstructions}`;
 
-        console.log("Prompt inviato:", systemPrompt);
+        const systemPrompt = promptBase;
+        console.log("Prompt inviato:\n", systemPrompt);
 
         const requestBody = {
             contents: [{ parts: [{ text: systemPrompt }] }],
             generationConfig: {
-                temperature: 0.15,
-                topP: 0.5,
-                topK: 10,
-                maxOutputTokens: Math.max(100, text.length + 150)
+                ...genConfigParams, // Usa i parametri specifici
+                maxOutputTokens: Math.max(100, Math.floor(text.length * (isRephrase ? 2.5 : 1.2) + 300))
             }
         };
+        console.log("Generation Config usata:", requestBody.generationConfig);
 
+        // Chiamata API
         try {
-            console.log("Invio richiesta API...");
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(requestBody),
-            });
-            console.log("Risposta API ricevuta, status:", response.status);
-
+            const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(requestBody) });
+            console.log("Risposta API status:", response.status);
             if (!response.ok) {
-                let errorBody = null; let errorText = '';
-                try { errorBody = await response.json(); console.error("Errore API (JSON):", errorBody); }
-                catch (e) { try { errorText = await response.text(); console.error("Errore API (Testo):", errorText); } catch (textError) {} }
-                let errorMessage = `Errore API (${response.status})`;
-                if (errorBody?.error?.message) errorMessage += `: ${errorBody.error.message}`;
-                else if (errorText) errorMessage += `. Dettagli: ${errorText}`;
-                throw new Error(errorMessage);
+                 let errorDetails = ''; try { const errorData = await response.json(); errorDetails = errorData?.error?.message || JSON.stringify(errorData); } catch (e) { errorDetails = await response.text(); }
+                 console.error("Dettagli Errore API:", errorDetails); throw new Error(`Errore API (${response.status}). ${errorDetails}`);
             }
-
             const data = await response.json();
-            console.log("Dati API:", data);
+            //console.log("Dati API:", data); // Log completo può essere troppo verboso
 
-            if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
-                let generatedText = data.candidates[0].content.parts[0].text.trim();
-                generatedText = generatedText.replace(/^["'`]*(.*?)[`'"]*$/s, '$1');
-                console.log("Testo generato pulito:", generatedText);
-                return generatedText; // Ritorna direttamente, la validazione è in handleProcessClick
+            const candidate = data.candidates?.[0];
+            if (candidate?.finishReason && candidate.finishReason !== "STOP" && candidate.finishReason !== "MAX_TOKENS") throw new Error(`Generazione interrotta (${candidate.finishReason})`);
+            if (data.promptFeedback?.blockReason) throw new Error(`Richiesta bloccata (${data.promptFeedback.blockReason})`);
+            let generatedText = candidate?.content?.parts?.[0]?.text?.trim();
+            if (!generatedText) throw new Error("Risposta API vuota.");
+
+            console.log("Testo generato grezzo:\n", generatedText);
+
+            // Parsing della risposta
+            if (isRephrase) {
+                let rephrasedText = ''; let explanation = ''; let alternatives = [];
+                const textMatch = generatedText.match(/---TESTO_RIFORMULATO_START---([\s\S]*?)---TESTO_RIFORMULATO_END---/i);
+                const expMatch = generatedText.match(/---SPIEGAZIONE_START---([\s\S]*?)---SPIEGAZIONE_END---/i);
+                const altMatch = generatedText.match(/---ALTERNATIVE_START---([\s\S]*?)---ALTERNATIVE_END---/i);
+
+                rephrasedText = textMatch ? textMatch[1].trim() : '';
+                explanation = expMatch ? expMatch[1].trim() : "Spiegazione non fornita nel formato atteso.";
+                if (altMatch && altMatch[1]) {
+                    alternatives = altMatch[1].trim().split('\n').map(line => line.replace(/^\s*[\d-*•]+\.?\s*/, '').trim()).filter(line => line.length > 0 && !line.toUpperCase().includes("SPIEGAZIONE"));
+                }
+                if (!rephrasedText) {
+                    console.warn("Parsing con separatori fallito, tentativo di fallback...");
+                    if (!generatedText.includes("---TESTO_RIFORMULATO_START---")) rephrasedText = generatedText;
+                    else rephrasedText = "[Errore formato risposta]";
+                }
+                while (alternatives.length < 3) alternatives.push("N/A"); alternatives = alternatives.slice(0, 3);
+                console.log("Parsed Rephrase:", { rephrasedText, explanation, alternatives });
+                return { text: rephrasedText, isRephrase: true, tone: tone, explanation: explanation, alternatives: alternatives };
             } else {
-                let finishReason = data.candidates?.[0]?.finishReason;
-                let blockReason = data.promptFeedback?.blockReason;
-                if (blockReason) throw new Error(`Bloccato per sicurezza: ${blockReason}`);
-                if (finishReason && finishReason !== "STOP") throw new Error(`Generazione interrotta: ${finishReason}`);
-                throw new Error("Risposta API non valida o testo non generato.");
+                 console.log("Parsed Correction:", { generatedText });
+                 return { text: generatedText, isRephrase: false, tone: null, explanation: null, alternatives: null };
             }
-        } catch (error) {
-            console.error("Errore chiamata API:", error);
-            throw error;
-        }
+        } catch (error) { console.error("Errore chiamata/parsing API:", error); throw error; }
     }
 
-    // --- NUOVA Validazione Finale ---
-    async function validateResultLanguage(originalText, resultText, expectedLanguage) {
-        console.log(`Validazione: Lingua attesa=${expectedLanguage}`);
-        if (!resultText || resultText.trim() === '') {
-             console.warn("Validazione fallita: Risultato vuoto.");
-             return false;
+    // Funzione per mostrare l'analisi della riformulazione (INVARIATA)
+    function displayRephraseAnalysis(tone, explanationText, alternatives) {
+        let analysisBox = document.getElementById('rephrased-analysis-box');
+        if (!analysisBox) {
+            analysisBox = document.createElement('div'); analysisBox.id = 'rephrased-analysis-box';
+            analysisBox.className = 'bg-blue-50 border border-blue-300 rounded-lg p-4 mt-6';
+            analysisBox.innerHTML = `
+                <h3 id="rephrased-analysis-title" class="text-lg font-medium text-blue-800 mb-3">Analisi Riformulazione</h3>
+                <div class="mb-4 p-3 bg-white rounded-lg border border-blue-200">
+                    <h4 class="text-md font-medium text-gray-700 mb-2">Motivazione:</h4>
+                    <div id="explanation-content" class="text-gray-600 text-sm"></div>
+                </div>
+                <div>
+                    <h4 class="text-md font-medium text-gray-700 mb-2">Alternative Concise:</h4>
+                    <div id="alternatives-list" class="space-y-2"></div>
+                </div>`;
+            resultsSection.parentNode.insertBefore(analysisBox, resultsSection.nextSibling);
         }
-        // Non chiamare API per validare, usa un controllo locale più semplice
-        const resultLangLocal = detectLanguageLocalSimple(resultText); // Funzione locale semplice
-        console.log(`Validazione: Lingua risultato (locale) = ${resultLangLocal}`);
-
-        if (resultLangLocal !== 'und' && resultLangLocal !== expectedLanguage) {
-             console.warn(`Validazione fallita: Lingua locale non corrispondente (${expectedLanguage} vs ${resultLangLocal})`);
-             return false;
-        }
-
-        const similarity = calculateWordOverlap(originalText, resultText);
-        console.log(`Validazione: Similarità lessicale = ${similarity.toFixed(2)}`);
-        if (similarity < 0.4) {
-             console.warn("Validazione fallita: Similarità lessicale troppo bassa.");
-             return false;
-        }
-        console.log("Validazione OK");
-        return true;
+        const analysisTitle = document.getElementById('rephrased-analysis-title');
+        if (analysisTitle) analysisTitle.textContent = `Analisi Riformulazione (Tono: ${getToneDisplayName(tone)})`;
+        const explanationContent = document.getElementById('explanation-content');
+        if (explanationContent) explanationContent.textContent = explanationText || "N/A.";
+        const alternativesList = document.getElementById('alternatives-list');
+        if (alternativesList && alternatives && alternatives.length > 0) {
+            alternativesList.innerHTML = '';
+            alternatives.forEach((alternative, index) => {
+                if (!alternative || alternative.toLowerCase() === "n/a") return;
+                const alternativeItem = document.createElement('div');
+                alternativeItem.className = 'p-2 bg-gray-50 rounded border border-gray-200 flex justify-between items-center cursor-pointer hover:bg-blue-100 transition';
+                const alternativeTextContainer = document.createElement('div'); alternativeTextContainer.className = 'flex-grow mr-2'; alternativeTextContainer.textContent = alternative;
+                const copyAlternativeBtn = document.createElement('button'); copyAlternativeBtn.className = 'text-blue-600 hover:text-blue-800 text-xs flex items-center flex-shrink-0'; copyAlternativeBtn.innerHTML = `<svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg> Copia`;
+                copyAlternativeBtn.addEventListener('click', (e) => { e.stopPropagation(); copyTextToClipboard(alternative); });
+                alternativeItem.appendChild(alternativeTextContainer); alternativeItem.appendChild(copyAlternativeBtn);
+                alternativeItem.addEventListener('click', () => {
+                    correctedText.textContent = alternative; correctedCount.textContent = countWords(alternative) + ' parole';
+                    alternativesList.querySelectorAll('div').forEach(item => item.classList.remove('bg-blue-100', 'border-blue-300'));
+                    alternativeItem.classList.add('bg-blue-100', 'border-blue-300');
+                });
+                alternativesList.appendChild(alternativeItem);
+            });
+            if (alternativesList.children.length === 0) alternativesList.innerHTML = '<p class="text-sm text-gray-500">Nessuna alternativa valida.</p>';
+        } else if (alternativesList) alternativesList.innerHTML = '<p class="text-sm text-gray-500">N/A.</p>';
+        analysisBox.classList.remove('hidden');
     }
 
-    // Funzione locale semplice per validazione rapida lingua (NON per rilevamento primario)
+    // Funzione di validazione locale (semplificata)
     function detectLanguageLocalSimple(text) {
         if (!text) return 'und';
-        if (/[\u0400-\u04FF]/.test(text)) return 'ru';
-        if (/[äöüß]/.test(text.toLowerCase())) return 'de';
-        if (/[ãõâçêôú]/i.test(text)) return 'pt';
-        if (/[ñ¡¿]/i.test(text)) return 'es';
+        if (/[\u0400-\u04FF]/.test(text)) return 'ru'; if (/[äöüß]/i.test(text)) return 'de';
+        if (/[ãõâçêôú]/i.test(text)) return 'pt'; if (/[ñ¡¿]/i.test(text)) return 'es';
         if (/[œæàâèéêëîïôùûüÿ]/i.test(text)) return 'fr';
-        // Controllo molto base per inglese vs italiano
         if (/\b(the|and|is|are)\b/i.test(text) && !/\b(il|la|che|non)\b/i.test(text)) return 'en';
         if (/\b(il|la|che|non|di|è)\b/i.test(text) && !/\b(the|and|is|are)\b/i.test(text)) return 'it';
-        return 'und'; // Indeterminato
+        return 'und';
     }
 
-
-    // Funzione per calcolare overlap di parole
+    // Funzione overlap parole (INVARIATA)
     function calculateWordOverlap(text1, text2) {
         if (!text1 || !text2) return 0;
         const words1 = new Set(text1.toLowerCase().match(/\b\w+\b/g) || []);
         const words2 = new Set(text2.toLowerCase().match(/\b\w+\b/g) || []);
-        if (words1.size === 0) return 0;
+        if (words1.size === 0) return words2.size === 0 ? 1 : 0;
         const intersection = new Set([...words1].filter(x => words2.has(x)));
         return intersection.size / words1.size;
     }
 
-
-    // Esempi per lingua
-    function getLanguageExamples(language) {
-        const examples = {
-            'it': ["- Correggi: Qual è il problema?", "- Riformula in tono amichevole: Andiamo al mare!"],
-            'en': ["- Correct: What is the issue?", "- Rephrase friendly: Let's hit the beach!"],
-            'de': ["- Korrigiere: Was ist das Problem?", "- Formuliere freundlich um: Lass uns zum Strand gehen!"],
-            'fr': ["- Corrigez: Quel est le problème?", "- Reformulez amicalement: Allons à la plage !"],
-            'es': ["- Corrige: ¿Cuál es el problema?", "- Reformula amistosamente: ¡Vamos a la playa!"],
-            'pt': ["- Corrija: Qual é o problema?", "- Reformule amigavelmente: Vamos à praia!"],
-            'ru': ["- Исправь: В чём проблема?", "- Перефразируй дружелюбно: Пойдём на пляж!"]
-        };
-        return examples[language] ? examples[language].join("\n") : examples['it'].join("\n");
-    }
-
-    function getLanguageName(code) {
-        const languages = { 'it': 'Italiano', 'en': 'Inglese', 'es': 'Spagnolo', 'fr': 'Francese', 'de': 'Tedesco', 'ru': 'Russo', 'pt': 'Portoghese' };
-        return languages[code] || 'Lingua sconosciuta';
-    }
-
-    // Funzione per generare spiegazioni
-    function generateExplanation(original, corrected, language) {
-        const langRules = {
-            'it': { "qual'è": "qual è", "propietario": "proprietario", "avvolte": "a volte" },
-            'de': { "ich liebe du": "ich liebe dich" }, 'ru': { "щто": "что", "здраствуйте": "здравствуйте" },
-            'pt': { "obrigado": "obrigada", "concerteza": "com certeza" }
-        };
-        const rules = langRules[language] || {};
-        for (const [error, fix] of Object.entries(rules)) {
-             if (original.toLowerCase().includes(error) && corrected.toLowerCase().includes(fix)) {
-                 return `Corretto errore comune in ${getLanguageName(language)}.`;
-             }
+    async function validateResultLanguage(originalText, resultText, expectedLanguage) {
+        console.log(`Validazione: Attesa=${expectedLanguage}`);
+        if (!resultText?.trim()) { console.warn("Validazione fallita: Risultato vuoto."); return false; }
+        const resultLangLocal = detectLanguageLocalSimple(resultText);
+        console.log(`Validazione: Locale=${resultLangLocal}`);
+        if (resultLangLocal !== 'und' && resultLangLocal !== expectedLanguage) { console.warn(`Validazione fallita: Lingua locale errata.`); return false; }
+        const similarity = calculateWordOverlap(originalText, resultText);
+        console.log(`Validazione: Similarità=${similarity.toFixed(2)}`);
+        if (similarity < 0.35 && countWords(originalText) > 5) { // Soglia leggermente più tollerante
+             console.warn("Validazione fallita: Similarità lessicale bassa.");
+             return false;
         }
-        if (original.toLowerCase() !== corrected.toLowerCase() && original.trim().length === corrected.trim().length) return "Correzione ortografica.";
-        if (calculateWordOverlap(original, corrected) < 0.8) {
-             return "Riformulazione per chiarezza/stile.";
-        }
-        return "Correzione grammaticale o miglioramento.";
+        console.log("Validazione OK"); return true;
     }
 
-    // Funzioni cronologia (saveToHistory, loadHistoryItems, loadHistoryItem, handleHistorySelection) - INVARIATE
-    function saveToHistory(originalText, correctedText) {
+    function getToneDisplayName(toneCode) { /*...*/ return {formal:'Formale', friendly:'Amichevole', professional:'Professionale', casual:'Informale', sarcastic:'Sarcastico'}[toneCode] || 'Neutrale'; }
+    function getLanguageName(code) { /*...*/ return {it:'Italiano', en:'Inglese', es:'Spagnolo', fr:'Francese', de:'Tedesco', ru:'Russo', pt:'Portoghese'}[code] || 'Sconosciuta'; }
+    function generateExplanation(original, corrected, language) { /*...*/ const rules = {'it': {"qual'è":"qual è"},}[language] || {}; for (const [e,f] of Object.entries(rules)) { if(original.toLowerCase().includes(e) && corrected.toLowerCase().includes(f)) return `Corretto errore comune: '${e}' -> '${f}'.`; } if (original.toLowerCase() !== corrected.toLowerCase() && original.length === corrected.length) return "Correzione ortografica."; return "Correzione/Miglioramento."; }
+
+    // Funzioni Cronologia (saveToHistory, loadHistoryItems, loadHistoryItem, handleHistorySelection) - INVARIATE
+     function saveToHistory(originalText, correctedText, isRephrase = false, tone = null, explanation = null, alternatives = null) {
         try {
             let history = JSON.parse(localStorage.getItem('textai-history') || '[]');
             if (!Array.isArray(history)) history = [];
-            const isDuplicate = history.some(item => item.originalText === originalText && item.correctedText === correctedText);
+            const isDuplicate = history.some(item => item.originalText === originalText && item.correctedText === correctedText && item.isRephrase === isRephrase);
             if (!isDuplicate) {
-                const historyItem = { id: Date.now(), date: new Date().toLocaleString(), originalText, correctedText, preview: correctedText.substring(0, 50) + (correctedText.length > 50 ? '...' : '') };
+                const historyItem = { id: Date.now(), date: new Date().toLocaleString(), originalText, correctedText, isRephrase, tone, explanation, alternatives, preview: correctedText.substring(0, 50) + (correctedText.length > 50 ? '...' : '') };
                 history.unshift(historyItem);
                 if (history.length > 10) history = history.slice(0, 10);
                 localStorage.setItem('textai-history', JSON.stringify(history));
             }
-            // Aggiorna subito la vista se il pannello è aperto
             const historyPanel = document.getElementById('history-panel');
-             if (historyPanel && !historyPanel.classList.contains('hidden')) {
-                 loadHistoryItems();
-             }
+             if (historyPanel && !historyPanel.classList.contains('hidden')) loadHistoryItems();
         } catch (error) { console.error("Errore salvataggio cronologia:", error); }
     }
 
@@ -1033,27 +966,19 @@ NON includere NESSUN commento, NESSUNA spiegazione, NESSUNA etichetta, NESSUNA f
             if (!historyList) return;
             let history = JSON.parse(localStorage.getItem('textai-history') || '[]');
             if (!Array.isArray(history)) history = [];
-            historyList.innerHTML = ''; // Pulisci prima di aggiungere
-            const msgElement = noHistoryMessage || document.getElementById('no-history-message'); // Cerca di nuovo se non trovato prima
+            historyList.innerHTML = '';
+            const msgElement = noHistoryMessage || document.getElementById('no-history-message');
 
             if (history.length === 0) {
-                 if (msgElement) {
-                    msgElement.style.display = 'block'; // Mostra messaggio
-                    if (!msgElement.parentNode) historyList.appendChild(msgElement); // Aggiungi se manca
-                 } else { // Crea se non esiste proprio
-                    const newMsg = document.createElement('p');
-                    newMsg.id = 'no-history-message';
-                    newMsg.className = 'text-gray-500 dark:text-gray-400 text-sm italic';
-                    newMsg.textContent = 'Nessuna correzione precedente disponibile.';
-                    historyList.appendChild(newMsg);
-                 }
+                 if (msgElement) { msgElement.style.display = 'block'; if (!msgElement.parentNode) historyList.appendChild(msgElement); }
+                 else { const newMsg = document.createElement('p'); newMsg.id = 'no-history-message'; newMsg.className = 'text-gray-500 dark:text-gray-400 text-sm italic px-4 py-2'; newMsg.textContent = 'Nessuna correzione precedente.'; historyList.appendChild(newMsg); }
             } else {
-                if (msgElement) msgElement.style.display = 'none'; // Nascondi messaggio
+                if (msgElement) msgElement.style.display = 'none';
                 history.forEach(item => {
                     const historyItem = document.createElement('div');
                     historyItem.className = 'history-item p-2 border-l-4 border-purple-400 dark:border-purple-600 mb-2 bg-purple-50 dark:bg-purple-900/30 hover:bg-purple-100 dark:hover:bg-purple-900/50 cursor-pointer transition-colors';
                     historyItem.dataset.id = item.id;
-                    historyItem.innerHTML = `<div class="text-xs text-gray-500 dark:text-gray-400">${item.date}</div><div class="text-sm truncate">${item.preview}</div>`;
+                    historyItem.innerHTML = `<div class="text-xs text-gray-500 dark:text-gray-400">${item.date}</div><div class="text-sm truncate">${item.isRephrase ? '[Riform.] ' : ''}${item.preview}</div>`;
                     historyItem.addEventListener('click', () => loadHistoryItem(item.id));
                     historyList.appendChild(historyItem);
                 });
@@ -1061,92 +986,88 @@ NON includere NESSUN commento, NESSUNA spiegazione, NESSUNA etichetta, NESSUNA f
         } catch (error) { console.error("Errore caricamento cronologia:", error); }
     }
 
-
     function loadHistoryItem(id) {
         try {
             let history = JSON.parse(localStorage.getItem('textai-history') || '[]');
             const item = history.find(item => item.id === id);
-            if (!item) { console.error("Elemento cronologia non trovato:", id); return; }
+            if (!item) throw new Error("Elemento cronologia non trovato");
             if (inputText) inputText.value = item.originalText;
-            const historyItems = document.querySelectorAll('.history-item');
-            historyItems.forEach(el => { el.classList.remove('history-selected', 'bg-purple-200', 'dark:bg-purple-700', 'border-purple-600'); if (el.dataset.id == id) el.classList.add('history-selected', 'bg-purple-200', 'dark:bg-purple-700', 'border-purple-600'); });
-            handleHistorySelection(item.originalText, item.correctedText);
+            document.querySelectorAll('.history-item').forEach(el => { el.classList.remove('history-selected', 'bg-purple-200', 'dark:bg-purple-700', 'border-purple-600'); if (el.dataset.id == id) el.classList.add('history-selected', 'bg-purple-200', 'dark:bg-purple-700', 'border-purple-600'); });
+            handleHistorySelection(item.originalText, item.correctedText, item.isRephrase, item.tone, item.explanation, item.alternatives);
         } catch (error) { console.error("Errore caricamento elemento cronologia:", error); }
     }
 
-    async function handleHistorySelection(originalText, correctedText) {
+    async function handleHistorySelection(originalText, correctedText, isRephrase = false, tone = null, explanation = null, alternatives = null) {
         try {
-            // Imposta i testi nei box
             if (originalTextHighlighted) originalTextHighlighted.textContent = originalText;
             if (correctedText) correctedText.textContent = correctedText;
             if (originalCount) originalCount.textContent = countWords(originalText) + ' parole';
             if (correctedCount) correctedCount.textContent = countWords(correctedText) + ' parole';
 
-             // Mostra sezione risultati e calcola diff
-            if (resultsSection) resultsSection.classList.remove('hidden');
+             if (resultsSection) resultsSection.classList.remove('hidden');
 
             if (typeof Diff !== 'undefined' && originalTextHighlighted) {
-                displayDifferences(originalText, correctedText, await detectLanguageWithGeminiAPI(originalText) || 'it'); // Rileva lingua dell'originale storico
+                 let language = preferredLangSelect ? preferredLangSelect.value : 'it'; // Usa lingua corrente per spiegazioni
+                 try { language = await detectLanguageWithGeminiAPI(originalText) || language; } catch {} // Prova a rilevare, ma non bloccare se fallisce
+                 displayDifferences(originalText, correctedText, language, isRephrase); // Passa isRephrase
             }
 
-            // Scrolla alla sezione risultati
-            if (resultsSection) {
-                resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-            // Nascondi i pannelli espandibili quando si carica dalla cronologia
-             hideExpandablePanels();
+            const analysisBox = document.getElementById('rephrased-analysis-box');
+            const correctionsToggle = document.getElementById('corrections-toggle');
+            const correctionsExplanationBox = document.getElementById('corrections-explanation');
 
+            if (isRephrase) {
+                displayRephraseAnalysis(tone, explanation, alternatives);
+                if (analysisBox) analysisBox.classList.remove('hidden');
+                if(correctionsToggle) correctionsToggle.classList.add('hidden');
+                if(correctionsExplanationBox) correctionsExplanationBox.classList.add('hidden');
+            } else {
+                if (analysisBox) analysisBox.classList.add('hidden');
+                // Mostra/nascondi sezione correzioni semplici basato su contenuto effettivo
+                 const correctionsList = document.getElementById('corrections-list');
+                 if (correctionsList && correctionsList.children.length > 0) {
+                      if(correctionsToggle) correctionsToggle.classList.remove('hidden');
+                      if(correctionsExplanationBox) correctionsExplanationBox.classList.add('hidden');
+                      if(document.getElementById('toggle-icon')) document.getElementById('toggle-icon').classList.remove('rotate-icon');
+                 } else {
+                      if(correctionsToggle) correctionsToggle.classList.add('hidden');
+                      if(correctionsExplanationBox) correctionsExplanationBox.classList.add('hidden');
+                 }
+            }
+
+            if (resultsSection) resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
         } catch (error) { console.error("Errore gestione selezione cronologia:", error); }
     }
 
-
-    // Funzione helper per aggiornare l'UI della lingua
-    function setDetectedLanguageUI(langCode) {
-         if (preferredLangSelect) {
-             const isValidOption = Array.from(preferredLangSelect.options).some(option => option.value === langCode);
-             if(isValidOption) {
-                preferredLangSelect.value = langCode;
-             } else {
-                 console.warn(`Codice lingua ${langCode} non trovato nel select, mantenendo il valore corrente.`);
-             }
-         }
-         if (detectedLang) {
-             detectedLang.textContent = getLanguageName(langCode);
-         }
-         console.log("Lingua UI impostata a:", langCode);
-     }
+    // Funzione helper per nascondere pannelli espandibili
+    function hideExpandablePanels() {
+        const analysisBox = document.getElementById('rephrased-analysis-box');
+        const explanationBox = document.getElementById('corrections-explanation');
+        const historyPanel = document.getElementById('history-panel');
+        if (analysisBox) analysisBox.classList.add('hidden');
+        if (explanationBox) explanationBox.classList.add('hidden');
+        const toggleIconCorr = document.getElementById('toggle-icon');
+        if (toggleIconCorr) toggleIconCorr.classList.remove('rotate-icon');
+        if (historyPanel) historyPanel.classList.add('hidden');
+        const toggleIconHist = document.getElementById('history-toggle-icon');
+        if (toggleIconHist) toggleIconHist.classList.remove('rotate-icon');
+    }
 
     // Inizializzazione
     async function initializeApp() {
-        let initialLang = 'it'; // Default
+        let initialLang = 'it';
         try {
-            if (navigator && navigator.language) {
-                const browserLang = navigator.language.split('-')[0].toLowerCase();
-                if (SUPPORTED_LANGS.includes(browserLang)) {
-                    initialLang = browserLang;
-                    console.log("Lingua iniziale impostata dal browser:", initialLang);
-                }
-            }
-            setDetectedLanguageUI(initialLang); // Imposta lingua browser o default
-        } catch(error) {
-             console.error("Errore durante l'inizializzazione:", error);
-             setDetectedLanguageUI('it'); // Fallback sicuro
-        }
-        if (document.getElementById('history-panel')) {
-            document.getElementById('history-panel').classList.add('hidden');
-        }
-         // Assicurati che il pannello spiegazioni sia nascosto all'inizio
-         const explanationBox = document.getElementById('corrections-explanation');
-         if (explanationBox) explanationBox.classList.add('hidden');
-
+            const browserLang = navigator?.language?.split('-')[0]?.toLowerCase();
+            if (browserLang && SUPPORTED_LANGS.includes(browserLang)) initialLang = browserLang;
+        } catch(e) {}
+        setDetectedLanguageUI(initialLang);
+        hideExpandablePanels(); // Assicura che siano nascosti all'inizio
         console.log("Inizializzazione completata.");
     }
 
-    initializeApp(); // Chiama la funzione di inizializzazione
+    initializeApp();
 
 });
-
-
 </script>
 </body>
 </html>
