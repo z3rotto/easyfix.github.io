@@ -182,152 +182,235 @@
 
     </style>
 </head>
-<body class="min-h-screen bg-blue-50 dark:bg-gray-900 transition-colors duration-300">
+<body class="min-h-screen">
     <div class="container mx-auto px-4 py-8 max-w-3xl">
-
-        <!-- Header con Titolo e Toggle Tema -->
-        <header class="mb-8 text-center relative">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 dark:text-gray-100">EasyFix AI</h1>
-            <p class="text-gray-600 dark:text-gray-400 mt-1">Correggi e migliora i tuoi testi con l'AI</p>
-            <button id="theme-toggle" aria-label="Toggle Dark Mode" class="absolute top-0 right-0 mt-2 mr-2 p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <i id="theme-icon" class="fas fa-moon text-gray-800 dark:text-gray-200"></i>
-            </button>
+        <!-- Header -->
+        <header class="mb-8 text-center">
+            <div class="gradient-bg roun-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-magic text-white text-3xl"></i>
+            </div>
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">EasyFix (Beta)</h1>
+            <p class="text-gray-600">✨ Correggi e riformula i tuoi testi grazie all'intelligenza artificiale</p>
         </header>
 
-        <!-- Tabs -->
-        <div class="mb-6 border-b border-gray-300 dark:border-gray-700">
-            <nav class="flex space-x-4" aria-label="Tabs">
-                <button id="text-tab" class="px-3 py-2 font-medium text-sm rounded-t-lg border-b-2 border-blue-500 text-gray-700 dark:text-gray-200" aria-current="page">
-                    Testo
+        <!-- Main Card -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
+            <!-- Tabs -->
+            <div class="flex border-b">
+                <button id="text-tab" class="flex-1 py-4 px-6 text-center font-medium text-gray-700 border-b-2 border-blue-500">
+                    <i class="fas fa-edit mr-2"></i>Testo
                 </button>
-                <button id="settings-tab" class="px-3 py-2 font-medium text-sm rounded-t-lg border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:border-gray-600">
-                    Impostazioni
+                <button id="settings-tab" class="flex-1 py-4 px-6 text-center font-medium text-gray-500">
+                    <i class="fas fa-cog mr-2"></i>Impostazioni
                 </button>
-            </nav>
+            </div>
+
+            <div class="mb-6 mt-4">
+                <button id="history-toggle" class="w-full flex items-center justify-between p-3 bg-purple-50 text-gray-800 rounded-lg border border-purple-200 hover:bg-purple-100 transition-all">
+                    <span class="font-medium">Cronologia correzioni</span>
+                    <i class="fas fa-history mr-2"></i>
+                    <i class="fas fa-chevron-down transition-transform" id="history-toggle-icon"></i>
+                </button>
+                <div id="history-panel" class="bg-white p-4 rounded-lg border border-purple-200 mt-2 hidden overflow-hidden">
+                    <div class="mb-3 text-sm text-gray-600">
+                        <p>Seleziona una correzione precedente per visualizzarla:</p>
+                    </div>
+                    <div id="history-list" class="max-h-60 overflow-y-auto">
+                        <!-- Gli elementi della cronologia verranno inseriti qui dinamicamente -->
+                        <p class="text-gray-500 text-sm italic" id="no-history-message">Nessuna correzione precedente disponibile.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Text Tab Content -->
+            <div id="text-content" class="p-6">
+                <div class="mb-6">
+                    <label for="input-text" class="block text-sm font-medium text-gray-700 mb-2">Inserisci il tuo testo</label>
+                    <textarea id="input-text" class="text-area w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200" placeholder="Scrivi o incolla qui il testo da correggere..."></textarea>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Opzioni</label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Removed detect-lang as API doesn't directly return it easily -->
+                        <!-- <div class="flex items-center">
+                            <input type="checkbox" id="detect-lang" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" checked>
+                            <label for="detect-lang" class="ml-2 block text-sm text-gray-700">Riconoscimento lingua</label>
+                        </div> -->
+                        <div class="flex items-center">
+                            <input type="checkbox" id="proofreading" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" checked>
+                            <label for="proofreading" class="ml-2 block text-sm text-gray-700">Correzione grammaticale</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="rephrase" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                            <label for="rephrase" class="ml-2 block text-sm text-gray-700">Riformulazione</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="style-match" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                            <label for="style-match" class="ml-2 block text-sm text-gray-700">Adatta al mio stile</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button id="process-btn" class="btn-primary flex-1 py-3 px-6 rounded-lg text-white font-medium flex items-center justify-center">
+                        <i class="fas fa-spinner fa-spin hidden mr-2" id="processing-spinner"></i>
+                        <span id="process-text">Ottimizza il testo</span>
+                    </button>
+                    <button id="clear-btn" class="btn-secondary py-3 px-6 rounded-lg text-gray-800 font-medium">
+                        <i class="fas fa-trash-alt mr-2"></i>Pulisci
+                    </button>
+                </div>
+            </div>            
+
+            <!-- Settings Tab Content -->
+            <div id="settings-content" class="p-6 hidden">
+                <div class="mb-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Profilo di scrittura</h3>
+                    <div class="mb-4">
+                        <label for="writing-style" class="block text-sm font-medium text-gray-700 mb-2">Descrizione del tuo stile</label>
+                        <textarea id="writing-style" class="text-area w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200" placeholder="Es: Uso un tono formale ma amichevole, con frasi brevi e dirette..."></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label for="sample-text" class="block text-sm font-medium text-gray-700 mb-2">Testo di esempio del tuo stile</label>
+                        <textarea id="sample-text" class="text-area w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200" placeholder="Incolla un testo scritto da te che rappresenta il tuo stile..."></textarea>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Preferenze</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="flex-grow flex flex-col">
+                                <span class="text-sm font-medium text-gray-700">Lingua preferita</span>
+                                <span class="text-xs text-gray-500">Rilevata automaticamente al processo</span>
+                            </span>
+                            <select id="preferred-lang" class="ml-4 block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                                <option value="it" selected>Italiano</option>
+                                <option value="en">Inglese</option>
+                                <option value="es">Spagnolo</option>
+                                <option value="fr">Francese</option>
+                                <option value="de">Tedesco</option>
+                                <option value="ru">Russo</option>
+                                <option value="pt">Portoghese</option>
+                            </select>                                                        
+                        </div>
+                        
+
+                        <div class="flex items-center justify-between">
+                            <span class="flex-grow flex flex-col">
+                                <span class="text-sm font-medium text-gray-700">Tono desiderato</span>
+                                <span class="text-xs text-gray-500">Per la riformulazione</span>
+                            </span>
+                            <select id="default-tone" class="ml-4 block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                                <option value="neutral">Neutrale</option>
+                                <option value="formal">Formale</option>
+                                <option value="friendly">Amichevole</option>
+                                <option value="professional">Professionale</option>
+                                <option value="casual">Informale</option>
+                                <option value="sarcastic">Sarcastico</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end">
+                    <button id="save-settings" class="btn-accent py-2 px-6 rounded-lg text-white font-medium">
+                        <i class="fas fa-save mr-2"></i>Salva impostazioni
+                    </button>
+                </div>
+            </div>
         </div>
 
-        <!-- Contenuto Tab Testo -->
-        <div id="text-content">
-            <!-- Input Area -->
-            <div class="mb-6">
-                <label for="input-text" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Inserisci il tuo testo</label>
-                <textarea id="input-text" rows="8" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400 text-area" placeholder="Scrivi o incolla qui il testo da elaborare..."></textarea>
-            </div>
-
-            <!-- Pulsante Processa -->
-            <div class="mb-8 text-center">
-                <button id="process-btn" class="w-full md:w-auto inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-150 dark:focus:ring-offset-gray-900 btn-primary">
-                    <i id="processing-spinner" class="fas fa-spinner fa-spin mr-2 hidden" aria-hidden="true"></i>
-                    <span id="process-text">Processa testo</span>
-                </button>
-            </div>
-
-            <!-- Sezione Risultati (inizialmente nascosta) -->
-            <div id="results-section" class="hidden bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                <div class="flex items-center justify-between mb-4">
-                     <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100">Risultati</h2>
-                     <div class="flex items-center text-sm">
-                         <span class="text-gray-500 dark:text-gray-400 mr-2">Lingua:</span>
-                         <span id="detected-lang" class="px-2 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 text-xs font-medium rounded">Italiano</span>
-                     </div>
-                 </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <!-- Testo Originale -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Testo Originale</label>
-                         <span id="original-count" class="text-xs text-gray-500 dark:text-gray-400 block mb-1">0 parole</span>
-                        <div id="original-text-highlighted" class="w-full h-60 p-3 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 overflow-y-auto text-area">
-                            <!-- Contenuto originale evidenziato apparirà qui -->
-                        </div>
-                    </div>
-                    <!-- Testo Corretto -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Testo Elaborato</label>
-                         <span id="corrected-count" class="text-xs text-gray-500 dark:text-gray-400 block mb-1">0 parole</span>
-                        <div id="corrected-text" class="w-full h-60 p-3 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 overflow-y-auto text-area">
-                            <!-- Contenuto corretto apparirà qui -->
-                        </div>
+        <!-- Results Section -->
+        <div id="results-section" class="bg-white rounded-xl shadow-lg overflow-hidden hidden slide-in">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-gray-800">Risultati</h2>
+                    <div class="flex items-center">
+                        <span class="text-sm text-gray-500 mr-2">Lingua (impostata):</span>
+                        <span id="detected-lang" class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Italiano</span>
                     </div>
                 </div>
 
-                <!-- Pulsanti Azioni -->
-                <div class="flex flex-wrap gap-3 justify-center mb-6">
-                    <button id="copy-btn" class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md shadow-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800 btn-secondary">
-                        <i class="fas fa-copy mr-2" aria-hidden="true"></i>Copia Elaborato
-                    </button>
-                    <button id="new-text-btn" class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md shadow-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800 btn-secondary">
-                        <i class="fas fa-plus mr-2" aria-hidden="true"></i>Nuovo Testo
-                    </button>
-                     <button id="clear-btn" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 dark:focus:ring-offset-gray-800 btn-accent">
-                        <i class="fas fa-trash-alt mr-2" aria-hidden="true"></i>Pulisci Input
-                    </button>
-                </div>
-
-                 <!-- Toggle Spiegazioni Correzioni -->
-                <div class="mb-4">
-                    <button id="corrections-toggle" class="w-full flex items-center justify-between p-3 bg-yellow-50 dark:bg-yellow-900/30 text-gray-800 dark:text-gray-200 rounded-lg border border-yellow-200 dark:border-yellow-600/50 hover:bg-yellow-100 dark:hover:bg-yellow-900/50 transition-all">
-                        <span class="font-medium text-sm">Spiegazione delle correzioni</span>
+                <div class="mb-6">
+                    <button id="corrections-toggle" class="w-full flex items-center justify-between p-3 bg-blue-50 text-gray-800 rounded-lg border border-blue-200 hover:bg-blue-100 transition-all">
+                        <span class="font-medium">Spiegazione delle correzioni</span>
                         <i class="fas fa-chevron-down transition-transform" id="toggle-icon"></i>
                     </button>
-                    <div id="corrections-explanation" class="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-b-lg border border-t-0 border-yellow-200 dark:border-yellow-600/50 mt-0 hidden overflow-hidden">
-                        <div id="corrections-list" class="space-y-3 max-h-60 overflow-y-auto text-sm">
+                    <div id="corrections-explanation" class="bg-yellow-50 p-4 rounded-lg border border-yellow-200 mt-2 hidden overflow-hidden">
+                        <div id="corrections-list" class="space-y-2 max-h-60 overflow-y-auto text-sm">
                             <!-- Le spiegazioni verranno inserite qui dinamicamente -->
-                            <p class="text-gray-500 dark:text-gray-400 text-sm italic" id="no-corrections-message">Nessuna correzione specifica da mostrare.</p>
                         </div>
                     </div>
                 </div>
+                
 
-                <!-- Toggle Cronologia -->
-                <div class="mb-0">
-                    <button id="history-toggle" class="w-full flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-900/30 text-gray-800 dark:text-gray-200 rounded-lg border border-purple-200 dark:border-purple-600/50 hover:bg-purple-100 dark:hover:bg-purple-900/50 transition-all">
-                        <span class="font-medium text-sm">Cronologia Correzioni</span>
-                        <div class="flex items-center">
-                             <i class="fas fa-history mr-2" aria-hidden="true"></i>
-                             <i class="fas fa-chevron-down transition-transform" id="history-toggle-icon"></i>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-sm font-medium text-gray-700">Originale (con modifiche evidenziate)</label>
+                            <span id="original-count" class="text-xs text-gray-500">0 parole</span>
                         </div>
+                        <!-- Modificato per usare innerHTML per l'evidenziazione -->
+                        <div id="original-text-highlighted" class="bg-gray-50 p-4 rounded-lg border border-gray-200 h-64 overflow-y-auto whitespace-pre-wrap"></div>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-sm font-medium text-gray-700">Elaborato dall'AI</label>
+                            <span id="corrected-count" class="text-xs text-gray-500">0 parole</span>
+                        </div>
+                        <div id="corrected-text" class="bg-blue-50 p-4 rounded-lg border border-blue-200 h-64 overflow-y-auto whitespace-pre-wrap"></div>
+                    </div>
+                </div>
+
+                <!-- Removed Changes List as it's hard to get structured diffs from the API -->
+                <!-- <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Modifiche apportate</label>
+                    <div id="changes-list" class="space-y-2 max-h-60 overflow-y-auto">
+                         <p class="text-gray-500">La visualizzazione dettagliata delle modifiche non è disponibile con l'API diretta.</p>
+                    </div>
+                </div> -->
+
+                <div class="flex flex-col sm:flex-row gap-4 mt-6">
+                    <button id="copy-btn" class="btn-primary flex-1 py-3 px-6 rounded-lg text-white font-medium">
+                        <i class="far fa-copy mr-2"></i>Copia testo elaborato
                     </button>
-                    <div id="history-panel" class="bg-white dark:bg-gray-700 p-4 rounded-b-lg border border-t-0 border-purple-200 dark:border-purple-600/50 mt-0 hidden overflow-hidden">
-                        <p class="mb-3 text-sm text-gray-600 dark:text-gray-400">Seleziona una correzione precedente:</p>
-                        <div id="history-list" class="max-h-60 overflow-y-auto">
-                            <!-- Gli elementi della cronologia verranno inseriti qui dinamicamente -->
-                            <p class="text-gray-500 dark:text-gray-400 text-sm italic" id="no-history-message">Nessuna correzione precedente disponibile.</p>
-                        </div>
-                    </div>
+                    <button id="new-text-btn" class="btn-secondary py-3 px-6 rounded-lg text-gray-800 font-medium">
+                        <i class="fas fa-redo mr-2"></i>Nuovo testo
+                    </button>
                 </div>
-
             </div>
         </div>
 
-        <!-- Contenuto Tab Impostazioni (inizialmente nascosto) -->
-        <div id="settings-content" class="hidden bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-            <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-6">Impostazioni Elaborazione</h2>
-
-            <div class="space-y-6">
-                <!-- Opzioni Base -->
-                <fieldset>
-                    <legend class="text-base font-medium text-gray-900 dark:text-gray-100">Opzioni Base</legend>
-                    <div class="mt-4 space-y-4">
-                        <div class="flex items-start">
-                            <div class="flex items-center h-5">
-                                <input id="proofreading" name="proofreading" type="checkbox" checked class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700 dark:checked:bg-blue-500">
-                            </div>
-                            <div class="ml-3 text-sm">
-                                <label for="proofreading" class="font-medium text-gray-700 dark:text-gray-300">Correzione Base</label>
-                                <p class="text-gray-500 dark:text-gray-400">Grammatica, ortografia, punteggiatura.</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <div class="flex items-center h-5">
-                                <input id="rephrase" name="rephrase" type="checkbox" class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700 dark:checked:
-
+        <!-- Info Section -->
+        <div class="mt-8 bg-white rounded-xl shadow-lg overflow-hidden">
+             <div class="p-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Informazioni su EasyFix</h2>
+                <div class="prose prose-sm max-w-none text-gray-600">
+                    <p>EasyFix utilizza modelli di linguaggio avanzati di Google AI per aiutarti a perfezionare i tuoi testi. Ecco cosa puoi fare:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1">
+                        <li><strong>Correzione grammaticale e ortografica</strong> - Trova e corregge errori nel testo</li>
+                        <li><strong>Riformulazione intelligente</strong> - Riscrivi il testo mantenendo il significato ma migliorando lo stile o cambiando tono</li>
+                        <li><strong>Adattamento al tuo stile</strong> - Personalizza la riformulazione in base alle tue preferenze e ai tuoi esempi</li>
+                    </ul>
+                    <p class="mt-4">EasyFix è progettato per essere semplice e intuitivo, con un'interfaccia pulita che funziona perfettamente su dispositivi mobili e desktop.</p>
+                </div>
+                <div class="mt-6 text-sm text-gray-500">
+                    <span>Creato da Mauro Col - 2025 © <br> versione 0.1 </span>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Toast Notification -->
     <div id="toast" class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-10 opacity-0 transition-all duration-300 flex items-center">
         <i class="fas fa-check-circle mr-2"></i>
         <span id="toast-message">Operazione completata!</span>
     </div>
-<script>
+
+    <script>
     document.addEventListener('DOMContentLoaded', function() {
         // --- Elements ---
         const textTab = document.getElementById('text-tab');
@@ -922,9 +1005,6 @@
         initializeApp(); // Chiama la funzione di inizializzazione
 
     });
-</script>
-
-
 </script>
 </body>
 </html>
