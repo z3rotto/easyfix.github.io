@@ -572,18 +572,14 @@
 
         let language = 'it'; // Default
         try {
+            // **Rilevamento lingua PRIMA di inviare all'API**
             language = await detectLanguageRobust(textToProcess);
-            console.log("Lingua rilevata:", language);
-            if (preferredLangSelect) { preferredLangSelect.value = language; }
-            if (detectedLang) {
-                detectedLang.textContent = getLanguageName(language);
-                detectedLang.classList.add('language-detected');
-                setTimeout(() => { detectedLang.classList.remove('language-detected'); }, 1000);
-            }
+            console.log("Lingua rilevata (prima dell'elaborazione):", language);
+            setDetectedLanguageUI(language); // Aggiorna UI SUBITO
         } catch (error) {
             console.error("Errore rilevamento lingua:", error);
             language = preferredLangSelect ? preferredLangSelect.value : 'it'; // Fallback alla lingua selezionata
-            if (detectedLang) { detectedLang.textContent = getLanguageName(language); }
+            setDetectedLanguageUI(language); // Aggiorna UI con il fallback
         }
 
         try {
@@ -591,17 +587,15 @@
             const resultText = await processTextWithAI(textToProcess, language);
             console.log("Risultato API:", resultText);
 
-            // Verifica della lingua del risultato (più tollerante)
+            // Verifica della lingua del risultato
             const resultLanguage = await detectLanguageRobust(resultText);
             console.log("Lingua risultato:", resultLanguage);
 
             if (resultLanguage !== language && !areLanguagesSimilar(language, resultLanguage)) {
-                 // Tolleranza se le lingue sono vicine (es. varianti) o se il rilevamento non è certo
                 console.warn(`CAMBIO LINGUA RILEVATO: ${language} -> ${resultLanguage}. Uso testo originale.`);
-                correctedText.textContent = textToProcess; // Mantiene originale se la lingua cambia drasticamente
+                correctedText.textContent = textToProcess;
                 showToast("Impossibile elaborare mantenendo la lingua originale", "yellow-500");
             } else {
-                 // La lingua è rimasta la stessa (o la differenza è tollerabile)
                 correctedText.textContent = resultText;
 
                 if (typeof Diff !== 'undefined') {
@@ -619,7 +613,7 @@
                             currentRemoved = part.value;
                         } else {
                             originalHighlightedHTML += escapedValue;
-                            currentRemoved = ''; // Resetta se c'è testo comune
+                            currentRemoved = '';
                         }
                     });
                     originalTextHighlighted.innerHTML = originalHighlightedHTML;
@@ -657,11 +651,11 @@
             if (document.getElementById('history-toggle-icon')) document.getElementById('history-toggle-icon').classList.remove('rotate-icon');
 
             showToast(getTranslation('success'));
-            saveToHistory(textToProcess, correctedText.textContent); // Salva sempre, anche se è l'originale
+            saveToHistory(textToProcess, correctedText.textContent);
 
         } catch (error) {
             console.error('Errore elaborazione testo:', error);
-            originalTextHighlighted.textContent = textToProcess; // Ripristina originale in caso di errore API
+            originalTextHighlighted.textContent = textToProcess;
             correctedText.textContent = `Errore: ${error.message}`;
             if (correctedCount) { correctedCount.textContent = '0 parole'; }
             if (resultsSection) { resultsSection.classList.remove('hidden'); }
@@ -672,9 +666,8 @@
         }
     }
 
-    // Funzione per verificare se due codici lingua sono simili (es. varianti)
+    // Funzione per verificare se due codici lingua sono simili
     function areLanguagesSimilar(lang1, lang2) {
-        // Aggiungi qui logica se necessario, per ora consideriamo solo identiche
         return lang1 === lang2;
     }
 
@@ -713,10 +706,10 @@
         const requestBody = {
             contents: [{ parts: [{ text: systemPrompt }] }],
             generationConfig: {
-                temperature: 0.15, // Leggermente aumentata per correzioni più naturali
+                temperature: 0.15,
                 topP: 0.5,
                 topK: 10,
-                maxOutputTokens: Math.max(50, text.length + 100) // Minimo 50 token
+                maxOutputTokens: Math.max(50, text.length + 100)
             }
         };
 
@@ -744,16 +737,16 @@
 
             if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
                 let generatedText = data.candidates[0].content.parts[0].text.trim();
-                generatedText = generatedText.replace(/^["'`]|["'`]$/g, ''); // Pulisci virgolette
+                generatedText = generatedText.replace(/^["'`]|["'`]$/g, '');
                 console.log("Testo generato pulito:", generatedText);
 
-                // Ulteriore controllo anti-traduzione basato su parole comuni INGLESI
+                // Controllo anti-inglese
                 const englishWords = /\b(the|is|are|was|were|and|or|but|a|an|in|on|at|to|for|with|from|of)\b/gi;
                 const englishMatchCount = (generatedText.match(englishWords) || []).length;
 
                 if (language !== 'en' && englishMatchCount > 3 && (englishMatchCount / countWords(generatedText)) > 0.1) {
                      console.warn("Rilevate troppe parole inglesi comuni, possibile traduzione errata.");
-                     return text; // Ritorna originale se sospetta traduzione in inglese
+                     return text;
                 }
 
                 return generatedText;
@@ -766,7 +759,7 @@
             }
         } catch (error) {
             console.error("Errore chiamata API:", error);
-            throw error; // Rilancia l'errore per gestirlo in handleProcessClick
+            throw error;
         }
     }
 
@@ -777,7 +770,7 @@
         const words2 = new Set(text2.toLowerCase().split(/\W+/).filter(w => w.length > 1));
         if (words1.size === 0 || words2.size === 0) return 0;
         const intersection = new Set([...words1].filter(x => words2.has(x)));
-        return intersection.size / words1.size; // Percentuale di parole originali presenti nel risultato
+        return intersection.size / words1.size;
     }
 
     // Esempi per lingua
@@ -812,6 +805,16 @@
         for (const [lang, pattern] of Object.entries(uniqueChars)) {
             if (pattern.test(text)) { console.log(`Priorità: Caratteri unici -> ${lang}`); return lang; }
         }
+        
+        // Controllo specifico per italiano
+        const italianPatterns = [
+            /\b(il|lo|la|i|gli|le|un|uno|una|del|dello|della|dei|degli|delle)\b/gi,
+            /\b(sono|sei|è|siamo|siete|ho|hai|ha|abbiamo|avete|hanno)\b/gi,
+            /\b(perché|come|quando|dove|perchè|magari|purtroppo|sicuramente)\b/gi,
+            /\b(questo|quello|questa|quella)\b/gi
+        ];
+        const italianScore = italianPatterns.reduce((acc, pattern) => acc + (text.match(pattern) || []).length, 0);
+        if (italianScore > 3) { console.log("Priorità: Pattern italiani -> Italiano"); return 'it'; }
 
         // Controllo frasi specifiche
         const specificPhrases = {
@@ -854,7 +857,7 @@
             if (scores[lang] > maxScore) { maxScore = scores[lang]; detectedLang = lang; }
         }
 
-        if (maxScore < 2 && words.length > 5) { // Soglia minima se ci sono abbastanza parole
+        if (maxScore < 2 && words.length > 5) {
              console.log("Punteggio parole comuni troppo basso, uso default");
              return preferredLangSelect ? preferredLangSelect.value : 'it';
         }
@@ -872,10 +875,10 @@
         };
         const rules = langRules[language] || {};
         for (const [error, fix] of Object.entries(rules)) {
-            if (original.toLowerCase().includes(error) && corrected.toLowerCase().includes(fix)) {
-                // Restituisci spiegazione specifica (potresti mappare gli errori a spiegazioni)
-                return `Corretto errore comune in ${getLanguageName(language)}.`;
-            }
+             if (original.toLowerCase().includes(error) && corrected.toLowerCase().includes(fix)) {
+                 // Potresti mappare a spiegazioni più dettagliate
+                 return `Corretto errore comune in ${getLanguageName(language)}.`;
+             }
         }
         if (original.toLowerCase() !== corrected.toLowerCase() && original.trim().length === corrected.trim().length) return "Correzione ortografica.";
         if (original.replace(/\s+/g, '') !== corrected.replace(/\s+/g, '')) return "Riformulazione o correzione grammaticale.";
@@ -960,11 +963,51 @@
         } catch (error) { console.error("Errore gestione selezione cronologia:", error); }
     }
 
-    // Initialize
-    if (inputText) inputText.value = "Qual'è il propietario di questo luogo? È molto bello e avvolte ci vengo qui per rilassarmi. Voglio dire, è proprio il mio posto preferito.";
-    if (detectedLang && preferredLangSelect) detectedLang.textContent = getLanguageName(preferredLangSelect.value);
-    console.log("Inizializzazione completata.");
-    if (document.getElementById('history-panel')) document.getElementById('history-panel').classList.add('hidden');
+    // Funzione helper per aggiornare l'UI della lingua
+    function setDetectedLanguageUI(langCode) {
+         if (preferredLangSelect) {
+             preferredLangSelect.value = langCode;
+         }
+         if (detectedLang) {
+             detectedLang.textContent = getLanguageName(langCode);
+         }
+         console.log("Lingua UI aggiornata a:", langCode);
+     }
+
+    // Inizializzazione con rilevamento lingua al caricamento
+    async function initializeApp() {
+        let initialLang = 'it'; // Default
+        try {
+            const initialText = inputText.value.trim();
+            if (initialText.length >= 5) { // Rileva solo se c'è testo iniziale significativo
+                 initialLang = await detectLanguageRobust(initialText);
+                 console.log("Lingua iniziale rilevata dal testo:", initialLang);
+            } else if (navigator && navigator.language) { // Altrimenti prova lingua browser
+                 const browserLang = navigator.language.split('-')[0].toLowerCase();
+                 const supportedLangs = ['it', 'en', 'es', 'fr', 'de', 'ru', 'pt'];
+                 if (supportedLangs.includes(browserLang)) {
+                     initialLang = browserLang;
+                     console.log("Lingua iniziale rilevata dal browser:", initialLang);
+                 } else {
+                      console.log("Lingua browser non supportata, default a 'it'");
+                 }
+            }
+        } catch(error) {
+             console.error("Errore rilevamento lingua iniziale:", error);
+        } finally {
+             setDetectedLanguageUI(initialLang);
+        }
+
+        // Inizializza pannello cronologia
+        if (document.getElementById('history-panel')) {
+            document.getElementById('history-panel').classList.add('hidden');
+        }
+
+        console.log("Inizializzazione completata.");
+    }
+
+    initializeApp(); // Chiama la funzione di inizializzazione
+
 });
 </script>
 </body>
