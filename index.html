@@ -314,23 +314,38 @@
                                 <option value="sarcastic">Sarcastico</option>
                             </select>
                         </div>
-                                                <!-- NUOVO: Selettore Livello Linguistico CEFR -->
+                                                <!-- NUOVO: Selettore Intensità Tono -->
                                                 <div class="flex items-center justify-between">
                                                     <span class="flex-grow flex flex-col">
-                                                        <span class="text-sm font-medium text-gray-700">Livello Linguistico (CEFR)</span>
-                                                        <span class="text-xs text-gray-500">Per Riformulazione/Adatta stile</span>
+                                                        <span class="text-sm font-medium text-gray-700">Intensità Tono</span>
+                                                        <span class="text-xs text-gray-500">Per Riformulazione</span>
                                                     </span>
-                                                    <select id="cefr-level" class="ml-4 block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md disabled:opacity-50 disabled:cursor-not-allowed bg-white" disabled>
-                                                        <option value="none" selected>Nessuno</option>
-                                                        <option value="A1">A1 (Principiante)</option>
-                                                        <option value="A2">A2 (Elementare)</option>
-                                                        <option value="B1">B1 (Intermedio)</option>
-                                                        <option value="B2">B2 (Intermedio Sup.)</option>
-                                                        <option value="C1">C1 (Avanzato)</option>
-                                                        <option value="C2">C2 (Padronanza)</option>
+                                                    <select id="tone-intensity" class="ml-4 block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md disabled:opacity-50 disabled:cursor-not-allowed bg-white" disabled>
+                                                        <option value="normal" selected>Normale</option>
+                                                        <option value="light">Leggera</option>
+                                                        <option value="strong">Forte</option>
                                                     </select>
                                                 </div>
-                                                <!-- FINE NUOVO: Selettore Livello Linguistico CEFR -->
+                                                <!-- FINE NUOVO: Selettore Intensità Tono -->
+                        
+                                                                        <!-- Selettore Livello Linguistico CEFR (con classi dark aggiunte per coerenza) -->
+                        <div class="flex items-center justify-between">
+                            <span class="flex-grow flex flex-col">
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Livello Linguistico (CEFR)</span>
+                                <span class="text-xs text-gray-500 dark:text-gray-400">Per Riformulazione/Adatta stile</span>
+                            </span>
+                            <select id="cefr-level" class="ml-4 block pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md disabled:opacity-50 disabled:cursor-not-allowed bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" disabled>
+                                <option value="none" selected>Nessuno</option>
+                                <option value="A1">A1 (Principiante)</option>
+                                <option value="A2">A2 (Elementare)</option>
+                                <option value="B1">B1 (Intermedio)</option>
+                                <option value="B2">B2 (Intermedio Sup.)</option>
+                                <option value="C1">C1 (Avanzato)</option>
+                                <option value="C2">C2 (Padronanza)</option>
+                            </select>
+                        </div>
+                        <!-- FINE Selettore Livello Linguistico CEFR -->
+
                         
                     </div>
                 </div>
@@ -430,16 +445,57 @@
         <i class="fas fa-check-circle mr-2"></i>
         <span id="toast-message">Operazione completata!</span>
     </div>
+        <!-- NUOVO: Popup Sinonimi -->
+        <div id="synonym-popup" class="fixed inset-x-0 bottom-0 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 z-50 w-full md:max-w-md max-h-[35vh] md:max-h-[60vh] bg-white dark:bg-gray-800 rounded-t-lg md:rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 hidden flex flex-col overflow-hidden">
+            <!-- Header Popup -->
+            <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-600">
+                <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200" id="synonym-popup-title">Sinonimi per: "<span id="synonym-word" class="font-bold">parola</span>"</h3>
+                <button id="synonym-popup-close" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <!-- Contenuto Popup -->
+            <div id="synonym-popup-content" class="p-4 overflow-y-auto flex-grow">
+                <!-- Stato di caricamento -->
+                <div id="synonym-loading" class="flex items-center justify-center h-full">
+                    <i class="fas fa-spinner fa-spin text-blue-500 text-2xl mr-2"></i>
+                    <span class="text-gray-500 dark:text-gray-400">Caricamento sinonimi...</span>
+                </div>
+                <!-- Contenuto effettivo (verrà popolato da JS) -->
+                <div id="synonym-results" class="hidden space-y-3 text-sm">
+                    <!-- Esempio di item (struttura ripetuta da JS) -->
+                    <!--
+                    <div>
+                        <strong class="text-blue-600 dark:text-blue-400">Sinonimo1:</strong>
+                        <p class="text-gray-600 dark:text-gray-400 ml-2">Breve esempio d'uso del sinonimo.</p>
+                    </div>
+                    -->
+                </div>
+                <div id="synonym-error" class="hidden text-red-600 dark:text-red-400 text-center">
+                    Errore nel recupero dei sinonimi.
+                </div>
+                 <div id="synonym-not-found" class="hidden text-gray-500 dark:text-gray-400 text-center">
+                    Nessun sinonimo trovato o parola non valida.
+                </div>
+            </div>
+        </div>
+        <!-- Overlay per chiusura su click esterno (facoltativo ma migliora UX) -->
+        <div id="synonym-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+        <!-- FINE NUOVO: Popup Sinonimi -->
+    
+        <!-- Toast Notification (invariato) -->
+        <div id="toast" class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-10 opacity-0 transition-all duration-300 flex items-center">
+            <i class="fas fa-check-circle mr-2"></i>
+            <span id="toast-message">Operazione completata!</span>
+        </div>
+    
     <script>
         // Inserisci questo codice DENTRO il tag <script> alla fine del tuo body HTML
-    
-    // Inserisci questo codice DENTRO il tag <script> alla fine del tuo body HTML
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("DOM Caricato. Avvio script EasyFix v12 CEFR."); // Version bump
+    console.log("DOM Caricato. Avvio script EasyFix v14.3 Checkbox Default & Synonym Fix v2."); // *** MODIFICA: Version bump ***
 
     // --- Elements ---
-    // Verifica critica elementi essenziali
     const textTab = document.getElementById('text-tab');
     const settingsTab = document.getElementById('settings-tab');
     const textContent = document.getElementById('text-content');
@@ -447,36 +503,56 @@ document.addEventListener('DOMContentLoaded', function() {
     const processBtn = document.getElementById('process-btn');
     const inputText = document.getElementById('input-text');
     const resultsSection = document.getElementById('results-section');
-    const correctedText = document.getElementById('corrected-text');
     const historyToggleBtn = document.getElementById('history-toggle');
     const historyPanel = document.getElementById('history-panel');
     const preferredLangSelect = document.getElementById('preferred-lang');
     const defaultToneSelect = document.getElementById('default-tone');
-    const proofreadingCheck = document.getElementById('proofreading');
-    const rephraseCheck = document.getElementById('rephrase');
+    const proofreadingCheck = document.getElementById('proofreading'); // Checkbox Correzione
+    const rephraseCheck = document.getElementById('rephrase');       // Checkbox Riformulazione
     const styleMatchCheck = document.getElementById('style-match');
     const writingStyleInput = document.getElementById('writing-style');
     const sampleTextInput = document.getElementById('sample-text');
-    const cefrLevelSelect = document.getElementById('cefr-level'); // *** AGGIUNTA ***
+    const cefrLevelSelect = document.getElementById('cefr-level');
+    const toneIntensitySelect = document.getElementById('tone-intensity');
+    const correctedText = document.getElementById('corrected-text');
+    const originalTextHighlighted = document.getElementById('original-text-highlighted');
 
-    // Log e gestione errori se elementi critici mancano
-    const essentialUI = { processBtn, inputText, resultsSection, correctedText, textTab, settingsTab, textContent, settingsContent, historyToggleBtn, historyPanel, preferredLangSelect, defaultToneSelect, proofreadingCheck, rephraseCheck, styleMatchCheck, writingStyleInput, sampleTextInput, cefrLevelSelect }; // *** AGGIUNTA cefrLevelSelect ***
-    let missingElements = [];
-    for (const [name, el] of Object.entries(essentialUI)) {
-        if (!el) {
-             console.error(`ERRORE CRITICO AVVIO: Elemento UI essenziale '${name}' NON trovato! Verifica l'ID nell'HTML.`);
-              missingElements.push(name);
-        }
-    }
-    if (missingElements.length > 0) {
-        alert(`Errore grave: Impossibile trovare elementi UI essenziali (${missingElements.join(', ')}). L'applicazione potrebbe non funzionare.`);
-        return; // Ferma se mancano elementi critici
-    }
+    // Elementi Popup Sinonimi
+    const synonymPopup = document.getElementById('synonym-popup');
+    const synonymOverlay = document.getElementById('synonym-overlay');
+    const synonymPopupTitle = document.getElementById('synonym-popup-title');
+    const synonymWordSpan = document.getElementById('synonym-word');
+    const synonymPopupCloseBtn = document.getElementById('synonym-popup-close');
+    const synonymPopupContent = document.getElementById('synonym-popup-content');
+    const synonymLoading = document.getElementById('synonym-loading');
+    const synonymResults = document.getElementById('synonym-results');
+    const synonymError = document.getElementById('synonym-error');
+    const synonymNotFound = document.getElementById('synonym-not-found');
 
-    // Elementi secondari (con check nullità successivi)
+    const essentialUI = {
+        processBtn, inputText, resultsSection, correctedText, textTab, settingsTab,
+        textContent, settingsContent, historyToggleBtn, historyPanel, preferredLangSelect,
+        defaultToneSelect, proofreadingCheck, rephraseCheck, styleMatchCheck, writingStyleInput,
+        sampleTextInput, cefrLevelSelect, toneIntensitySelect, originalTextHighlighted,
+        synonymPopup, synonymOverlay, synonymPopupTitle, synonymWordSpan, synonymPopupCloseBtn,
+        synonymPopupContent, synonymLoading, synonymResults, synonymError, synonymNotFound
+    };
+
+     let missingElements = [];
+     for (const [name, el] of Object.entries(essentialUI)) {
+         if (!el) {
+              console.error(`ERRORE CRITICO AVVIO: Elemento UI essenziale '${name}' NON trovato! Verifica l'ID nell'HTML.`);
+               missingElements.push(name);
+         }
+     }
+     if (missingElements.length > 0) {
+         alert(`Errore grave: Impossibile trovare elementi UI essenziali (${missingElements.join(', ')}). L'applicazione potrebbe non funzionare.`);
+         return;
+     }
+
+    // Elementi secondari
     const processingSpinner = document.getElementById('processing-spinner');
     const processText = document.getElementById('process-text');
-    const originalTextHighlighted = document.getElementById('original-text-highlighted');
     const detectedLang = document.getElementById('detected-lang');
     const originalCount = document.getElementById('original-count');
     const correctedCount = document.getElementById('corrected-count');
@@ -490,9 +566,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const correctionsExplanationBox = document.getElementById('corrections-explanation');
     const correctionsToggleIcon = document.getElementById('toggle-icon');
     const historyToggleIcon = document.getElementById('history-toggle-icon');
-    const styleContainer = writingStyleInput?.closest('.mb-6'); // Usa un container più generale per stile
-    const styleDescriptionLabel = document.querySelector('label[for="writing-style"]');
-    const styleSampleLabel = document.querySelector('label[for="sample-text"]');
 
     // --- API Configuration ---
     const API_KEY = "AIzaSyDWnH7YEbBDG3Ph5JLbUyZVS_RBSb4uxgs"; // <-- INSERISCI LA TUA CHIAVE API VALIDA QUI
@@ -500,7 +573,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const SUPPORTED_LANGS = ['it', 'en', 'es', 'fr', 'de', 'ru', 'pt', 'ar'];
 
     // --- UI Translations ---
-    const uiTranslations = { /* ... (invariate v11) ... */
+    const uiTranslations = {
         'it': { processBtn: 'Ottimizza il testo', loading: 'Rilevamento lingua...', success: 'Successo!', error: 'Errore', langDetectError: 'Errore rilev. lingua', processing: 'Elaborazione...', langMismatchError: 'Errore: Lingua risultato non valida!', apiKeyError: 'Errore: Chiave API non valida o mancante', networkError: 'Errore di Rete', unknownError: 'Errore Sconosciuto', noActionError: 'Seleziona almeno Correzione o Riformulazione' },
         'en': { processBtn: 'Optimize text', loading: 'Detecting language...', success: 'Success!', error: 'Error', langDetectError: 'Lang detect error', processing: 'Processing...', langMismatchError: 'Error: Invalid result language!', apiKeyError: 'Error: Invalid or missing API Key', networkError: 'Network Error', unknownError: 'Unknown Error', noActionError: 'Select at least Proofreading or Rephrasing' },
         'ru': { processBtn: 'Оптимизировать текст', loading: 'Определение языка...', success: 'Успех!', error: 'Ошибка', langDetectError: 'Ошибка опр. языка', processing: 'Обработка...', langMismatchError: 'Ошибка: Неверный язык результата!', apiKeyError: 'Ошибка: Неверный или отсутствующий ключ API', networkError: 'Сетевая ошибка', unknownError: 'Неизвестная ошибка', noActionError: 'Выберите хотя бы Исправление или Перефразирование' },
@@ -511,593 +584,560 @@ document.addEventListener('DOMContentLoaded', function() {
         'ar': { processBtn: 'تحسين النص', loading: 'اكتشاف اللغة...', success: 'نجاح!', error: 'خطأ', langDetectError: 'خطأ في اكتشاف اللغة', processing: 'معالجة...', langMismatchError: 'خطأ: لغة النتيجة غير صالحة!', apiKeyError: 'خطأ: مفتاح API غير صالح أو مفقود', networkError: 'خطأ في الشبكة', unknownError: 'خطأ غير معروف', noActionError: 'حدد التدقيق اللغوي أو إعادة الصياغة على الأقل' }
     };
 
+    // --- Variabili Globali di Stato ---
+    let currentLanguage = 'it';
+    let isHistoryPanelListenerActive = false;
+    let isSynonymPopupListenerActive = false;
+
     // --- Funzioni Helper Generiche ---
     function countWords(t){ return t?.trim()===''?0:t.trim().split(/\s+/).length; }
-    function getToneDisplayName(c) { /* ... (invariata) ... */ return {formal:'Formale', friendly:'Amichevole', professional:'Professionale', casual:'Informale', sarcastic:'Sarcastico'}[c] || 'Neutrale'; }
-    function getLanguageName(c) { /* ... (invariata) ... */ return {it:'Italiano', en:'Inglese', es:'Spagnolo', fr:'Francese', de:'Tedesco', ru:'Russo', pt:'Portoghese', ar:'Arabo'}[c] || 'Sconosciuta'; }
-    function detectLanguageLocalSimple(t) { /* ... (invariata) ... */ if (!t) return 'und'; const tl = t.toLowerCase(); if (/[\u0600-\u06FF]/.test(tl)) return 'ar'; if (/[\u0400-\u04FF]/.test(tl)) return 'ru'; if (/[äöüß]/i.test(tl)) return 'de'; if (/[ãõâçêôú]/i.test(tl)) return 'pt'; if (/[ñ¡¿]/i.test(tl)) return 'es'; if (/[àâæçéèêëîïôùûüÿ]/i.test(tl)) return 'fr'; const itM = (tl.match(/\b(il|la|lo|gli|le|del|che|non|sono|hanno|è|per|con|una|si|ciò)\b/g) || []).length; const enM = (tl.match(/\b(the|and|is|are|was|were|have|has|not|for|with|you|that|this|it|of)\b/g) || []).length; if (itM > enM + 2 && itM >= 3) return 'it'; if (enM > itM + 2 && enM >= 3) return 'en'; return 'und'; }
-    function calculateWordOverlap(t1, t2) { /* ... (invariata) ... */ if (!t1 || !t2) return 0; const n = (t) => t.toLowerCase().match(/[\p{L}\p{N}]+/gu) || []; const w1 = new Set(n(t1)); const w2 = new Set(n(t2)); if (w1.size === 0) return w2.size === 0 ? 1 : 0; const i = new Set([...w1].filter(x => w2.has(x))); return w1.size > 0 ? i.size / w1.size : (w2.size === 0 ? 1 : 0); }
-    function generateExplanation(original, corrected, language) { /* ... (invariata) ... */ const rules = { 'it': { "qual'è": "qual è", "po'": "po’", "perchè": "perché", "sé stesso": "sé stesso", "avvolte":"a volte", "propietario":"proprietario" }, 'ru': { "делаеш": "делаешь", "привет мир":"Привет, мир!", "как дила":"как дела?", "этат":"этот", "ашибками":"ошибками" }, 'en': { "its": "it's", "it's":"its", "your":"you're", "you're":"your", "their":"there", "there":"their", "they're":"their", "helo":"hello", "mistaks":"mistakes", "exemples":"examples"}, 'es': { "ola":"hola", "estas":"estás", "texo":"texto", "herrores":"errores", "como estas":"cómo estás" }, 'fr': { "bonjur":"bonjour", "ca va":"ça va", "érreurs":"erreurs"}, 'de': { "wie gehts":"wie geht's", "feler":"fehler" }, 'pt': { "voce":"você", "esta":"está", "contem":"contém" }, 'ar': {} }; const langRules = rules[language] || {}; const ot = original.trim(); const ct = corrected.trim(); const on = ot.toLowerCase(); const cn = ct.toLowerCase(); for (const [e, f] of Object.entries(langRules)) { if (on === e.toLowerCase() && cn === f.toLowerCase()) { return `Corretto: '${ot}' → '${ct}'.`; } } const ov = calculateWordOverlap(ot, ct); if (on !== cn && Math.abs(ot.length - ct.length) <= 2 && ov > 0.6) return "Correzione ortografica."; if (ot.replace(/\s+/g, '') !== ct.replace(/\s+/g, '')) { const co = on.replace(/[\P{L}\P{N}\s]+/gu, ''); const cc = cn.replace(/[\P{L}\P{N}\s]+/gu, ''); if (co === cc) return "Correzione punteggiatura/spazi."; } if (ov < 0.8 && ov > 0.2) return "Correzione grammaticale / Modifica struttura."; return "Correzione grammaticale/Miglioramento generico."; }
+    function getToneDisplayName(c) { return {formal:'Formale', friendly:'Amichevole', professional:'Professionale', casual:'Informale', sarcastic:'Sarcastico'}[c] || 'Neutrale'; }
+    function getIntensityDisplayName(c) { return {light:'Leggera', normal:'Normale', strong:'Forte'}[c] || 'Normale'; }
+    function getLanguageName(c) { return {it:'Italiano', en:'Inglese', es:'Spagnolo', fr:'Francese', de:'Tedesco', ru:'Russo', pt:'Portoghese', ar:'Arabo'}[c] || 'Sconosciuta'; }
+    function detectLanguageLocalSimple(t) { if (!t) return 'und'; const tl = t.toLowerCase(); if (/[\u0600-\u06FF]/.test(tl)) return 'ar'; if (/[\u0400-\u04FF]/.test(tl)) return 'ru'; if (/[äöüß]/i.test(tl)) return 'de'; if (/[ãõâçêôú]/i.test(tl)) return 'pt'; if (/[ñ¡¿]/i.test(tl)) return 'es'; if (/[àâæçéèêëîïôùûüÿ]/i.test(tl)) return 'fr'; const itM = (tl.match(/\b(il|la|lo|gli|le|del|che|non|sono|hanno|è|per|con|una|si|ciò)\b/g) || []).length; const enM = (tl.match(/\b(the|and|is|are|was|were|have|has|not|for|with|you|that|this|it|of)\b/g) || []).length; if (itM > enM + 2 && itM >= 3) return 'it'; if (enM > itM + 2 && enM >= 3) return 'en'; return 'und'; }
+    function calculateWordOverlap(t1, t2) { if (!t1 || !t2) return 0; const n = (t) => t.toLowerCase().match(/[\p{L}\p{N}]+/gu) || []; const w1 = new Set(n(t1)); const w2 = new Set(n(t2)); if (w1.size === 0) return w2.size === 0 ? 1 : 0; const i = new Set([...w1].filter(x => w2.has(x))); return w1.size > 0 ? i.size / w1.size : (w2.size === 0 ? 1 : 0); }
+    function generateExplanation(original, corrected, language) { const rules = { 'it': { "qual'è": "qual è", "po'": "po’", "perchè": "perché", "sé stesso": "sé stesso", "avvolte":"a volte", "propietario":"proprietario" }, 'ru': { "делаеш": "делаешь", "привет мир":"Привет, мир!", "как дила":"как дела?", "этат":"этот", "ашибками":"ошибками" }, 'en': { "its": "it's", "it's":"its", "your":"you're", "you're":"your", "their":"there", "there":"their", "they're":"their", "helo":"hello", "mistaks":"mistakes", "exemples":"examples"}, 'es': { "ola":"hola", "estas":"estás", "texo":"texto", "herrores":"errores", "como estas":"cómo estás" }, 'fr': { "bonjur":"bonjour", "ca va":"ça va", "érreurs":"erreurs"}, 'de': { "wie gehts":"wie geht's", "feler":"fehler" }, 'pt': { "voce":"você", "esta":"está", "contem":"contém" }, 'ar': {} }; const langRules = rules[language] || {}; const ot = original.trim(); const ct = corrected.trim(); const on = ot.toLowerCase(); const cn = ct.toLowerCase(); for (const [e, f] of Object.entries(langRules)) { if (on === e.toLowerCase() && cn === f.toLowerCase()) { return `Corretto: '${ot}' → '${ct}'.`; } } const ov = calculateWordOverlap(ot, ct); if (on !== cn && Math.abs(ot.length - ct.length) <= 2 && ov > 0.6) return "Correzione ortografica."; if (ot.replace(/\s+/g, '') !== ct.replace(/\s+/g, '')) { const co = on.replace(/[\P{L}\P{N}\s]+/gu, ''); const cc = cn.replace(/[\P{L}\P{N}\s]+/gu, ''); if (co === cc) return "Correzione punteggiatura/spazi."; } if (ov < 0.8 && ov > 0.2) return "Correzione grammaticale / Modifica struttura."; return "Correzione grammaticale/Miglioramento generico."; }
     function getTranslation(key){let cl=preferredLangSelect?preferredLangSelect.value:'auto';if(cl==='auto'){const lcd=Object.keys(uiTranslations).find(c=>getLanguageName(c)===detectedLang?.textContent?.split(' ')[0]);cl=lcd||'it';}return uiTranslations[cl]?.[key]||uiTranslations['it']?.[key]||key;}
 
     // --- Funzioni Helper UI ---
-    function hideExpandablePanels() { /* ... (invariata) ... */ console.log("Nascondo pannelli..."); const ab = document.getElementById('rephrased-analysis-box'); const hp = historyPanel; hideCorrectionsPanel(); if (ab) ab.classList.add('hidden'); if (hp && !hp.classList.contains('hidden')) { hp.classList.add('hidden'); hp.style.maxHeight = '0'; hp.style.padding = '0'; hp.style.marginTop = '0'; hp.style.opacity = '0'; if (historyToggleIcon) historyToggleIcon.classList.remove('rotate-icon'); } }
-    function hideCorrectionsPanel() { /* ... (invariata) ... */ if (correctionsExplanationBox) { correctionsExplanationBox.classList.add('hidden'); correctionsExplanationBox.style.maxHeight = '0'; correctionsExplanationBox.style.padding = '0'; correctionsExplanationBox.style.marginTop = '0'; correctionsExplanationBox.style.opacity = '0';} if (correctionsToggleBtn) correctionsToggleBtn.classList.add('hidden'); if (correctionsToggleIcon) correctionsToggleIcon.classList.remove('rotate-icon'); }
-    function hideRephraseAnalysisPanel() { /* ... (invariata) ... */ const ab = document.getElementById('rephrased-analysis-box'); if (ab) ab.classList.add('hidden'); }
-    function switchTab(aT,iT,aC,iC){/* ... (invariata) ... */ if(!aT||!iT||!aC||!iC){console.error("Err switchTab: elem mancanti.");return;}console.log(`Switch tab: ${aT.id}->${iT.id}`);aT.classList.add('border-blue-500','text-gray-700');aT.classList.remove('text-gray-500','border-transparent');iT.classList.add('text-gray-500','border-transparent');iT.classList.remove('border-blue-500','text-gray-700');aC.classList.remove('hidden');iC.classList.add('hidden');}
-    function showToast(m,bgColor='bg-green-500'){ /* ... (invariata - cambiato bg-* di default?) ... */ if(!toast||!toastMessage){console.error("Elem Toast mancanti");return;}console.log(`Toast:"${m}" (bg:${bgColor})`);toastMessage.textContent=m;toast.className=toast.className.replace(/bg-(green|red|yellow)-500/g,'')+` ${bgColor}`;toast.classList.remove('opacity-0','translate-y-10');toast.classList.add('opacity-100','translate-y-0');if(toast.timeoutId)clearTimeout(toast.timeoutId);toast.timeoutId=setTimeout(()=>{toast.classList.remove('opacity-100','translate-y-0');toast.classList.add('opacity-0','translate-y-10');toast.timeoutId=null;},3500);}
-    function updateProcessButtonState() { /* ... (invariata) ... */ const isProofreadingActive = proofreadingCheck?.checked ?? false; const isRephrasingActive = rephraseCheck?.checked ?? false; const isActionSelected = isProofreadingActive || isRephrasingActive; if (processBtn) { processBtn.disabled = !isActionSelected; if (!isActionSelected) { processBtn.classList.add('opacity-50', 'cursor-not-allowed'); } else { processBtn.classList.remove('opacity-50', 'cursor-not-allowed'); } } }
-    function setLoadingState(isLoading,messageKey='processing'){ /* ... (invariata) ... */ if(!processingSpinner||!processText||!processBtn){console.error("Elem loading mancanti");return;}const m=getTranslation(messageKey);if(isLoading){console.log(`Loading:TRUE (${m})`);if(processingSpinner)processingSpinner.classList.remove('hidden');if(processText)processText.innerHTML=m+'<span class="loading-dots"></span>';processBtn.disabled=true;processBtn.classList.add('opacity-50','cursor-not-allowed');}else{console.log("Loading:FALSE");if(processingSpinner)processingSpinner.classList.add('hidden');if(processText)processText.textContent=getTranslation('processBtn'); updateProcessButtonState(); /* Aggiorna stato bottone al termine */}}
+    function closeHistoryPanel() {
+        if (historyPanel && !historyPanel.classList.contains('hidden')) {
+            console.log("Chiudo pannello cronologia");
+            historyPanel.classList.add('hidden');
+            historyPanel.style.maxHeight = '0'; historyPanel.style.padding = '0';
+            historyPanel.style.marginTop = '0'; historyPanel.style.opacity = '0';
+            if (historyToggleIcon) historyToggleIcon.classList.remove('rotate-icon');
+            document.removeEventListener('click', handleHistoryOutsideClick, true);
+            isHistoryPanelListenerActive = false;
+            console.log("Listener chiusura esterna cronologia rimosso.");
+        }
+    }
 
-    // *** MODIFICA: Aggiornata per includere il selettore CEFR ***
+    function closeSynonymPopup() {
+        if (synonymPopup && !synonymPopup.classList.contains('hidden')) {
+            console.log("Chiudo popup sinonimi");
+            synonymPopup.classList.add('hidden');
+            synonymOverlay.classList.add('hidden');
+            document.removeEventListener('click', handleSynonymOutsideClick, true);
+            isSynonymPopupListenerActive = false;
+            console.log("Listener chiusura esterna sinonimi rimosso.");
+        }
+    }
+
+    function hideExpandablePanels() {
+        console.log("Nascondo pannelli espandibili...");
+        const ab = document.getElementById('rephrased-analysis-box');
+        hideCorrectionsPanel();
+        closeHistoryPanel();
+        closeSynonymPopup();
+        if (ab) ab.classList.add('hidden');
+    }
+
+    function hideCorrectionsPanel() {
+        if (correctionsExplanationBox) {
+            correctionsExplanationBox.classList.add('hidden');
+            correctionsExplanationBox.style.maxHeight = '0'; correctionsExplanationBox.style.padding = '0';
+            correctionsExplanationBox.style.marginTop = '0'; correctionsExplanationBox.style.opacity = '0';
+        }
+        if (correctionsToggleBtn) correctionsToggleBtn.classList.add('hidden');
+        if (correctionsToggleIcon) correctionsToggleIcon.classList.remove('rotate-icon');
+    }
+
+    function hideRephraseAnalysisPanel() {
+        const ab = document.getElementById('rephrased-analysis-box');
+        if (ab) ab.classList.add('hidden');
+    }
+
+    function switchTab(aT,iT,aC,iC){
+        if(!aT||!iT||!aC||!iC){console.error("Err switchTab: elem mancanti.");return;}
+        console.log(`Switch tab: ${aT.id}->${iT.id}`);
+        aT.classList.add('border-blue-500','text-gray-700');
+        aT.classList.remove('text-gray-500','border-transparent');
+        iT.classList.add('text-gray-500','border-transparent');
+        iT.classList.remove('border-blue-500','text-gray-700');
+        aC.classList.remove('hidden');
+        iC.classList.add('hidden');
+    }
+
+    function showToast(m,bgColor='bg-green-500'){
+        if(!toast||!toastMessage){console.error("Elem Toast mancanti");return;}
+        console.log(`Toast:"${m}" (bg:${bgColor})`);
+        toastMessage.textContent=m;
+        toast.className=toast.className.replace(/bg-(green|red|yellow)-500/g,'')+` ${bgColor}`;
+        toast.classList.remove('opacity-0','translate-y-10');
+        toast.classList.add('opacity-100','translate-y-0');
+        if(toast.timeoutId)clearTimeout(toast.timeoutId);
+        toast.timeoutId=setTimeout(()=>{toast.classList.remove('opacity-100','translate-y-0');toast.classList.add('opacity-0','translate-y-10');toast.timeoutId=null;},3500);
+    }
+
+    function updateProcessButtonState() {
+        const isProofreadingActive = proofreadingCheck?.checked ?? false;
+        const isRephrasingActive = rephraseCheck?.checked ?? false;
+        const isActionSelected = isProofreadingActive || isRephrasingActive;
+        if (processBtn) {
+            processBtn.disabled = !isActionSelected;
+            processBtn.classList.toggle('opacity-50', !isActionSelected);
+            processBtn.classList.toggle('cursor-not-allowed', !isActionSelected);
+        }
+    }
+
+    function setLoadingState(isLoading,messageKey='processing'){
+        if(!processingSpinner||!processText||!processBtn){console.error("Elem loading mancanti");return;}
+        const m=getTranslation(messageKey);
+        if(isLoading){
+            console.log(`Loading:TRUE (${m})`);
+            processingSpinner?.classList.remove('hidden');
+            if(processText) processText.innerHTML=m+'<span class="loading-dots"></span>';
+            if(processBtn) { processBtn.disabled = true; processBtn.classList.add('opacity-50','cursor-not-allowed'); }
+        }else{
+            console.log("Loading:FALSE");
+            processingSpinner?.classList.add('hidden');
+            if(processText) processText.textContent=getTranslation('processBtn');
+            updateProcessButtonState(); // Aggiorna stato bottone in base alle checkbox
+        }
+    }
+
     function updateStyleOptionsState() {
         const isRephrasing = rephraseCheck?.checked ?? false;
-        console.log(`Aggiornamento opzioni Riformulazione (Stile/Livello): ${isRephrasing ? 'Abilitato' : 'Disabilitato'}`);
-
-        // Elementi controllati dalla checkbox "Riformulazione"
-        const controlledElements = [writingStyleInput, sampleTextInput, styleMatchCheck, cefrLevelSelect];
-        // Etichette/Contenitori da rendere opachi se disabilitati
-        const visualContainers = [
-            writingStyleInput?.closest('.mb-4'),      // Container descrizione stile
-            sampleTextInput?.closest('.mb-4'),        // Container esempio stile
-            styleMatchCheck?.closest('.flex'),        // Container checkbox "Adatta stile"
-            cefrLevelSelect?.closest('.flex')         // Container select CEFR
+        console.log(`Aggiornamento opzioni Riformulazione: ${isRephrasing ? 'Abilitato' : 'Disabilitato'}`);
+        const elementsToToggle = [
+            writingStyleInput, sampleTextInput, styleMatchCheck,
+            defaultToneSelect, toneIntensitySelect, cefrLevelSelect
+        ];
+        const containersToFade = [
+            writingStyleInput?.closest('.mb-4'), sampleTextInput?.closest('.mb-4'),
+            styleMatchCheck?.closest('.flex'), defaultToneSelect?.closest('.flex'),
+            toneIntensitySelect?.closest('.flex'), cefrLevelSelect?.closest('.flex')
         ];
 
-        controlledElements.forEach(el => {
-            if (!el) return;
-            el.disabled = !isRephrasing; // Abilita/Disabilita l'elemento input/select
-
-            // Se stiamo disabilitando, resetta i valori
-            if (!isRephrasing) {
-                if (el === styleMatchCheck) el.checked = false;
-                if (el === cefrLevelSelect) el.value = 'none';
-                // Non resettiamo i textarea, l'utente potrebbe volerli mantenere
-            }
+        elementsToToggle.forEach(el => {
+            if (el) el.disabled = !isRephrasing;
+        });
+        containersToFade.forEach(c => {
+            if (c) c.classList.toggle('opacity-50', !isRephrasing);
         });
 
-        visualContainers.forEach(container => {
-            if (!container) return;
-            if (isRephrasing) {
-                container.classList.remove('opacity-50');
-            } else {
-                container.classList.add('opacity-50');
-            }
-        });
+        // Reset valori se disabilitato
+        if (!isRephrasing) {
+            if (styleMatchCheck) styleMatchCheck.checked = false;
+            if (cefrLevelSelect) cefrLevelSelect.value = 'none';
+            if (toneIntensitySelect) toneIntensitySelect.value = 'normal';
+        }
+    }
 
-         // Assicurati che styleMatchCheck sia gestito correttamente (potrebbe essere ridondante ma sicuro)
-         if (styleMatchCheck) {
-             styleMatchCheck.disabled = !isRephrasing;
-             if (!isRephrasing) styleMatchCheck.checked = false;
-         }
+    // Funzioni Popup Sinonimi
+    function openSynonymPopup(word) {
+        if (!synonymPopup || !word) return;
+        console.log(`Apro popup sinonimi per: "${word}"`);
+        synonymWordSpan.textContent = word;
+        synonymLoading.classList.remove('hidden');
+        synonymResults.classList.add('hidden'); synonymResults.innerHTML = '';
+        synonymError.classList.add('hidden'); synonymNotFound.classList.add('hidden');
+        synonymPopup.classList.remove('hidden'); synonymOverlay.classList.remove('hidden');
+
+        fetchSynonyms(word, currentLanguage)
+            .then(synonyms => {
+                synonymLoading.classList.add('hidden');
+                if (synonyms?.length > 0) {
+                    synonymResults.classList.remove('hidden');
+                    synonyms.forEach(item => {
+                        const div = document.createElement('div');
+                        div.innerHTML = `<strong class="text-blue-600 dark:text-blue-400">${item.synonym}:</strong> <p class="text-gray-600 dark:text-gray-400 ml-2 italic">${item.usage || 'Nessun esempio fornito.'}</p>`;
+                        synonymResults.appendChild(div);
+                    });
+                } else { synonymNotFound.classList.remove('hidden'); }
+            })
+            .catch(err => {
+                handleError("fetchSynonyms", err);
+                synonymLoading.classList.add('hidden');
+                synonymError.classList.remove('hidden');
+                synonymError.textContent = `Errore recupero sinonimi: ${err.message}`;
+            });
+
+        if (!isSynonymPopupListenerActive) {
+             setTimeout(() => {
+                document.addEventListener('click', handleSynonymOutsideClick, true);
+                isSynonymPopupListenerActive = true;
+                console.log("Listener chiusura esterna sinonimi aggiunto.");
+             }, 0);
+        }
+    }
+
+    function handleSynonymOutsideClick(event) {
+        if (synonymPopup?.classList.contains('hidden') || !isSynonymPopupListenerActive) return;
+        if (!synonymPopup.contains(event.target)) {
+            console.log("Click esterno al popup sinonimi rilevato.");
+            closeSynonymPopup();
+        }
     }
 
     // --- Error Handling ---
-    function handleError(context, error, showAlert = false) { /* ... (invariata) ... */ console.error(`Errore in ${context}:`, error); let message = error?.message || getTranslation('unknownError'); let specificKeyError = false; let isMismatchError = false; if (message.includes("API key not valid") || message.includes("API_KEY") || (message.includes("400") && (message.includes("API key") || message.includes("api_key")))) { message = getTranslation('apiKeyError'); specificKeyError = true; } else if (message.includes("NetworkError") || message.includes("Failed to fetch") || message.includes("Errore di rete")) { message = getTranslation('networkError'); } else if (message.includes("Lingua risultato non valida") || message.includes("Result language mismatch") || message.includes("Invalid result language")) { message = getTranslation('langMismatchError'); isMismatchError = true; } else if (message.startsWith('Errore API')) { message = `Errore API (${context}): ${message.replace('Errore API ','')}`; } else { message = `${getTranslation('error')} (${context}): ${message}`; } showToast(message, 'bg-red-500'); if (showAlert || specificKeyError) { alert(`ERRORE CRITICO:\n${message}\n\nVerifica chiave API e impostazioni progetto.`); } setLoadingState(false); if (resultsSection) resultsSection.classList.remove('hidden'); if (correctedText) correctedText.textContent = `Errore: ${error.message}`; try { hideExpandablePanels(); } catch(e) { console.error("Errore durante hideExpandablePanels in handleError:", e); } }
+    function handleError(context, error, showAlert = false) {
+        console.error(`Errore in ${context}:`, error);
+        let message = error?.message || getTranslation('unknownError');
+        let specificKeyError = false;
+        if (message.includes("API key not valid") || message.includes("API_KEY") || (message.includes("400") && (message.includes("API key") || message.includes("api_key")))) { message = getTranslation('apiKeyError'); specificKeyError = true; }
+        else if (message.includes("NetworkError") || message.includes("Failed to fetch") || message.includes("Errore di rete")) { message = getTranslation('networkError'); }
+        else if (message.includes("Lingua risultato non valida") || message.includes("Result language mismatch") || message.includes("Invalid result language")) { message = getTranslation('langMismatchError'); }
+        else if (message.startsWith('Errore API')) { message = `Errore API (${context}): ${message.replace('Errore API ','')}`; }
+        else { message = `${getTranslation('error')} (${context}): ${message}`; }
+        if (!(context === "fetchSynonyms" && synonymPopup && !synonymPopup.classList.contains('hidden'))) { showToast(message, 'bg-red-500'); }
+        if (showAlert || specificKeyError) { alert(`ERRORE CRITICO:\n${message}\n\nVerifica chiave API.`); }
+        setLoadingState(false);
+        if (context !== "fetchSynonyms") {
+            if (resultsSection) resultsSection.classList.remove('hidden');
+            if (correctedText) correctedText.textContent = `Errore: ${error.message}`;
+        }
+        try {
+             if (context !== "fetchSynonyms") { hideExpandablePanels(); }
+             else { const ab=document.getElementById('rephrased-analysis-box'); hideCorrectionsPanel(); closeHistoryPanel(); if(ab) ab.classList.add('hidden'); }
+        } catch(e) { console.error("Errore durante hideExpandablePanels in handleError:", e); }
+    }
 
     // --- Event Listeners ---
-    if (textTab && settingsTab && textContent && settingsContent) { textTab.addEventListener('click', () => switchTab(textTab, settingsTab, textContent, settingsContent)); settingsTab.addEventListener('click', () => switchTab(settingsTab, textTab, settingsContent, textContent)); console.log("Listeners Tab aggiunti."); } else { console.error("Errore critico: Elementi Tab mancanti!"); }
-    if (correctionsToggleBtn && correctionsExplanationBox && correctionsToggleIcon) { /* ... (invariata) ... */ correctionsToggleBtn.addEventListener('click', function() { console.log("Corrections Toggle clicked."); correctionsToggleIcon.classList.toggle('rotate-icon'); const iH = correctionsExplanationBox.classList.toggle('hidden'); correctionsExplanationBox.style.transition='max-height .3s ease-out,padding .3s ease-out,margin .3s ease-out,opacity .3s ease-out'; if(!iH){correctionsExplanationBox.style.paddingTop='1rem';correctionsExplanationBox.style.paddingBottom='1rem';correctionsExplanationBox.style.marginTop='.5rem';correctionsExplanationBox.style.opacity='1';correctionsExplanationBox.style.maxHeight=(correctionsExplanationBox.scrollHeight+20)+"px";}else{correctionsExplanationBox.style.maxHeight='0';correctionsExplanationBox.style.paddingTop='0';correctionsExplanationBox.style.paddingBottom='0';correctionsExplanationBox.style.marginTop='0';correctionsExplanationBox.style.opacity='0';} }); console.log("Listener Corrections Toggle aggiunto."); } else { console.warn("Warn: Elementi Corrections Toggle mancanti!"); }
-    if (historyToggleBtn && historyPanel && historyToggleIcon) { /* ... (invariata) ... */ historyToggleBtn.addEventListener('click', function() { console.log("History Toggle clicked."); historyToggleIcon.classList.toggle('rotate-icon'); const iH = historyPanel.classList.toggle('hidden'); historyPanel.style.transition='max-height .3s ease-out,padding .3s ease-out,margin .3s ease-out,opacity .3s ease-out'; if(!iH){loadHistoryItems();historyPanel.style.padding='1rem';historyPanel.style.marginTop='.5rem';historyPanel.style.opacity='1';setTimeout(()=>{historyPanel.style.maxHeight='300px';},50);}else{historyPanel.style.maxHeight='0';historyPanel.style.padding='0';historyPanel.style.marginTop='0';historyPanel.style.opacity='0';} }); console.log("Listener History Toggle aggiunto."); } else { console.error("Errore critico: Elementi History Toggle mancanti!"); }
-    if (rephraseCheck) { rephraseCheck.addEventListener('change', updateStyleOptionsState); console.log("Listener Rephrase Check (per stile/livello) aggiunto."); } else { console.warn("Warn: rephraseCheck mancante."); } // *** AGGIORNATO COMMENTO ***
-    if (proofreadingCheck && rephraseCheck && processBtn) { proofreadingCheck.addEventListener('change', updateProcessButtonState); rephraseCheck.addEventListener('change', updateProcessButtonState); console.log("Listeners Checkbox (per bottone) aggiunti."); } else { console.warn("Warn: Checkbox o processBtn mancanti per gestione stato bottone."); }
-    if (processBtn) { processBtn.addEventListener('click', handleProcessClick); console.log("Listener Process Button aggiunto."); }
-    if (clearBtn) { /* ... (invariata) ... */ clearBtn.addEventListener('click', () => { console.log("Clear Button clicked"); if(inputText) inputText.value = ''; if(resultsSection) resultsSection.classList.add('hidden'); if(originalTextHighlighted) originalTextHighlighted.textContent = ''; if(correctedText) correctedText.textContent = ''; if(originalCount) originalCount.textContent = '0 parole'; if(correctedCount) correctedCount.textContent = '0 parole'; hideExpandablePanels(); updateProcessButtonState(); }); console.log("Listener Clear Button aggiunto."); } else { console.warn("Warn: clear-btn mancante."); }
-    if (newTextBtn) { /* ... (invariata) ... */ newTextBtn.addEventListener('click', () => { console.log("New Text Button clicked"); if(inputText) inputText.value = ''; if(resultsSection) resultsSection.classList.add('hidden'); if(originalTextHighlighted) originalTextHighlighted.textContent = ''; if(correctedText) correctedText.textContent = ''; if(originalCount) originalCount.textContent = '0 parole'; if(correctedCount) correctedCount.textContent = '0 parole'; hideExpandablePanels(); inputText?.focus(); updateProcessButtonState(); }); console.log("Listener New Text Button aggiunto."); } else { console.warn("Warn: new-text-btn mancante."); }
-    function copyTextToClipboard(t){if(!t){showToast('Nessun testo da copiare','bg-yellow-500');return;}if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(t).then(()=>showToast('Testo copiato!')).catch(e=>{console.error("Err Clipboard API:",e);fallbackCopyMethod(t);});}else{fallbackCopyMethod(t);}} function fallbackCopyMethod(t){try{const ta=document.createElement("textarea");ta.value=t;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.focus();ta.select();const ok=document.execCommand('copy');document.body.removeChild(ta);if(ok)showToast('Testo copiato!');else showToast('Copia fallita','bg-red-500');}catch(e){handleError("fallbackCopy",e);}} if(copyBtn){copyBtn.addEventListener('click',()=>copyTextToClipboard(correctedText?.textContent||''));console.log("Listener Copy Btn aggiunto.");}else{console.warn("Warn: copy-btn mancante.");}
+    if (textTab && settingsTab && textContent && settingsContent) {
+        textTab.addEventListener('click', () => switchTab(textTab, settingsTab, textContent, settingsContent));
+        settingsTab.addEventListener('click', () => { closeHistoryPanel(); switchTab(settingsTab, textTab, settingsContent, textContent); });
+        console.log("Listeners Tab aggiunti.");
+    } else { console.error("Errore critico: Elementi Tab mancanti!"); }
+
+    if (correctionsToggleBtn && correctionsExplanationBox && correctionsToggleIcon) {
+        correctionsToggleBtn.addEventListener('click', function() {
+            console.log("Corrections Toggle clicked.");
+            correctionsToggleIcon.classList.toggle('rotate-icon');
+            const iH = correctionsExplanationBox.classList.toggle('hidden');
+            correctionsExplanationBox.style.transition='max-height .3s ease-out,padding .3s ease-out,margin .3s ease-out,opacity .3s ease-out';
+            if(!iH){ correctionsExplanationBox.style.paddingTop='1rem'; correctionsExplanationBox.style.paddingBottom='1rem'; correctionsExplanationBox.style.marginTop='.5rem'; correctionsExplanationBox.style.opacity='1'; correctionsExplanationBox.style.maxHeight=(correctionsExplanationBox.scrollHeight+20)+"px"; }
+            else { correctionsExplanationBox.style.maxHeight='0'; correctionsExplanationBox.style.paddingTop='0'; correctionsExplanationBox.style.paddingBottom='0'; correctionsExplanationBox.style.marginTop='0'; correctionsExplanationBox.style.opacity='0'; }
+        });
+        console.log("Listener Corrections Toggle aggiunto.");
+    } else { console.warn("Warn: Elementi Corrections Toggle mancanti!"); }
+
+    if (historyToggleBtn && historyPanel && historyToggleIcon) {
+        historyToggleBtn.addEventListener('click', function(event) {
+            event.stopPropagation();
+            console.log("History Toggle clicked.");
+            historyToggleIcon.classList.toggle('rotate-icon');
+            const isHiddenNow = historyPanel.classList.toggle('hidden');
+            historyPanel.style.transition='max-height .3s ease-out,padding .3s ease-out,margin .3s ease-out,opacity .3s ease-out';
+            if(!isHiddenNow){
+                loadHistoryItems(); historyPanel.style.padding='1rem'; historyPanel.style.marginTop='.5rem'; historyPanel.style.opacity='1'; setTimeout(()=>{ historyPanel.style.maxHeight='300px'; }, 50);
+                if (!isHistoryPanelListenerActive) { setTimeout(() => { document.addEventListener('click', handleHistoryOutsideClick, true); isHistoryPanelListenerActive = true; console.log("Listener chiusura esterna cronologia aggiunto."); }, 0); }
+            } else {
+                historyPanel.style.maxHeight='0'; historyPanel.style.padding='0'; historyPanel.style.marginTop='0'; historyPanel.style.opacity='0';
+                if (isHistoryPanelListenerActive) { document.removeEventListener('click', handleHistoryOutsideClick, true); isHistoryPanelListenerActive = false; console.log("Listener chiusura esterna cronologia rimosso."); }
+            }
+        });
+        console.log("Listener History Toggle aggiunto.");
+    } else { console.error("Errore critico: Elementi History Toggle mancanti!"); }
+
+    function handleHistoryOutsideClick(event) {
+        if (historyPanel?.classList.contains('hidden') || !isHistoryPanelListenerActive) return;
+        if (!historyPanel.contains(event.target) && event.target !== historyToggleBtn && !historyToggleBtn.contains(event.target)) {
+             console.log("Click esterno alla cronologia rilevato.");
+             closeHistoryPanel();
+        }
+    }
+
+    // Listeners Checkbox, Bottoni Azione, Copia, Salva
+    if (rephraseCheck) { rephraseCheck.addEventListener('change', updateStyleOptionsState); }
+    if (proofreadingCheck && rephraseCheck && processBtn) { proofreadingCheck.addEventListener('change', updateProcessButtonState); rephraseCheck.addEventListener('change', updateProcessButtonState); }
+    if (processBtn) { processBtn.addEventListener('click', handleProcessClick); }
+    if (clearBtn) { clearBtn.addEventListener('click', () => { if(inputText) inputText.value = ''; if(resultsSection) resultsSection.classList.add('hidden'); if(originalTextHighlighted) originalTextHighlighted.textContent = ''; if(correctedText) correctedText.textContent = ''; if(originalCount) originalCount.textContent = '0 parole'; if(correctedCount) correctedCount.textContent = '0 parole'; hideExpandablePanels(); updateProcessButtonState(); }); }
+    if (newTextBtn) { newTextBtn.addEventListener('click', () => { if(inputText) inputText.value = ''; if(resultsSection) resultsSection.classList.add('hidden'); if(originalTextHighlighted) originalTextHighlighted.textContent = ''; if(correctedText) correctedText.textContent = ''; if(originalCount) originalCount.textContent = '0 parole'; if(correctedCount) correctedCount.textContent = '0 parole'; hideExpandablePanels(); inputText?.focus(); updateProcessButtonState(); }); }
+    function copyTextToClipboard(t){if(!t){showToast('Nessun testo da copiare','bg-yellow-500');return;}if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(t).then(()=>showToast('Testo copiato!')).catch(e=>{console.error("Err Clipboard API:",e);fallbackCopyMethod(t);});}else{fallbackCopyMethod(t);}} function fallbackCopyMethod(t){try{const ta=document.createElement("textarea");ta.value=t;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.focus();ta.select();const ok=document.execCommand('copy');document.body.removeChild(ta);if(ok)showToast('Testo copiato!');else showToast('Copia fallita','bg-red-500');}catch(e){handleError("fallbackCopy",e);}} if(copyBtn){copyBtn.addEventListener('click',()=>copyTextToClipboard(correctedText?.textContent||''));}
     if(saveSettings) {
         saveSettings.addEventListener('click', () => {
             console.log("Save Settings clicked");
             try {
-                const p = {
+                 // Salva tutte le preferenze ATTUALI
+                 const p = {
                     lang: preferredLangSelect?.value || 'auto',
                     tone: defaultToneSelect?.value || 'neutral',
-                    cefr: cefrLevelSelect?.value || 'none', // *** AGGIUNTA cefr ***
+                    intensity: toneIntensitySelect?.value || 'normal',
+                    cefr: cefrLevelSelect?.value || 'none',
                     proofread: proofreadingCheck?.checked,
                     rephrase: rephraseCheck?.checked,
                     matchStyle: styleMatchCheck?.checked
                 };
                 localStorage.setItem('textai-prefs', JSON.stringify(p));
                 showToast('Impostazioni salvate!');
-            } catch (e) {
-                handleError("saveSettings", new Error("Impossibile salvare preferenze."), false); // Non mostrare alert per questo
-            }
-            if (textTab && settingsTab && textContent && settingsContent) {
-                switchTab(textTab, settingsTab, textContent, settingsContent); // Torna alla tab testo dopo salvataggio
-            }
+            } catch (e) { handleError("saveSettings", new Error("Impossibile salvare preferenze."), false); }
+            if (textTab && settingsTab && textContent && settingsContent) { switchTab(textTab, settingsTab, textContent, settingsContent); }
         });
-        console.log("Listener Save Settings aggiunto.");
-    } else { console.warn("Warn: save-settings mancante."); }
-
-    // --- Funzioni Core ---
-    async function detectLanguageWithGeminiAPI(text){ /* ... (invariata) ... */ console.log("Chiamo API per rilevare lingua...");const pL=preferredLangSelect?(preferredLangSelect.value!=='auto'?preferredLangSelect.value:'it'):'it';if(!API_KEY||API_KEY.includes("YOUR_API")||API_KEY.length<20){console.error("Chiave API mancante/non valida per rilevamento.");return pL;}if(!text||text.trim().length<10){console.log("Testo breve, uso pref:",pL);return pL;}const pr=`Identify the main language (ISO 639-1 code) from [${SUPPORTED_LANGS.join(', ')}] for: "${text.substring(0,500)}"... Respond ONLY with the 2-letter code or 'und'.`;const req={contents:[{parts:[{text:pr}]}],generationConfig:{temperature:0.0,maxOutputTokens:5,stopSequences:["\n"]}};try{const res=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(req)});if(!res.ok){let eD='';try{const d=await res.json();eD=d?.error?.message||JSON.stringify(d);}catch{eD=await res.text();}console.warn(`Warn API rilevamento (${res.status}): ${eD}. Uso fallback: ${pL}`);return pL;}const data=await res.json();const code=data.candidates?.[0]?.content?.parts?.[0]?.text?.trim().toLowerCase().match(/^[a-z]{2}$/)?.[0];console.log("API rilevato:",code);if(code&&SUPPORTED_LANGS.includes(code))return code;console.warn("Codice API non valido/supportato, fallback a pref:",pL);return pL;}catch(e){console.error("Errore rete rilevamento:",e);console.warn("Uso fallback:",pL);return pL;}}
-    function setDetectedLanguageUI(lc){ /* ... (invariata) ... */ if(!lc||!SUPPORTED_LANGS.includes(lc)){lc='it';}const ln=getLanguageName(lc);if(detectedLang){detectedLang.textContent=ln;detectedLang.classList.remove('language-detected');void detectedLang.offsetWidth;detectedLang.classList.add('language-detected');}if(preferredLangSelect&&preferredLangSelect.value!=='auto'&&preferredLangSelect.value!==lc){console.log(`Aggiorno dropdown (non auto) a: ${lc}`);preferredLangSelect.value=lc;}else if(preferredLangSelect&&preferredLangSelect.value==='auto'&&detectedLang){detectedLang.textContent=`${ln} (Auto)`;}}
-    function displayRephraseAnalysis(tone, explanationText, alternatives) { /* ... (invariata) ... */ let analysisBox = document.getElementById('rephrased-analysis-box'); if (!analysisBox) { analysisBox = document.createElement('div'); analysisBox.id = 'rephrased-analysis-box'; analysisBox.className = 'bg-blue-50 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 rounded-lg p-4 mt-6 mb-8'; analysisBox.innerHTML = `<h3 id="rephrased-analysis-title" class="text-lg font-medium text-blue-800 dark:text-blue-200 mb-3"></h3><div class="mb-4 p-3 bg-white dark:bg-gray-800 rounded-lg border border-blue-200 dark:border-blue-600"><h4 class="text-md font-medium text-gray-700 dark:text-gray-300 mb-2">Motivazione:</h4><div id="explanation-content" class="text-gray-600 dark:text-gray-400 text-sm"></div></div><div><h4 class="text-md font-medium text-gray-700 dark:text-gray-300 mb-2">Alternative (Stesso Tono):</h4><div id="alternatives-list" class="space-y-2"></div></div>`; if (resultsSection && resultsSection.parentNode) resultsSection.parentNode.insertBefore(analysisBox, resultsSection.nextSibling); else console.error("Impossibile inserire box analisi."); } const analysisTitle = document.getElementById('rephrased-analysis-title'); if (analysisTitle) analysisTitle.textContent = `Analisi Riformulazione (Tono: ${getToneDisplayName(tone)})`; const explanationContent = document.getElementById('explanation-content'); if (explanationContent) explanationContent.textContent = explanationText || "N/A."; const alternativesList = document.getElementById('alternatives-list'); if (alternativesList && alternatives && alternatives.length > 0) { alternativesList.innerHTML = ''; let validAlternativesFound = 0; alternatives.forEach((alternative) => { if (!alternative || alternative.toLowerCase() === "n/a") return; validAlternativesFound++; const item = document.createElement('div'); item.className = 'p-2 bg-gray-50 dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600 flex justify-between items-center cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors'; item.dataset.alternativeItem = 'true'; const txt = document.createElement('div'); txt.className = 'flex-grow mr-2 text-sm text-gray-800 dark:text-gray-200'; txt.textContent = alternative; const btn = document.createElement('button'); btn.className = 'text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-xs flex items-center flex-shrink-0 ml-2'; btn.innerHTML = `<svg class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor"><path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"></path></svg> Copia`; btn.addEventListener('click', (e) => { e.stopPropagation(); copyTextToClipboard(alternative); }); item.appendChild(txt); item.appendChild(btn); item.addEventListener('click', () => { if(correctedText) correctedText.textContent = alternative; if(correctedCount) correctedCount.textContent = countWords(alternative) + ' parole'; alternativesList.querySelectorAll('[data-alternative-item="true"]').forEach(i => i.classList.remove('bg-blue-100', 'dark:bg-blue-900', 'border-blue-300', 'dark:border-blue-500')); item.classList.add('bg-blue-100', 'dark:bg-blue-900', 'border-blue-300', 'dark:border-blue-500'); }); alternativesList.appendChild(item); }); if (validAlternativesFound === 0) alternativesList.innerHTML = '<p class="text-sm text-gray-500 dark:text-gray-400">Nessuna alternativa valida.</p>'; } else if (alternativesList) alternativesList.innerHTML = '<p class="text-sm text-gray-500 dark:text-gray-400">N/A.</p>'; if(analysisBox) analysisBox.classList.remove('hidden'); }
-    function displayDifferences(original, result, language, isRephraseResult) { /* ... (invariata) ... */ const cl = document.getElementById('corrections-list'); const ct = correctionsToggleBtn; if (!cl || !originalTextHighlighted) { console.error("Elementi Diff mancanti"); if(originalTextHighlighted) originalTextHighlighted.textContent = original; return; } cl.innerHTML = ''; let cc = 0; hideCorrectionsPanel(); if (typeof Diff === 'undefined') { if(originalTextHighlighted) originalTextHighlighted.textContent = original; return; } const diff = Diff.diffWords(original, result, { ignoreWhitespace: false }); let oHTML = ''; diff.forEach((p) => { const eV = p.value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;").replace(/\n/g, '<br>'); if (p.removed) { oHTML += `<span class="diff-removed">${eV}</span>`; if (p.added) { if (!isRephraseResult) { let eD = generateExplanation(p.removed, p.added, language); const i = document.createElement('div'); i.className = 'correction-item p-2 border-l-2 border-yellow-400 dark:border-yellow-600 mb-1 bg-yellow-50 dark:bg-yellow-900/20'; i.innerHTML = `<div><span class="correction-original text-red-600 dark:text-red-400 line-through">${p.removed}</span> → <span class="correction-corrected text-green-700 dark:text-green-400 font-medium">${p.added}</span></div><div class="correction-explanation text-xs text-gray-500 dark:text-gray-400 mt-1">${eD}</div>`; cl.appendChild(i); } cc++; } else { if (!isRephraseResult) { const i = document.createElement('div'); i.className = 'correction-item p-2 border-l-2 border-red-400 dark:border-red-600 mb-1 bg-red-50 dark:bg-red-900/20'; i.innerHTML = `<div><span class="correction-original text-red-600 dark:text-red-400 line-through">${p.removed}</span></div><div class="correction-explanation text-xs text-gray-500 dark:text-gray-400 mt-1">Testo rimosso.</div>`; cl.appendChild(i); } cc++; } } else if (p.added) { oHTML += `<span class="diff-added" style="background-color: rgba(16, 185, 129, 0.2); padding: 1px 0;">${eV}</span>`; if (!isRephraseResult) { const i = document.createElement('div'); i.className = 'correction-item p-2 border-l-2 border-green-400 dark:border-green-600 mb-1 bg-green-50 dark:bg-green-900/20'; i.innerHTML = `<div><span class="correction-corrected text-green-700 dark:text-green-400 font-medium">${p.added}</span></div><div class="correction-explanation text-xs text-gray-500 dark:text-gray-400 mt-1">Testo aggiunto.</div>`; cl.appendChild(i); } cc++; } else { oHTML += eV; } }); if (originalTextHighlighted) originalTextHighlighted.innerHTML = oHTML; if (!isRephraseResult && cc > 0) { if(ct) ct.classList.remove('hidden'); } }
-
-    // *** MODIFICA: Aggiunto parametro cefrLevel (cl) ***
-    function saveToHistory(ot, ct, ir, t, ex, al, cl) {
-        try {
-            let h = JSON.parse(localStorage.getItem('textai-history') || '[]');
-            if (!Array.isArray(h)) h = [];
-            // Non includere cl nel controllo duplicati per semplicità ora
-            const d = h.some(i => i.originalText === ot && i.correctedText === ct && i.isRephrase === ir && i.tone === t);
-            if (!d) {
-                const hi = {
-                    id: Date.now(),
-                    date: new Date().toLocaleString('it-IT'),
-                    originalText: ot,
-                    correctedText: ct,
-                    isRephrase: ir,
-                    tone: t,
-                    explanation: ex,
-                    alternatives: al,
-                    cefrLevel: cl, // Salva il livello CEFR
-                    preview: ct.substring(0, 60) + (ct.length > 60 ? '...' : '')
-                };
-                h.unshift(hi);
-                if (h.length > 15) h = h.slice(0, 15); // Limita cronologia
-                localStorage.setItem('textai-history', JSON.stringify(h));
-                console.log("Salvataggio crono:", hi.id, "CEFR:", cl);
-            } else {
-                console.log("Duplicato non salvato.");
-            }
-            const hp = historyPanel;
-            // Aggiorna vista se pannello è aperto
-            if (hp && !hp.classList.contains('hidden')) {
-                 loadHistoryItems();
-            }
-        } catch (error) {
-            handleError("saveToHistory", error);
-        }
     }
 
-    function loadHistoryItems() { /* ... (invariata - la preview non mostra CEFR) ... */ try { const hl = document.getElementById('history-list'); const nhm = document.getElementById('no-history-message'); if (!hl) { console.error("history-list mancante!"); return; } let h = []; try { h = JSON.parse(localStorage.getItem('textai-history') || '[]'); } catch { console.error("Errore parsing crono"); } if (!Array.isArray(h)) h = []; hl.innerHTML = ''; const msg = nhm || document.getElementById('no-history-message'); if (h.length === 0) { console.log("Crono vuota."); if (msg) { msg.style.display = 'block'; if (!msg.parentNode) hl.appendChild(msg); } else { const n = document.createElement('p'); n.id = 'no-history-message'; n.className = 'text-gray-500 dark:text-gray-400 text-sm italic px-4 py-2'; n.textContent = 'Nessuna correzione.'; hl.appendChild(n); } } else { console.log(`Carico ${h.length} el. crono.`); if (msg) msg.style.display = 'none'; h.forEach(i => { const hi = document.createElement('div'); hi.className = 'history-item p-3 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors'; hi.dataset.id = i.id; hi.innerHTML = `<div class="text-xs text-gray-500 dark:text-gray-400 mb-1">${i.date}</div><div class="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">${i.isRephrase ? `<span class="text-blue-500 font-semibold">[${getToneDisplayName(i.tone)}${i.cefrLevel && i.cefrLevel !== 'none' ? ` / ${i.cefrLevel.toUpperCase()}` : ''}]</span> ` : ''}${i.preview}</div>`; hi.addEventListener('click', () => loadHistoryItem(i.id)); hl.appendChild(hi); }); } } catch (error) { handleError("loadHistoryItems", error); } }
+    // Listener doppio click per Sinonimi
+    const addSynonymListener = (element, elementName) => {
+        if (element) {
+            element.addEventListener('dblclick', function(event) {
+                event.preventDefault();
+                const selectedText = window.getSelection()?.toString().trim();
+                let targetWord = selectedText; // Inizia con la selezione grezza
 
-    // *** MODIFICA: Aggiunto parametro cefrLevel (cl) ***
+                // *** CORREZIONE DUPLICATI v2.1: Prioritizza testo dallo SPAN cliccato ***
+                // Se l'evento target è uno SPAN (probabile in caso di diff), usa il suo contenuto.
+                if (event.target.tagName === 'SPAN' && event.target.textContent) {
+                     const spanText = event.target.textContent.trim();
+                      // Verifica che sia una singola parola ragionevole
+                     if (spanText && spanText.length > 1 && !spanText.includes(' ') && !spanText.includes('\n')) {
+                        // Se la selezione globale è diversa (es. perchèperché) e lo span è solo la parte corretta (es. perché),
+                        // usa lo span. Questo aiuta a isolare la parola giusta anche se la selezione del browser è imprecisa.
+                        if (targetWord !== spanText) {
+                             console.log(`Correzione selezione: da "${targetWord}" a "${spanText}" (target span)`);
+                             targetWord = spanText;
+                        }
+                     }
+                }
+                // *** FINE CORREZIONE DUPLICATI v2.1 ***
+
+                // Filtro finale sulla parola determinata (invariato)
+                if (targetWord && targetWord.length > 1 && !targetWord.includes(' ') && !targetWord.includes('\n')) {
+                    // Non mostrare per testo rimosso nel box originale
+                    if (element === originalTextHighlighted && event.target.closest('.diff-removed')) {
+                        showToast("Sinonimi non disponibili per testo rimosso", "bg-yellow-500"); return;
+                    }
+                    openSynonymPopup(targetWord);
+                } else {
+                    console.log(`Selezione non valida per sinonimi su ${elementName}: '${selectedText}' -> '${targetWord}'`);
+                    if (selectedText && (selectedText.includes(' ') || selectedText.includes('\n'))) { showToast("Seleziona una singola parola", "bg-yellow-500"); }
+                }
+            });
+            console.log(`Listener DblClick per sinonimi su ${elementName} aggiunto.`);
+        } else { console.warn(`Warn: ${elementName} non trovato.`); }
+    };
+    addSynonymListener(correctedText, 'correctedText');
+    addSynonymListener(originalTextHighlighted, 'originalTextHighlighted');
+
+    // Listener chiusura Popup Sinonimi
+    if (synonymPopupCloseBtn) { synonymPopupCloseBtn.addEventListener('click', closeSynonymPopup); }
+    if (synonymOverlay) { synonymOverlay.addEventListener('click', closeSynonymPopup); }
+
+    // --- Funzioni Core ---
+    async function detectLanguageWithGeminiAPI(text){
+        console.log("Chiamo API per rilevare lingua...");
+        const preferredLang = preferredLangSelect ? (preferredLangSelect.value !== 'auto' ? preferredLangSelect.value : 'it') : 'it';
+        if(!API_KEY || API_KEY.includes("YOUR_API") || API_KEY.length < 20){ console.error("Chiave API mancante/non valida."); return preferredLang; }
+        if(!text || text.trim().length < 10){ console.log("Testo breve, uso lingua preferita:", preferredLang); return preferredLang; }
+        const prompt = `Identify the main language (ISO 639-1 code) from [${SUPPORTED_LANGS.join(', ')}] for: "${text.substring(0,500)}"... Respond ONLY with the 2-letter code or 'und'.`;
+        const request = { contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.0, maxOutputTokens: 5, stopSequences: ["\n"] } };
+        try {
+            const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(request) });
+            if (!response.ok) { let eD=''; try{const d=await response.json();eD=d?.error?.message||JSON.stringify(d);}catch{eD=await response.text();} console.warn(`Warn API rilevamento (${response.status}): ${eD}. Uso fallback: ${preferredLang}`); return preferredLang; }
+            const data = await response.json();
+            const code = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim().toLowerCase().match(/^[a-z]{2}$/)?.[0];
+            console.log("API rilevato lingua:", code);
+            if (code && SUPPORTED_LANGS.includes(code)) return code;
+            console.warn("Codice lingua API non valido/supportato, fallback:", preferredLang); return preferredLang;
+        } catch (error) { console.error("Errore rete rilevamento:", error); console.warn("Uso fallback:", preferredLang); return preferredLang; }
+    }
+
+    function setDetectedLanguageUI(lc){
+        if(!lc || !SUPPORTED_LANGS.includes(lc)){lc='it';}
+        currentLanguage = lc;
+        const ln = getLanguageName(lc);
+        if(detectedLang){ detectedLang.textContent=ln; detectedLang.classList.remove('language-detected'); void detectedLang.offsetWidth; detectedLang.classList.add('language-detected'); }
+        if(preferredLangSelect && preferredLangSelect.value !== 'auto' && preferredLangSelect.value !== lc){ console.log(`Aggiorno dropdown lingua a: ${lc}`); preferredLangSelect.value=lc; }
+        else if (preferredLangSelect && preferredLangSelect.value === 'auto' && detectedLang) { detectedLang.textContent = `${ln} (Auto)`; }
+    }
+
+    function displayRephraseAnalysis(tone, intensity, explanationText, alternatives) {
+        let analysisBox = document.getElementById('rephrased-analysis-box');
+        if (!analysisBox) { analysisBox = document.createElement('div'); analysisBox.id = 'rephrased-analysis-box'; analysisBox.className = 'bg-blue-50 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 rounded-lg p-4 mt-6 mb-8';
+            analysisBox.innerHTML = `<h3 id="rephrased-analysis-title" class="text-lg font-medium text-blue-800 dark:text-blue-200 mb-3"></h3><div class="mb-4 p-3 bg-white dark:bg-gray-800 rounded-lg border border-blue-200 dark:border-blue-600"><h4 class="text-md font-medium text-gray-700 dark:text-gray-300 mb-2">Motivazione:</h4><div id="explanation-content" class="text-gray-600 dark:text-gray-400 text-sm"></div></div><div><h4 class="text-md font-medium text-gray-700 dark:text-gray-300 mb-2">Alternative:</h4><div id="alternatives-list" class="space-y-2"></div></div>`;
+            resultsSection?.parentNode?.insertBefore(analysisBox, resultsSection.nextSibling); }
+        const analysisTitle = analysisBox.querySelector('#rephrased-analysis-title');
+        if (analysisTitle) analysisTitle.textContent = `Analisi Riformulazione (Tono: ${getToneDisplayName(tone)} / Intensità: ${getIntensityDisplayName(intensity)})`;
+        const explanationContent = analysisBox.querySelector('#explanation-content');
+        if (explanationContent) explanationContent.textContent = explanationText || "N/A.";
+        const alternativesList = analysisBox.querySelector('#alternatives-list');
+        if (alternativesList) { alternativesList.innerHTML = ''; let validAlts = 0;
+             if (alternatives?.length > 0) { alternatives.forEach(alt => { if (!alt || alt.toLowerCase()==="n/a" || alt.trim()==='') return; validAlts++; const item = document.createElement('div'); item.className='p-2 bg-gray-50 dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600 flex justify-between items-center cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors'; item.dataset.alternativeItem='true'; const txt=document.createElement('div'); txt.className='flex-grow mr-2 text-sm text-gray-800 dark:text-gray-200'; txt.textContent=alt; const btn=document.createElement('button'); btn.className='text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-xs flex items-center shrink-0 ml-2'; btn.innerHTML=`<svg class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor"><path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"></path></svg> Copia`; btn.onclick=(e)=>{e.stopPropagation();copyTextToClipboard(alt);}; item.appendChild(txt); item.appendChild(btn); item.onclick=()=>{if(correctedText)correctedText.textContent=alt;if(correctedCount)correctedCount.textContent=countWords(alt)+' parole';alternativesList.querySelectorAll('[data-alternative-item="true"]').forEach(i=>i.classList.remove('bg-blue-100','dark:bg-blue-900','border-blue-300','dark:border-blue-500'));item.classList.add('bg-blue-100','dark:bg-blue-900','border-blue-300','dark:border-blue-500');}; alternativesList.appendChild(item); }); }
+             if (validAlts === 0) { alternativesList.innerHTML = '<p class="text-sm text-gray-500 dark:text-gray-400">Nessuna alternativa valida fornita.</p>'; }
+        }
+        if(analysisBox) analysisBox.classList.remove('hidden');
+    }
+
+    function displayDifferences(original, result, language, isRephraseResult) {
+        const correctionsListDiv = document.getElementById('corrections-list');
+        const toggleButton = correctionsToggleBtn; const originalHighlightDiv = originalTextHighlighted;
+        if (!correctionsListDiv || !originalHighlightDiv) { console.error("Elementi Diff mancanti"); if(originalHighlightDiv) originalHighlightDiv.textContent = original; return; }
+        correctionsListDiv.innerHTML = ''; let correctionCount = 0; hideCorrectionsPanel();
+        if (typeof Diff === 'undefined') { console.warn("Diff.js non caricato."); originalHighlightDiv.textContent = original; return; }
+        const diff = Diff.diffWords(original, result, { ignoreWhitespace: false }); let originalHtml = '';
+        diff.forEach((part, index) => {
+            const escapedValue = part.value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;").replace(/\n/g, '<br>');
+            if (part.removed) { originalHtml += `<span class="diff-removed">${escapedValue}</span>`;
+                 if (!isRephraseResult) { const nextPart = diff[index + 1]; if (!nextPart?.added) { const item=document.createElement('div');item.className='correction-item p-2 border-l-2 border-red-400 dark:border-red-600 mb-1 bg-red-50 dark:bg-red-900/20';item.innerHTML=`<div><span class="correction-original text-red-600 dark:text-red-400 line-through">${part.value}</span></div><div class="correction-explanation text-xs text-gray-500 dark:text-gray-400 mt-1">Testo rimosso.</div>`; correctionsListDiv.appendChild(item); correctionCount++; } } }
+            else if (part.added) { originalHtml += `<span class="diff-added" style="background-color: rgba(16, 185, 129, 0.1); padding: 1px 0; border-bottom: 1px dashed #10B981;">${escapedValue}</span>`;
+                 if (!isRephraseResult) { const prevPart = diff[index - 1]; let expTxt="Testo aggiunto."; let origSeg=''; if (prevPart?.removed){expTxt=generateExplanation(prevPart.value,part.value,language);origSeg=`<span class="correction-original text-red-600 dark:text-red-400 line-through">${prevPart.value}</span> → `;} const item=document.createElement('div');item.className='correction-item p-2 border-l-2 border-green-400 dark:border-green-600 mb-1 bg-green-50 dark:bg-green-900/20';item.innerHTML=`<div>${origSeg}<span class="correction-corrected text-green-700 dark:text-green-400 font-medium">${part.value}</span></div><div class="correction-explanation text-xs text-gray-500 dark:text-gray-400 mt-1">${expTxt}</div>`; correctionsListDiv.appendChild(item); correctionCount++; } }
+            else { originalHtml += escapedValue; }
+        });
+        originalHighlightDiv.innerHTML = originalHtml;
+        if (!isRephraseResult && correctionCount > 0 && toggleButton) { toggleButton.classList.remove('hidden'); }
+    }
+
+    function saveToHistory(ot, ct, ir, t, inte, ex, al, cl) {
+        try {
+            let history = JSON.parse(localStorage.getItem('textai-history') || '[]');
+            if (!Array.isArray(history)) history = [];
+            const isDuplicate = history.some(item => item.originalText === ot && item.correctedText === ct);
+            if (!isDuplicate) {
+                const historyItem = { id: Date.now(), date: new Date().toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }), originalText: ot, correctedText: ct, isRephrase: ir, tone: t, intensity: inte, explanation: ex, alternatives: al, cefrLevel: cl, preview: ct.substring(0, 60) + (ct.length > 60 ? '...' : '') };
+                history.unshift(historyItem); if (history.length > 15) history = history.slice(0, 15);
+                localStorage.setItem('textai-history', JSON.stringify(history));
+                console.log("Salvataggio cronologia:", historyItem.id);
+                if (historyPanel && !historyPanel.classList.contains('hidden')) { loadHistoryItems(); }
+            } else { console.log("Duplicato non salvato."); }
+        } catch (error) { handleError("saveToHistory", error); }
+    }
+
+    function loadHistoryItems() {
+        try {
+            const historyListDiv = document.getElementById('history-list'); const noHistoryMsg = document.getElementById('no-history-message');
+            if (!historyListDiv) { console.error("#history-list non trovato!"); return; }
+            let history = []; try { history = JSON.parse(localStorage.getItem('textai-history') || '[]'); } catch { console.error("Errore parsing crono"); } if (!Array.isArray(history)) history = [];
+            historyListDiv.innerHTML = '';
+            if (history.length === 0) { console.log("Crono vuota."); if (noHistoryMsg) { noHistoryMsg.style.display = 'block'; if (!noHistoryMsg.parentNode) historyListDiv.appendChild(noHistoryMsg); } else { const p=document.createElement('p'); p.className='text-gray-500 dark:text-gray-400 text-sm italic px-4 py-2'; p.textContent='Nessuna correzione.'; historyListDiv.appendChild(p); } }
+            else { console.log(`Carico ${history.length} el. crono.`); if (noHistoryMsg) noHistoryMsg.style.display = 'none';
+                history.forEach(item => { const itemDiv = document.createElement('div'); itemDiv.className = 'history-item p-3 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer'; itemDiv.dataset.id = item.id;
+                    let tag = ''; if (item.isRephrase) { tag += `[${getToneDisplayName(item.tone)}`; if (item.intensity && item.intensity !== 'normal') tag += ` ${getIntensityDisplayName(item.intensity)}`; if (item.cefrLevel && item.cefrLevel !== 'none') tag += ` / ${item.cefrLevel.toUpperCase()}`; tag += '] '; }
+                    const dateDiv = document.createElement('div'); dateDiv.className = 'text-xs text-gray-500 dark:text-gray-400 mb-1'; dateDiv.textContent = item.date;
+                    const previewDiv = document.createElement('div'); previewDiv.className = 'text-sm font-medium text-gray-800 dark:text-gray-200 truncate'; if (tag) { const tagSpan = document.createElement('span'); tagSpan.className = 'text-blue-500 font-semibold'; tagSpan.textContent = tag; previewDiv.appendChild(tagSpan); } previewDiv.appendChild(document.createTextNode(item.preview));
+                    itemDiv.appendChild(dateDiv); itemDiv.appendChild(previewDiv); itemDiv.onclick = () => loadHistoryItem(item.id); historyListDiv.appendChild(itemDiv); });
+            }
+        } catch (error) { handleError("loadHistoryItems", error); }
+    }
+
     function loadHistoryItem(id) {
         try {
             console.log(`Carico crono ID: ${id}`);
-            let h = JSON.parse(localStorage.getItem('textai-history') || '[]');
-            const item = h.find(it => it.id == id);
-            if (!item) throw new Error("Elemento cronologia non trovato");
-
+            let h = JSON.parse(localStorage.getItem('textai-history') || '[]'); const item = h.find(it => it.id == id); if (!item) throw new Error("Item crono non trovato");
+            if (settingsContent && !settingsContent.classList.contains('hidden')) { console.log("Switch a Testo per crono."); switchTab(textTab, settingsTab, textContent, settingsContent); }
+            closeHistoryPanel();
             if (inputText) inputText.value = item.originalText;
-            // Evidenzia l'elemento selezionato nella lista
-            document.querySelectorAll('.history-item').forEach(el => {
-                 el.classList.remove('history-selected', 'bg-blue-100', 'dark:bg-blue-900'); // Rimuovi classi da tutti
-                 if (el.dataset.id == id) {
-                     el.classList.add('history-selected', 'bg-blue-100', 'dark:bg-blue-900'); // Aggiungi al selezionato
-                 }
-            });
-
-            // Chiama la funzione per visualizzare i dettagli, passando tutti i dati
-            handleHistorySelection(
-                item.originalText,
-                item.correctedText,
-                item.isRephrase,
-                item.tone,
-                item.explanation,
-                item.alternatives,
-                item.cefrLevel // Passa il livello CEFR
-            );
-
-             // Opzionale: aggiorna i controlli UI per riflettere l'elemento caricato
-             if(rephraseCheck) rephraseCheck.checked = item.isRephrase;
-             if(defaultToneSelect && item.tone) defaultToneSelect.value = item.tone;
-             if(cefrLevelSelect && item.cefrLevel) cefrLevelSelect.value = item.cefrLevel;
-             updateStyleOptionsState(); // Aggiorna abilitazione/disabilitazione controlli
-             updateProcessButtonState(); // Aggiorna stato bottone principale
-
-        } catch (error) {
-            handleError("loadHistoryItem", error);
-        }
+            document.querySelectorAll('.history-item').forEach(el => { el.classList.remove('history-selected', 'bg-blue-100', 'dark:bg-blue-900'); if (el.dataset.id == id) el.classList.add('history-selected', 'bg-blue-100', 'dark:bg-blue-900'); });
+            handleHistorySelection(item.originalText, item.correctedText, item.isRephrase, item.tone, item.intensity, item.explanation, item.alternatives, item.cefrLevel);
+            if(rephraseCheck) rephraseCheck.checked = item.isRephrase; if(defaultToneSelect && item.tone) defaultToneSelect.value = item.tone; if(toneIntensitySelect && item.intensity) toneIntensitySelect.value = item.intensity; if(cefrLevelSelect && item.cefrLevel) cefrLevelSelect.value = item.cefrLevel; if(styleMatchCheck) styleMatchCheck.checked = item.matchStyle ?? false;
+            updateStyleOptionsState(); updateProcessButtonState();
+        } catch (error) { handleError("loadHistoryItem", error); }
     }
 
-    // *** MODIFICA: Aggiunto parametro cefrLevel (cl) ***
-    async function handleHistorySelection(ot, ctv, ir, tn, ex, al, cl) {
+    async function handleHistorySelection(ot, ctv, ir, tn, inte, ex, al, cl) {
         try {
-            console.log("Visualizzo da crono:", { ir, tn, cl }); // Logga anche CEFR
-            hideExpandablePanels();
-            if(resultsSection) resultsSection.classList.remove('hidden');
-            if (originalTextHighlighted) originalTextHighlighted.textContent = ot;
-            if (correctedText) correctedText.textContent = ctv;
-            if (originalCount) originalCount.textContent = countWords(ot) + ' parole';
-            if (correctedCount) correctedCount.textContent = countWords(ctv) + ' parole';
-
-            // Rileva lingua (necessario per displayDifferences)
-            let lang = preferredLangSelect ? (preferredLangSelect.value !== 'auto' ? preferredLangSelect.value : 'it') : 'it';
-            try {
-                const d = await detectLanguageWithGeminiAPI(ot);
-                if (d && SUPPORTED_LANGS.includes(d)) lang = d;
-            } catch(langErr) {
-                 console.warn("Errore rilevamento lingua per history item:", langErr);
-            }
-            setDetectedLanguageUI(lang);
-
+            console.log("Visualizzo da crono:", { ir, tn, inte, cl });
+            hideExpandablePanels(); if(resultsSection) resultsSection.classList.remove('hidden'); if (originalTextHighlighted) originalTextHighlighted.textContent = ot; if (correctedText) correctedText.textContent = ctv; if (originalCount) originalCount.textContent = countWords(ot) + ' parole'; if (correctedCount) correctedCount.textContent = countWords(ctv) + ' parole';
+            let lang = 'it'; try { const detected = await detectLanguageWithGeminiAPI(ot); if (detected && SUPPORTED_LANGS.includes(detected)) lang = detected; else { const pref = preferredLangSelect?.value; if (pref && pref !== 'auto' && SUPPORTED_LANGS.includes(pref)) lang = pref; } currentLanguage = lang; console.log("Lingua per history determinata:", currentLanguage); } catch(langErr) { console.warn("Errore rilevamento lingua history:", langErr); currentLanguage = 'it'; lang = 'it'; } setDetectedLanguageUI(lang);
             displayDifferences(ot, ctv, lang, ir);
-            const ab = document.getElementById('rephrased-analysis-box');
-            const ctg = correctionsToggleBtn;
-
-            if (ir) {
-                // Mostra analisi riformulazione (non mostra CEFR per ora, ma potrebbe)
-                displayRephraseAnalysis(tn, ex, al);
-                if (ab) ab.classList.remove('hidden');
-                hideCorrectionsPanel(); // Nascondi correzioni se è riformulazione
-            } else {
-                if (ab) ab.classList.add('hidden'); // Nascondi analisi se non è riformulazione
-                const clist = document.getElementById('corrections-list');
-                // Mostra/nascondi sezione correzioni basata su contenuto effettivo
-                if (clist && ctg && clist.children.length > 0) {
-                    ctg.classList.remove('hidden');
-                } else {
-                    hideCorrectionsPanel();
-                }
-            }
-        } catch (error) {
-            handleError("handleHistorySelection", error);
-        }
+            const analysisBox = document.getElementById('rephrased-analysis-box'); const correctionsBtn = correctionsToggleBtn;
+            if (ir) { displayRephraseAnalysis(tn, inte, ex, al); hideCorrectionsPanel(); }
+            else { if (analysisBox) analysisBox.classList.add('hidden'); const correctionsList = document.getElementById('corrections-list'); if (!correctionsList || correctionsList.children.length === 0) hideCorrectionsPanel(); /* Diff gestisce visualizzazione bottone */ }
+        } catch (error) { handleError("handleHistorySelection", error); }
     }
 
-    // Funzione per elaborare testo con AI
-    // *** MODIFICA: Aggiornato prompt per includere livello CEFR ***
-    async function processTextWithAI(text, language, useProofreading, useRephrasing) {
-        if (!API_KEY || API_KEY.includes("YOUR_API") || API_KEY.length < 20) {
-            throw new Error("Chiave API mancante o non valida.");
-        }
-
-        const isStyleMatch = useRephrasing && styleMatchCheck ? styleMatchCheck.checked : false;
-        const styleDesc = useRephrasing && writingStyleInput ? writingStyleInput.value.trim() : '';
-        const styleSample = useRephrasing && sampleTextInput ? sampleTextInput.value.trim() : '';
-        const tone = useRephrasing && defaultToneSelect ? defaultToneSelect.value : 'neutral';
-        // *** NUOVO: Recupera livello CEFR selezionato (solo se rilevante) ***
-        const cefrLevel = useRephrasing && cefrLevelSelect && cefrLevelSelect.value !== 'none'
-                          ? cefrLevelSelect.value
-                          : null;
-
+    async function fetchSynonyms(word, language) {
+        if (!API_KEY || API_KEY.includes("YOUR_API")) { throw new Error("API Key non valida."); }
+        if (!word || !language || !SUPPORTED_LANGS.includes(language)) { throw new Error("Parola/lingua non valida."); }
         const langName = getLanguageName(language);
-        console.log("Opzioni effettive Prompt:", { useProofreading, useRephrasing, isStyleMatch, tone, cefrLevel });
-
-        let promptBase = `Sei un esperto linguista ${langName}.\n\n`;
-        let expectedFormatInstructions = "";
-        let genConfigParams = {};
-
-        if (useRephrasing) {
-            // --- PROMPT RIFORMULAZIONE (v8 - Aggiunto CEFR) ---
-            promptBase += `COMPITO: 1) CORREGGI errori grammaticali/ortografici, POI 2) RIFORMULA il testo CORRETTO usando SOLO ${langName} (${language}).\nISTRUZIONI IMPERATIVE:\n1. LINGUA: Produci output ESCLUSIVAMENTE in ${langName.toUpperCase()}.\n2. CORREZIONE PRIMA: Correggi TUTTI gli errori oggettivi (grammatica, ortografia, punteggiatura) del testo originale PRIMA di riformulare.\n3. RIFORMULA + TONO (${tone.toUpperCase()}): Applica il tono richiesto in modo CHIARO ed EVIDENTE. Riscrivi significativamente la struttura delle frasi e il lessico, non fare solo piccole modifiche.\n`;
-
-            // *** NUOVO: Istruzione CEFR Condizionale ***
-            let instructionNumber = 4;
-            if (cefrLevel) {
-                promptBase += `${instructionNumber}. LIVELLO LINGUISTICO (CEFR ${cefrLevel.toUpperCase()}): Adatta la complessità grammaticale e lessicale al livello CEFR '${cefrLevel}'. Usa strutture di frase e vocabolario appropriati per una persona a quel livello di competenza linguistica. Esempio: A1/A2 = frasi molto semplici, vocabolario base; B1/B2 = frasi più complesse, vocabolario intermedio; C1/C2 = linguaggio ricco, sfumato e complesso.\n`;
-                instructionNumber++;
-            }
-
-            promptBase += `${instructionNumber}. SIGNIFICATO: Preserva il significato fondamentale e tutte le informazioni chiave del testo originale.\n`;
-            instructionNumber++;
-
-            promptBase += `${instructionNumber}. DEFINIZIONE TONI:\n   - Formal: Linguaggio elevato, impersonale, evita contrazioni.\n   - Friendly: Tono caloroso, positivo, amichevole, più colloquiale.\n   - Professional: Chiaro, conciso, autorevole, focalizzato sull'obiettivo.\n   - Casual: Rilassato, informale, come parleresti con un amico.\n   - Sarcastic: Usa ironia evidente, possibilmente esagerata, per esprimere il contrario di ciò che dici letteralmente.\n   - Neutral: Oggettivo, diretto, senza carica emotiva.\n`;
-            instructionNumber++;
-
-            if (isStyleMatch && (styleDesc || styleSample)) {
-                promptBase += `${instructionNumber}. STILE PERSONALE (Prioritario): Adatta l'output allo stile descritto ("${styleDesc}") e/o esemplificato ("${styleSample}"). COMBINA lo stile personale richiesto con il TONO (${tone.toUpperCase()})${cefrLevel ? ` e il livello LINGUISTICO (CEFR ${cefrLevel.toUpperCase()})` : ''}.\n\n`;
-            } else {
-                promptBase += "\n";
-            }
-
-            // *** NUOVO: Aggiornato formato per menzionare CEFR se attivo ***
-            expectedFormatInstructions = `
-FORMATO RISPOSTA OBBLIGATORIO (USA SEPARATORI ESATTI IN ${langName.toUpperCase()}):\n
----TESTO_RIFORMULATO_START---
-[QUI VA **SOLO ED ESCLUSIVAMENTE** il testo principale RIFORMULATO nel tono ${tone.toUpperCase()}${cefrLevel ? ` e livello CEFR ${cefrLevel.toUpperCase()}` : ''} richiesto. **IMPORTANTE: NON AGGIUNGERE NESSUNA ETICHETTA** come "${tone.toUpperCase()}:", "**TONO:**", "**CEFR:**" o simili all'inizio di questo blocco. Inizia direttamente con il testo riformulato.]
----TESTO_RIFORMULATO_END---
-
----SPIEGAZIONE_START---
-[Spiegazione MOLTO BREVE (1-2 frasi) in ${langName} sulle scelte chiave di riformulazione fatte per ottenere il tono${cefrLevel ? ` e il livello CEFR ${cefrLevel.toUpperCase()}` : ''} richiesti.]
----SPIEGAZIONE_END---
-
----ALTERNATIVE_START---
-[QUI 3 alternative CONCISE e DIVERSE, TUTTE NEL TONO ${tone.toUpperCase()}${cefrLevel ? ` e livello CEFR ${cefrLevel.toUpperCase()}` : ''}. Numera 1. 2. 3. **NON** usare etichette di tono o livello qui.]
-1. [Alternativa 1 nel tono ${tone.toUpperCase()}${cefrLevel ? ` (Livello ${cefrLevel.toUpperCase()})` : ''}]
-2. [Alternativa 2 nel tono ${tone.toUpperCase()}${cefrLevel ? ` (Livello ${cefrLevel.toUpperCase()})` : ''}]
-3. [Alternativa 3 nel tono ${tone.toUpperCase()}${cefrLevel ? ` (Livello ${cefrLevel.toUpperCase()})` : ''}]
----ALTERNATIVE_END---`;
-
-            // Aumenta leggermente la temperatura per più creatività nella riformulazione
-             genConfigParams = { temperature: (tone === 'sarcastic') ? 0.95 : 0.85, topP: 0.95, topK: 40 };
-
-        } else if (useProofreading) {
-            // --- PROMPT SOLA CORREZIONE (Invariato) ---
-            promptBase += `COMPITO: Correggi SOLO errori oggettivi (grammatica, ortografia, punteggiatura) nel testo in ${langName}.\nREGOLE IMPERATIVE:\n1. LINGUA OUTPUT: Esclusivamente ${langName.toUpperCase()} (${language}).\n2. NON MODIFICARE: Non cambiare stile, tono, scelta delle parole o struttura delle frasi se non strettamente necessario per la correzione.\n3. NON RIFORMULARE.\n4. MINIMALISMO: Applica solo le correzioni indispensabili.\n\n`;
-            expectedFormatInstructions = `FORMATO RISPOSTA: Fornisci SOLO il testo corretto in ${langName}. Non aggiungere spiegazioni, commenti o altro testo.`;
-            // Bassa temperatura per output deterministico
-            genConfigParams = { temperature: 0.0, topP: 0.7, topK: 10 };
-        } else {
-            // Questo caso non dovrebbe accadere grazie ai controlli UI, ma per sicurezza:
-            throw new Error("Nessuna azione specificata per l'AI (né correzione né riformulazione).");
-        }
-
-        promptBase += `TESTO ORIGINALE DA ELABORARE (${langName}):\n\`\`\`\n${text}\n\`\`\`\n\nLA TUA RISPOSTA IN ${langName.toUpperCase()} (SEGUI ESATTAMENTE IL FORMATO RICHIESTO):${expectedFormatInstructions}`;
-
-        const systemPrompt = promptBase;
-        console.log("Prompt (prime 500 char):", systemPrompt.substring(0, 500) + "...");
-
-        // Calcola maxOutputTokens in modo più dinamico
-        const baseTokens = 300; // Base per overhead e istruzioni
-        const multiplier = useRephrasing ? 3.5 : 1.2; // Riformulazione richiede più spazio
-        const estimatedInputTokens = Math.floor(text.length / 3); // Stima grossolana
-        const calculatedMaxTokens = Math.max(400, Math.floor(baseTokens + estimatedInputTokens * multiplier));
-        const finalMaxTokens = Math.min(8000, calculatedMaxTokens); // Limite massimo assoluto
-
-        const requestBody = {
-            contents: [{ parts: [{ text: systemPrompt }] }],
-            generationConfig: {
-                ...genConfigParams,
-                maxOutputTokens: finalMaxTokens // Usa il valore calcolato
-            }
-        };
-        console.log("Generation Config:", requestBody.generationConfig);
-
+        const prompt = `Sei un lessicografo esperto in ${langName}. Trova max 5 sinonimi comuni per "${word}" in ${langName}. Per ognuno, fornisci breve esempio d'uso in ${langName}. Rispondi SOLO con array JSON: [{"synonym": "s1", "usage": "e1."}, ...]. Se non trovi nulla, rispondi con: []`;
+        const requestBody = { contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.4, maxOutputTokens: 500, responseMimeType: "application/json" } };
+        console.log("API Sinonimi:", word, language);
         try {
             const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(requestBody) });
-            console.log(`API Status: ${response.status} ${response.statusText}`);
-            if (!response.ok) { let eD = `Status: ${response.status}. `; try { const d = await response.json(); eD += d?.error?.message || JSON.stringify(d); } catch { try {eD += await response.text();} catch {} } console.error("API Error Details:", eD); throw new Error(`Errore API. ${eD}`); }
-
-            const data = await response.json();
-            const candidate = data.candidates?.[0];
-            const finishReason = candidate?.finishReason;
-            const blockReason = data.promptFeedback?.blockReason;
-            const safetyRatings = JSON.stringify(candidate?.safetyRatings || data.promptFeedback?.safetyRatings || {});
-
-            if (blockReason) throw new Error(`Bloccato (${blockReason}). Ratings: ${safetyRatings}`);
-            // Considera MAX_TOKENS un errore potenziale solo se non abbiamo ottenuto testo
-            if (finishReason && finishReason !== "STOP" && !(finishReason === "MAX_TOKENS" && candidate?.content?.parts?.[0]?.text)) {
-                 throw new Error(`Interrotto (${finishReason}). Ratings: ${safetyRatings}`);
-            }
-
-            let generatedText = candidate?.content?.parts?.[0]?.text?.trim();
-            if (!generatedText) throw new Error("Risposta API vuota o contenuto mancante.");
-
-            console.log("Testo grezzo AI:\n", generatedText.substring(0, 500) + (generatedText.length > 500 ? "..." : ""));
-
-            // **** PARSING E PULIZIA (v8 - Gestisce CEFR nel ritorno) ****
-            if (useRephrasing) {
-                let rephrasedText = ''; let explanation = ''; let alternatives = [];
-                const textMatch = generatedText.match(/---TESTO_RIFORMULATO_START---([\s\S]*?)---TESTO_RIFORMULATO_END---/im);
-
-                 // Regex per rimuovere etichette di Tono o Livello all'inizio del testo
-                 const labelRegex = /^\s*(\*\*?)?(TONO|TONE|FORMAL|FRIENDLY|PROFESSIONAL|CASUAL|SARCASTIC|NEUTRAL|LIVELLO|LEVEL|CEFR|A1|A2|B1|B2|C1|C2)(\*\*?)?\s*[:\(\)-]?\s*\n?/i;
-
-                 if (textMatch && textMatch[1]) {
-                    rephrasedText = textMatch[1].trim().replace(labelRegex, ''); // Pulisce eventuali etichette residue
-                 } else {
-                    // Fallback se i separatori mancano o il parsing fallisce
-                    console.warn("Separatore TESTO_RIFORMULATO non trovato o vuoto. Tento fallback sul testo grezzo.");
-                    // Prendi tutto il testo prima di ---SPIEGAZIONE_START--- o ---ALTERNATIVE_START---
-                    const potentialEndMarkers = /---SPIEGAZIONE_START---|---ALTERNATIVE_START---/im;
-                    const endMatchIndex = generatedText.search(potentialEndMarkers);
-                     if (endMatchIndex !== -1) {
-                        rephrasedText = generatedText.substring(0, endMatchIndex).trim();
-                     } else {
-                        rephrasedText = generatedText.trim(); // Prendi tutto se nessun altro marcatore è presente
-                     }
-                     // Pulisci comunque da etichette note
-                     rephrasedText = rephrasedText.replace(labelRegex, '');
-                     if (!rephrasedText) rephrasedText = "[Errore parsing AI - Testo non trovato]";
-                 }
-
-
-                const expMatch = generatedText.match(/---SPIEGAZIONE_START---([\s\S]*?)---SPIEGAZIONE_END---/im);
-                explanation = expMatch ? expMatch[1].trim() : "Spiegazione non trovata o mal formattata.";
-
-                const altMatch = generatedText.match(/---ALTERNATIVE_START---([\s\S]*?)---ALTERNATIVE_END---/im);
-                if (altMatch && altMatch[1]) {
-                    alternatives = altMatch[1].trim().split('\n')
-                        .map(line => line.replace(/^\s*[\d-*•]+\.?\s*/, '').trim()) // Rimuovi numerazione/bullet
-                        .map(line => line.replace(labelRegex, '')) // Rimuovi etichette Tono/Livello
-                        .filter(line => line.length > 3 && !/^\s*$/.test(line) && !/^(---|\bSPIEGAZIONE\b|\bALTERNATIVE\b|\[\s*Alternativa)/i.test(line)); // Filtri robusti
-                } else {
-                    alternatives = [];
-                     console.warn("Separatore ALTERNATIVE non trovato o vuoto.");
-                }
-
-                 // Assicurati ci siano sempre 3 alternative, riempiendo con N/A se necessario
-                 while (alternatives.length < 3) alternatives.push("N/A");
-                 alternatives = alternatives.slice(0, 3);
-
-                console.log("Parsed Rephrase:", { rephrasedText: rephrasedText.substring(0,100)+"...", explanation, alternatives });
-                return {
-                    text: rephrasedText,
-                    isRephrase: true,
-                    tone: tone,
-                    explanation: explanation,
-                    alternatives: alternatives,
-                    cefrLevel: cefrLevel // *** AGGIUNTA: Ritorna il livello usato ***
-                };
-            } else { // Solo Correzione
-                console.log("Parsed Correction:", { text: generatedText.substring(0,100)+"..." });
-                 // Pulizia base per sola correzione (rimuove eventuali separatori se l'AI li include per errore)
-                 if (/---[A-Z_]+---|\bSPIEGAZIONE:|\bALTERNATIVE:/i.test(generatedText)) {
-                    console.warn("Formato inatteso per correzione, applico pulizia base...");
-                    generatedText = generatedText.split(/---[A-Z_]+---|\bSPIEGAZIONE:|\bALTERNATIVE:/i)[0].trim();
-                 }
-                 return {
-                    text: generatedText,
-                    isRephrase: false,
-                    tone: null,
-                    explanation: null,
-                    alternatives: null,
-                    cefrLevel: null // *** AGGIUNTA: Ritorna null ***
-                 };
-            }
-        } catch (error) {
-            console.error("Errore chiamata/parsing API:", error);
-            // Rilancia l'errore per gestirlo in handleProcessClick
-            throw error;
-        }
+            if (!response.ok) { let eD=`Status:${response.status}. `; try{const d=await response.json(); eD+=d?.error?.message||JSON.stringify(d);}catch{try{eD+=await response.text();}catch{}} console.error("API Err Sinonimi:", eD); throw new Error(`Errore API Sinonimi. ${eD}`); }
+            const data = await response.json(); const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (typeof rawText !== 'string') { if (typeof data.candidates?.[0]?.content?.parts?.[0]?.jsonObject === 'object') { console.log("API ha ritornato JSON obj."); const jObj = data.candidates?.[0]?.content?.parts?.[0]?.jsonObject; if (Array.isArray(jObj)) return jObj; console.warn("JSON obj non è array:", jObj); return []; } throw new Error("Risposta API sinonimi vuota/inattesa."); }
+            console.log("API Sinonimi raw:", rawText);
+            let parsed = []; try { parsed = JSON.parse(rawText); if (!Array.isArray(parsed)) { console.warn("Risposta sinonimi non è array."); parsed = []; } } catch (e) { console.error("Errore parsing JSON sinonimi:", e); console.warn("Contenuto:", rawText); parsed = []; }
+            console.log("Sinonimi parsati:", parsed); return parsed;
+        } catch (error) { console.error("Errore fetch/parse API Sinonimi:", error); throw error; }
     }
 
+    async function processTextWithAI(text, language, useProofreading, useRephrasing) {
+        if (!API_KEY || API_KEY.includes("YOUR_API") || API_KEY.length < 20) { throw new Error("Chiave API non valida."); }
+        const isStyleMatch=useRephrasing&&styleMatchCheck?.checked; const styleDesc=useRephrasing&&writingStyleInput?writingStyleInput.value.trim():''; const styleSample=useRephrasing&&sampleTextInput?sampleTextInput.value.trim():''; const tone=useRephrasing&&defaultToneSelect?defaultToneSelect.value:'neutral'; const intensity=useRephrasing&&toneIntensitySelect?toneIntensitySelect.value:'normal'; const cefrLevel=useRephrasing&&cefrLevelSelect&&cefrLevelSelect.value!=='none'?cefrLevelSelect.value:null; const langName=getLanguageName(language);
+        console.log("Prompt Opts:",{useProofreading,useRephrasing,isStyleMatch,tone,intensity,cefrLevel}); let promptBase=`Sei un esperto linguista ${langName}.\n\n`; let expectedFormat=""; let genCfg={};
+        if(useRephrasing){ promptBase+=`COMPITO: 1) CORREGGI errori, POI 2) RIFORMULA testo CORRETTO in SOLO ${langName}(${language}).\nISTRUZIONI:\n1. LINGUA: Output ${langName.toUpperCase()}.\n2. CORREGGI PRIMA.\n3. RIFORMULA+TONO(${tone.toUpperCase()})+INTENSITÀ(${getIntensityDisplayName(intensity).toUpperCase()}): Applica tono/intensità. Riscrivi.\n`; let i=4; promptBase+=`${i++}. DEF INTENSITÀ: Leggera=sottile, Normale=equilibrato, Forte=marcato.\n`; if(cefrLevel){promptBase+=`${i++}. LIVELLO(CEFR ${cefrLevel.toUpperCase()}): Adatta a livello ${cefrLevel}.\n`;} promptBase+=`${i++}. SIGNIFICATO: Preserva.\n`; promptBase+=`${i++}. DEF TONI: Formal=elevato, Friendly=colloquiale, Professional=conciso, Casual=informale, Sarcastic=ironia, Neutral=oggettivo.\n`; if(isStyleMatch&&(styleDesc||styleSample)){promptBase+=`${i++}. STILE PERSONALE(Prioritario): Adatta a stile("${styleDesc}"/"${styleSample}"). COMBINA.\n\n`;}else{promptBase+="\n";} expectedFormat=`\nFORMATO(SEPARATORI):\n---TESTO_RIFORMULATO_START---\n[Testo T:${tone}/I:${intensity}${cefrLevel?`/L:${cefrLevel}`:''}. NO ETICHETTE.]\n---TESTO_RIFORMULATO_END---\n---SPIEGAZIONE_START---\n[Breve spiegazione.]\n---SPIEGAZIONE_END---\n---ALTERNATIVE_START---\n[3 alt CONCISE T:${tone}/I:${intensity}${cefrLevel?`/L:${cefrLevel}`:''}. USA SINONIMI. Numera 1.2.3. NO ETICHETTE.]\n1.[Alt1]\n2.[Alt2]\n3.[Alt3]\n---ALTERNATIVE_END---`; genCfg={temperature:(tone==='sarcastic'?0.95:0.90),topP:0.95,topK:50};}
+        else if(useProofreading){ promptBase+=`COMPITO: Correggi SOLO errori oggettivi in ${langName}.\nREGOLE: 1. Output solo ${langName.toUpperCase()}. 2. NON MODIFICARE stile/tono/struttura. 3. NON RIFORMULARE. 4. MINIMALISMO.\n\n`; expectedFormat=`\nFORMATO: SOLO testo corretto in ${langName}.`; genCfg={temperature:0.0,topP:0.7,topK:10};}
+        else{throw new Error("Nessuna azione specificata.");}
+        promptBase+=`TESTO ORIGINALE(${langName}):\n\`\`\`\n${text}\n\`\`\`${expectedFormat}`;
+        const systemPrompt=promptBase; console.log("Prompt(500):",systemPrompt.substring(0,500)+"..."); const tkBase=350,tkMult=useRephrasing?3.8:1.2,tkIn=Math.floor(text.length/3); const maxTk=Math.min(8000,Math.max(450,Math.floor(tkBase+tkIn*tkMult))); const reqBody={contents:[{parts:[{text:systemPrompt}]}],generationConfig:{...genCfg,maxOutputTokens:maxTk}}; console.log("Gen Cfg:",reqBody.generationConfig);
+        try{ const resp=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(reqBody)}); if(!resp.ok){let eD=`Status:${resp.status}. `;try{const d=await resp.json();eD+=d?.error?.message||JSON.stringify(d);}catch{try{eD+=await resp.text();}catch{}} console.error("API Err:",eD);throw new Error(`Errore API. ${eD}`);} const data=await resp.json(); const cand=data.candidates?.[0]; const finR=cand?.finishReason, blkR=data.promptFeedback?.blockReason; const safeR=JSON.stringify(cand?.safetyRatings||data.promptFeedback?.safetyRatings||{}); if(blkR)throw new Error(`Bloccato(${blkR}). R:${safeR}`); if(finR&&finR!=="STOP"&&!(finR==="MAX_TOKENS"&&cand?.content?.parts?.[0]?.text)){throw new Error(`Interrotto(${finR}). R:${safeR}`);} let genTxt=cand?.content?.parts?.[0]?.text?.trim(); if(!genTxt)throw new Error("Risposta API vuota."); console.log("AI Raw:",genTxt.substring(0,500)+"...");
+            if(useRephrasing){ let txt='',expl='',alts=[]; const txtM=genTxt.match(/---TESTO_RIFORMULATO_START---([\s\S]*?)---TESTO_RIFORMULATO_END---/im); const lblRgx=/^\s*(\*\*?)?(TONO|TONE|FORMAL|FRIENDLY|PROFESSIONAL|CASUAL|SARCASTIC|NEUTRAL|INTENSIT[AÀ]|INTENSITY|LEGGERA|LIGHT|NORMALE|NORMAL|FORTE|STRONG|LIVELLO|LEVEL|CEFR|A1|A2|B1|B2|C1|C2)(\*\*?)?\s*[:\(\)-]?\s*\n?/i; if(txtM?.[1]){txt=txtM[1].trim().replace(lblRgx,'');}else{console.warn("Sep TESTO mancante.Fallback.");const endM=/---SPIEGAZIONE_START---|---ALTERNATIVE_START---/im;const endI=genTxt.search(endM);txt=(endI!==-1?genTxt.substring(0,endI):genTxt).trim().replace(lblRgx,'');if(!txt)txt="[Err parsing]";} const expM=genTxt.match(/---SPIEGAZIONE_START---([\s\S]*?)---SPIEGAZIONE_END---/im); expl=expM?.[1]?.trim()??"N/A."; const altM=genTxt.match(/---ALTERNATIVE_START---([\s\S]*?)---ALTERNATIVE_END---/im); if(altM?.[1]){alts=altM[1].trim().split('\n').map(l=>l.replace(/^\s*[\d-*•]+\.?\s*/,'').trim().replace(lblRgx,'')).filter(l=>l.length>3&&!/^\s*$/.test(l)&&!/^(---|\bSPIEGAZIONE\b|\bALTERNATIVE\b|\[\s*Alternativa)/i.test(l));}else{console.warn("Sep ALT mancante.");alts=[];} while(alts.length<3)alts.push("N/A"); alts=alts.slice(0,3); console.log("Parsed Rephrase:",{txt:txt.substring(0,100)+"...",expl,alts}); return{text:txt,isRephrase:true,tone,intensity,explanation:expl,alternatives:alts,cefrLevel};}
+            else{ console.log("Parsed Correction:",{text:genTxt.substring(0,100)+"..."}); if(/---[A-Z_]+---|\bSPIEGAZIONE:|\bALTERNATIVE:/i.test(genTxt)){console.warn("Formato correz inatteso, pulisco...");genTxt=genTxt.split(/---[A-Z_]+---|\bSPIEGAZIONE:|\bALTERNATIVE:/i)[0].trim();} return{text:genTxt,isRephrase:false,tone:null,intensity:null,explanation:null,alternatives:null,cefrLevel:null};}
+        }catch(error){console.error("Err API call/parse:",error);throw error;}
+    }
 
     // --- Funzione Principale ---
     async function handleProcessClick() {
-        console.log("+++++ handleProcessClick v12 (CEFR) avviato +++++");
-        // Verifica elementi critici e API Key...
-        if (!API_KEY || API_KEY.includes("YOUR_API") || API_KEY.length < 20) { handleError("init", new Error("Chiave API mancante/non valida."), true); return; }
-        const isAnyActionSelected = proofreadingCheck.checked || rephraseCheck.checked;
-        if (!isAnyActionSelected) { showToast(getTranslation('noActionError'), 'bg-yellow-500'); return; }
-
+        console.log("+++++ handleProcessClick v14.2 avviato +++++");
+        if (!API_KEY || API_KEY.includes("YOUR_API") || API_KEY.length < 20) { handleError("init", new Error("Chiave API non valida."), true); return; }
+        const isAny = proofreadingCheck.checked || rephraseCheck.checked; if (!isAny) { showToast(getTranslation('noActionError'), 'bg-yellow-500'); return; }
         try {
-            const textToProcess = inputText.value.trim();
-            if (!textToProcess) { showToast('Inserisci un testo', 'bg-yellow-500'); return; }
-
-            // Reset UI
-            resultsSection.classList.add('hidden');
-            if(originalTextHighlighted) originalTextHighlighted.textContent = textToProcess;
-            if(correctedText) correctedText.textContent = '';
-            if(originalCount) originalCount.textContent = countWords(textToProcess) + ' parole';
-            if(correctedCount) correctedCount.textContent = '0 parole';
-            hideExpandablePanels();
-            setLoadingState(true, 'loading'); // Inizia con "Rilevamento lingua..."
-
-            // Rilevamento Lingua
-            let language = 'it'; // Default fallback
-            const preferredSetting = preferredLangSelect.value;
-            if (preferredSetting === 'auto') {
-                language = await detectLanguageWithGeminiAPI(textToProcess);
-                console.log("Lingua rilevata (auto):", language);
-            } else {
-                language = preferredSetting;
-                console.log("Lingua selezionata:", language);
-            }
-             if (!SUPPORTED_LANGS.includes(language)) {
-                console.warn(`Lingua rilevata/selezionata '${language}' non supportata, fallback a 'it'.`);
-                language = 'it';
-             }
-            setDetectedLanguageUI(language); // Aggiorna UI lingua
-            setLoadingState(true, 'processing'); // Cambia stato in "Elaborazione..."
-            console.log(`Chiamo API per elaborare in: ${language} (${getLanguageName(language)})`);
-
-            // Determina opzioni per API
-            const useRephrasing = rephraseCheck.checked;
-            // La correzione è implicita nella riformulazione nel nuovo prompt, ma la passiamo comunque
-            // per determinare il tipo di prompt da usare (proofread vs rephrase)
-            const useProofreading = proofreadingCheck.checked;
-            console.log("Opzioni REALI per API:", { useProofreading, useRephrasing });
-
-            // Chiamata API
-            const result = await processTextWithAI(textToProcess, language, useProofreading, useRephrasing);
-            console.log("Risultato AI ricevuto:", { ...result, text: result.text.substring(0, 100) + "..." }); // Logga risultato troncato
-
-             // Estrai dati dal risultato
-             const { text: resultText, isRephrase: resultIsRephrase, tone, explanation: explanationText, alternatives, cefrLevel: resultCefrLevel } = result;
-
-            if (!resultText || resultText.trim().length === 0 || resultText.startsWith("[Errore")) {
-                 throw new Error(`API ha restituito testo vuoto o un errore interno: ${resultText}`);
-            }
-
-            // Visualizzazione Risultati
-            resultsSection.classList.remove('hidden');
-            correctedText.textContent = resultText; // Mostra testo elaborato
-            if (correctedCount) correctedCount.textContent = countWords(resultText) + ' parole';
-
-            // Mostra differenze
-            if (typeof Diff !== 'undefined') {
-                displayDifferences(textToProcess, resultText, language, resultIsRephrase);
-            } else {
-                if(originalTextHighlighted) originalTextHighlighted.textContent = textToProcess; // Mostra originale senza highlight
-                console.warn("Libreria Diff.js non trovata. Impossibile evidenziare differenze.");
-            }
-
-            // Mostra/Nascondi pannelli aggiuntivi
-            if (resultIsRephrase) {
-                displayRephraseAnalysis(tone, explanationText, alternatives);
-                hideCorrectionsPanel(); // Nascondi spiegazioni correzioni se è riformulazione
-            } else {
-                hideRephraseAnalysisPanel(); // Nascondi analisi riformulazione
-                const cl = document.getElementById('corrections-list');
-                const ct = correctionsToggleBtn;
-                // Mostra bottone correzioni solo se ci sono correzioni listate
-                if (cl && ct && cl.children.length > 0) {
-                    ct.classList.remove('hidden');
-                } else {
-                    hideCorrectionsPanel();
-                }
-            }
-
-            showToast(getTranslation('success'), 'bg-green-500');
-            // *** MODIFICA: Passa resultCefrLevel a saveToHistory ***
-            saveToHistory(textToProcess, resultText, resultIsRephrase, tone, explanationText, alternatives, resultCefrLevel);
-            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-        } catch (error) {
-            // Gestione centralizzata errori
-            handleError('handleProcessClick', error, error.message.includes("Chiave API")); // Mostra alert solo per errori API key
-        } finally {
-            // Assicura che lo stato di loading sia rimosso
-            setLoadingState(false);
-        }
+            const txtIn = inputText.value.trim(); if (!txtIn) { showToast('Inserisci testo', 'bg-yellow-500'); return; }
+            resultsSection.classList.add('hidden'); if(originalTextHighlighted) originalTextHighlighted.textContent=txtIn; if(correctedText) correctedText.textContent=''; if(originalCount) originalCount.textContent=countWords(txtIn)+' parole'; if(correctedCount) correctedCount.textContent='0 parole'; hideExpandablePanels(); setLoadingState(true, 'loading');
+            let lang = 'it'; const prefSet = preferredLangSelect.value; if (prefSet === 'auto') { lang = await detectLanguageWithGeminiAPI(txtIn); } else { lang = prefSet; } if (!SUPPORTED_LANGS.includes(lang)) { console.warn(`Lingua '${lang}' non supportata, fallback 'it'.`); lang = 'it'; } setDetectedLanguageUI(lang); setLoadingState(true, 'processing'); console.log(`API call: ${lang} (${getLanguageName(lang)})`);
+            const useReph = rephraseCheck.checked, useProof = proofreadingCheck.checked;
+            const result = await processTextWithAI(txtIn, lang, useProof, useReph);
+            console.log("API Result:", { ...result, text: result.text.substring(0,100)+"..." });
+            const { text: resTxt, isRephrase: isReph, tone, intensity: intensity, explanation: expl, alternatives: alts, cefrLevel: cefr } = result;
+            if (!resTxt || resTxt.trim().length === 0 || resTxt.startsWith("[Errore")) { throw new Error(`API ha ritornato testo vuoto/errore: ${resTxt}`); }
+            resultsSection.classList.remove('hidden'); correctedText.textContent = resTxt; if (correctedCount) correctedCount.textContent = countWords(resTxt) + ' parole';
+            displayDifferences(txtIn, resTxt, lang, isReph);
+            if (isReph) { displayRephraseAnalysis(tone, intensity, expl, alts); hideCorrectionsPanel(); } else { hideRephraseAnalysisPanel(); /* Diff gestisce bottone */ }
+            showToast(getTranslation('success'), 'bg-green-500'); saveToHistory(txtIn, resTxt, isReph, tone, intensity, expl, alts, cefr); resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } catch (error) { handleError('handleProcessClick', error, error.message.includes("Chiave API")); } finally { setLoadingState(false); }
     }
-
 
     // --- Inizializzazione App ---
     async function initializeApp() {
-        console.log("Inizializzazione v12 (CEFR)...");
-        // Verifica elementi critici (già fatta all'inizio)
-
+        console.log("Inizializzazione v14.2...");
         let initialLangSetting = 'auto';
         try {
-            const p = JSON.parse(localStorage.getItem('textai-prefs') || '{}');
-            console.log("Preferenze caricate:", p);
-
-            // Carica lingua
-            if (p.lang && (SUPPORTED_LANGS.includes(p.lang) || p.lang === 'auto')) {
-                initialLangSetting = p.lang;
-                console.log("Pref lingua:", initialLangSetting);
-            } else { console.log("Nessuna pref lingua valida, uso 'auto'."); }
-
-            // Carica tono
-            if (p.tone && defaultToneSelect && [...defaultToneSelect.options].some(o => o.value === p.tone)) {
-                defaultToneSelect.value = p.tone;
-                console.log("Pref tono:", p.tone);
-            }
-
-            // *** AGGIUNTA: Carica livello CEFR ***
-            if (p.cefr && cefrLevelSelect && [...cefrLevelSelect.options].some(o => o.value === p.cefr)) {
-                cefrLevelSelect.value = p.cefr;
-                console.log("Pref CEFR:", p.cefr);
-            }
-
-            // Carica stati checkbox
-            if (typeof p.proofread === 'boolean' && proofreadingCheck) proofreadingCheck.checked = p.proofread;
-            if (typeof p.rephrase === 'boolean' && rephraseCheck) rephraseCheck.checked = p.rephrase;
+            const prefsString = localStorage.getItem('textai-prefs');
+            const p = prefsString ? JSON.parse(prefsString) : {};
+            console.log("Preferenze caricate (proofread/rephrase verranno ignorate):", p);
+            // Carica preferenze NON relative alle checkbox proofread/rephrase
+            if (p.lang && (SUPPORTED_LANGS.includes(p.lang) || p.lang === 'auto')) { initialLangSetting = p.lang; }
+            if (p.tone && defaultToneSelect && [...defaultToneSelect.options].some(o => o.value === p.tone)) { defaultToneSelect.value = p.tone; }
+            if (p.intensity && toneIntensitySelect && [...toneIntensitySelect.options].some(o => o.value === p.intensity)) { toneIntensitySelect.value = p.intensity; }
+            if (p.cefr && cefrLevelSelect && [...cefrLevelSelect.options].some(o => o.value === p.cefr)) { cefrLevelSelect.value = p.cefr; }
             if (typeof p.matchStyle === 'boolean' && styleMatchCheck) styleMatchCheck.checked = p.matchStyle;
-
         } catch(e) {
-            console.warn("Impossibile leggere o applicare preferenze:", e);
-             localStorage.removeItem('textai-prefs'); // Rimuovi prefs corrotte
+            console.warn("Impossibile leggere preferenze, uso default:", e);
+            localStorage.removeItem('textai-prefs');
         }
 
-        // Applica lingua iniziale all'UI
+        // *** CORREZIONE DEFAULT CHECKBOX: Forza SEMPRE lo stato desiderato all'avvio ***
+        if (proofreadingCheck) proofreadingCheck.checked = true;
+        if (rephraseCheck) rephraseCheck.checked = false;
+        console.log(`Stato checkbox FORZATO all'avvio: Proofreading=${proofreadingCheck?.checked}, Rephrase=${rephraseCheck?.checked}`);
+        // *** FINE CORREZIONE DEFAULT CHECKBOX ***
+
+        // --- Resto dell'inizializzazione ---
         if (preferredLangSelect) preferredLangSelect.value = initialLangSetting;
+        let langToSet = 'it';
         if (initialLangSetting === 'auto') {
              if(detectedLang) detectedLang.textContent = "Automatico";
-        } else {
-             setDetectedLanguageUI(initialLangSetting);
-        }
+             const currentInputText = inputText?.value;
+             if (currentInputText && API_KEY && !API_KEY.includes("YOUR_API")) {
+                 try {
+                     const detected = await detectLanguageWithGeminiAPI(currentInputText.substring(0, 200));
+                     if (detected && SUPPORTED_LANGS.includes(detected)) { langToSet = detected; }
+                 } catch { /* ignore */ }
+             }
+        } else { langToSet = initialLangSetting; }
+        setDetectedLanguageUI(langToSet);
 
         try {
              hideExpandablePanels();
-             updateStyleOptionsState(); // Aggiorna stato opzioni stile/livello in base ai checkbox caricati
+             updateStyleOptionsState(); // Aggiorna visibilità opzioni in base allo stato FORZATO di rephrase
              updateProcessButtonState(); // Aggiorna stato bottone principale
-        } catch (uiError) {
-             handleError("initializeApp UI updates", uiError);
-        }
+        } catch (uiError) { handleError("initializeApp UI updates", uiError); }
 
-        // Imposta testo di default se l'input è vuoto
+        // Imposta testo di default se vuoto
         if (inputText && !inputText.value) {
-             let dT = "";
-             // Usa lingua preferita (non auto) o italiano per il testo default
-             const langForDefault = (initialLangSetting !== 'auto' && SUPPORTED_LANGS.includes(initialLangSetting)) ? initialLangSetting : 'it';
+             let dT = ""; const langForDefault = currentLanguage || 'it';
              switch (langForDefault) {
                  case 'ru': dT = "Привет мир! Как дила? Этот текст содержит ашибки для примера."; break;
                  case 'en': dT = "Helo world! How are you doing? This examples contains some mistaks."; break;
@@ -1106,22 +1146,21 @@ FORMATO RISPOSTA OBBLIGATORIO (USA SEPARATORI ESATTI IN ${langName.toUpperCase()
                  case 'de': dT = "Hallo Welt! Wie gehts? Dieser Text enthält einige Feler."; break;
                  case 'pt': dT = "Ola mundo! Como voce esta? Este texto contem alguns erros."; break;
                  case 'ar': dT = "مرحباً بالعالم! كيف حالك؟ هذا النص يحتوي على بعض الأخطاء كمثال."; break;
-                 case 'it':
-                 default: dT = "Qual'è il propiettario di questa casa? Sembra molto bella e avvolte penso di comprarla perchè mi piace.";
+                 case 'it': default: dT = "Qual'è il propiettario di questa casa? Sembra molto bella e avvolte penso di comprarla perchè mi piace.";
               }
               try { inputText.value = dT; console.log("Testo default impostato per:", langForDefault); }
              catch (textErr) { handleError("initializeApp set default text", textErr); }
-        } else if (inputText) {
-             console.log("Trovato testo esistente nell'input.");
-        }
-
+        } else if (inputText) { console.log("Trovato testo esistente."); }
         console.log("Inizializzazione completata.");
     }
 
     // Avvia l'applicazione
-    initializeApp().catch(err => handleError("initializeApp Global", err, true)); // Cattura errori globali init
+    initializeApp().catch(err => handleError("initializeApp Global", err, true));
 
 }); // Fine DOMContentLoaded
-</script>            
+
+
+
+    </script>            
 </body>
 </html>
