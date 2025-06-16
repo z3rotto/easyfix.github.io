@@ -6,15 +6,17 @@ app.use(express.json());
 app.use(express.static('.'));
 
 app.post('/api/generateContent', async (req, res) => {
-  const apiKey = process.env.API_KEY;
+  const apiKey = req.body.apiKey || process.env.API_KEY;
   if (!apiKey) {
     return res.status(500).json({ error: 'API key not configured' });
   }
+  const requestBody = { ...req.body };
+  delete requestBody.apiKey;
   try {
     const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(req.body)
+      body: JSON.stringify(requestBody)
     });
     const data = await resp.json();
     res.status(resp.status).json(data);
