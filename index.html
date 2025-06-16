@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Se il file è nella stessa cartella dell'HTML -->
     <script src="jsdiff.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.2/dist/purify.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -568,8 +569,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const historyToggleIcon = document.getElementById('history-toggle-icon');
 
     // --- API Configuration ---
-    const API_KEY = "AIzaSyDWnH7YEbBDG3Ph5JLbUyZVS_RBSb4uxgs"; // <-- INSERISCI LA TUA CHIAVE API VALIDA QUI
-    const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`;
+    const API_URL = '/api/generateContent';
     const SUPPORTED_LANGS = ['it', 'en', 'es', 'fr', 'de', 'ru', 'pt', 'ar'];
 
     // --- UI Translations ---
@@ -687,7 +687,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if(isLoading){
             console.log(`Loading:TRUE (${m})`);
             processingSpinner?.classList.remove('hidden');
-            if(processText) processText.innerHTML=m+'<span class="loading-dots"></span>';
+            if(processText) processText.innerHTML = DOMPurify.sanitize(m+'<span class="loading-dots"></span>');
             if(processBtn) { processBtn.disabled = true; processBtn.classList.add('opacity-50','cursor-not-allowed'); }
         }else{
             console.log("Loading:FALSE");
@@ -731,7 +731,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log(`Apro popup sinonimi per: "${word}"`);
         synonymWordSpan.textContent = word;
         synonymLoading.classList.remove('hidden');
-        synonymResults.classList.add('hidden'); synonymResults.innerHTML = '';
+        synonymResults.classList.add('hidden'); synonymResults.textContent = '';
         synonymError.classList.add('hidden'); synonymNotFound.classList.add('hidden');
         synonymPopup.classList.remove('hidden'); synonymOverlay.classList.remove('hidden');
 
@@ -742,7 +742,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     synonymResults.classList.remove('hidden');
                     synonyms.forEach(item => {
                         const div = document.createElement('div');
-                        div.innerHTML = `<strong class="text-blue-600 dark:text-blue-400">${item.synonym}:</strong> <p class="text-gray-600 dark:text-gray-400 ml-2 italic">${item.usage || 'Nessun esempio fornito.'}</p>`;
+                        const strong = document.createElement('strong');
+                        strong.className = 'text-blue-600 dark:text-blue-400';
+                        strong.textContent = `${item.synonym}:`;
+                        const p = document.createElement('p');
+                        p.className = 'text-gray-600 dark:text-gray-400 ml-2 italic';
+                        p.textContent = item.usage || 'Nessun esempio fornito.';
+                        div.appendChild(strong);
+                        div.appendChild(p);
                         synonymResults.appendChild(div);
                     });
                 } else { synonymNotFound.classList.remove('hidden'); }
@@ -917,7 +924,6 @@ document.addEventListener('DOMContentLoaded', function() {
     async function detectLanguageWithGeminiAPI(text){
         console.log("Chiamo API per rilevare lingua...");
         const preferredLang = preferredLangSelect ? (preferredLangSelect.value !== 'auto' ? preferredLangSelect.value : 'it') : 'it';
-        if(!API_KEY || API_KEY.includes("YOUR_API") || API_KEY.length < 20){ console.error("Chiave API mancante/non valida."); return preferredLang; }
         if(!text || text.trim().length < 10){ console.log("Testo breve, uso lingua preferita:", preferredLang); return preferredLang; }
         const prompt = `Identify the main language (ISO 639-1 code) from [${SUPPORTED_LANGS.join(', ')}] for: "${text.substring(0,500)}"... Respond ONLY with the 2-letter code or 'und'.`;
         const request = { contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.0, maxOutputTokens: 5, stopSequences: ["\n"] } };
@@ -944,16 +950,16 @@ document.addEventListener('DOMContentLoaded', function() {
     function displayRephraseAnalysis(tone, intensity, explanationText, alternatives) {
         let analysisBox = document.getElementById('rephrased-analysis-box');
         if (!analysisBox) { analysisBox = document.createElement('div'); analysisBox.id = 'rephrased-analysis-box'; analysisBox.className = 'bg-blue-50 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 rounded-lg p-4 mt-6 mb-8';
-            analysisBox.innerHTML = `<h3 id="rephrased-analysis-title" class="text-lg font-medium text-blue-800 dark:text-blue-200 mb-3"></h3><div class="mb-4 p-3 bg-white dark:bg-gray-800 rounded-lg border border-blue-200 dark:border-blue-600"><h4 class="text-md font-medium text-gray-700 dark:text-gray-300 mb-2">Motivazione:</h4><div id="explanation-content" class="text-gray-600 dark:text-gray-400 text-sm"></div></div><div><h4 class="text-md font-medium text-gray-700 dark:text-gray-300 mb-2">Alternative:</h4><div id="alternatives-list" class="space-y-2"></div></div>`;
+            analysisBox.innerHTML = DOMPurify.sanitize(`<h3 id="rephrased-analysis-title" class="text-lg font-medium text-blue-800 dark:text-blue-200 mb-3"></h3><div class="mb-4 p-3 bg-white dark:bg-gray-800 rounded-lg border border-blue-200 dark:border-blue-600"><h4 class="text-md font-medium text-gray-700 dark:text-gray-300 mb-2">Motivazione:</h4><div id="explanation-content" class="text-gray-600 dark:text-gray-400 text-sm"></div></div><div><h4 class="text-md font-medium text-gray-700 dark:text-gray-300 mb-2">Alternative:</h4><div id="alternatives-list" class="space-y-2"></div></div>`);
             resultsSection?.parentNode?.insertBefore(analysisBox, resultsSection.nextSibling); }
         const analysisTitle = analysisBox.querySelector('#rephrased-analysis-title');
         if (analysisTitle) analysisTitle.textContent = `Analisi Riformulazione (Tono: ${getToneDisplayName(tone)} / Intensità: ${getIntensityDisplayName(intensity)})`;
         const explanationContent = analysisBox.querySelector('#explanation-content');
         if (explanationContent) explanationContent.textContent = explanationText || "N/A.";
         const alternativesList = analysisBox.querySelector('#alternatives-list');
-        if (alternativesList) { alternativesList.innerHTML = ''; let validAlts = 0;
-             if (alternatives?.length > 0) { alternatives.forEach(alt => { if (!alt || alt.toLowerCase()==="n/a" || alt.trim()==='') return; validAlts++; const item = document.createElement('div'); item.className='p-2 bg-gray-50 dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600 flex justify-between items-center cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors'; item.dataset.alternativeItem='true'; const txt=document.createElement('div'); txt.className='flex-grow mr-2 text-sm text-gray-800 dark:text-gray-200'; txt.textContent=alt; const btn=document.createElement('button'); btn.className='text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-xs flex items-center shrink-0 ml-2'; btn.innerHTML=`<svg class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor"><path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"></path></svg> Copia`; btn.onclick=(e)=>{e.stopPropagation();copyTextToClipboard(alt);}; item.appendChild(txt); item.appendChild(btn); item.onclick=()=>{if(correctedText)correctedText.textContent=alt;if(correctedCount)correctedCount.textContent=countWords(alt)+' parole';alternativesList.querySelectorAll('[data-alternative-item="true"]').forEach(i=>i.classList.remove('bg-blue-100','dark:bg-blue-900','border-blue-300','dark:border-blue-500'));item.classList.add('bg-blue-100','dark:bg-blue-900','border-blue-300','dark:border-blue-500');}; alternativesList.appendChild(item); }); }
-             if (validAlts === 0) { alternativesList.innerHTML = '<p class="text-sm text-gray-500 dark:text-gray-400">Nessuna alternativa valida fornita.</p>'; }
+        if (alternativesList) { alternativesList.textContent = ''; let validAlts = 0;
+             if (alternatives?.length > 0) { alternatives.forEach(alt => { if (!alt || alt.toLowerCase()==="n/a" || alt.trim()==='') return; validAlts++; const item = document.createElement('div'); item.className='p-2 bg-gray-50 dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600 flex justify-between items-center cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors'; item.dataset.alternativeItem='true'; const txt=document.createElement('div'); txt.className='flex-grow mr-2 text-sm text-gray-800 dark:text-gray-200'; txt.textContent=alt; const btn=document.createElement('button'); btn.className='text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-xs flex items-center shrink-0 ml-2'; btn.innerHTML=DOMPurify.sanitize('<svg class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor"><path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"></path></svg> Copia'); btn.onclick=(e)=>{e.stopPropagation();copyTextToClipboard(alt);}; item.appendChild(txt); item.appendChild(btn); item.onclick=()=>{if(correctedText)correctedText.textContent=alt;if(correctedCount)correctedCount.textContent=countWords(alt)+' parole';alternativesList.querySelectorAll('[data-alternative-item="true"]').forEach(i=>i.classList.remove('bg-blue-100','dark:bg-blue-900','border-blue-300','dark:border-blue-500'));item.classList.add('bg-blue-100','dark:bg-blue-900','border-blue-300','dark:border-blue-500');}; alternativesList.appendChild(item); }); }
+             if (validAlts === 0) { alternativesList.innerHTML = DOMPurify.sanitize('<p class="text-sm text-gray-500 dark:text-gray-400">Nessuna alternativa valida fornita.</p>'); }
         }
         if(analysisBox) analysisBox.classList.remove('hidden');
     }
@@ -962,18 +968,18 @@ document.addEventListener('DOMContentLoaded', function() {
         const correctionsListDiv = document.getElementById('corrections-list');
         const toggleButton = correctionsToggleBtn; const originalHighlightDiv = originalTextHighlighted;
         if (!correctionsListDiv || !originalHighlightDiv) { console.error("Elementi Diff mancanti"); if(originalHighlightDiv) originalHighlightDiv.textContent = original; return; }
-        correctionsListDiv.innerHTML = ''; let correctionCount = 0; hideCorrectionsPanel();
+        correctionsListDiv.textContent = ''; let correctionCount = 0; hideCorrectionsPanel();
         if (typeof Diff === 'undefined') { console.warn("Diff.js non caricato."); originalHighlightDiv.textContent = original; return; }
         const diff = Diff.diffWords(original, result, { ignoreWhitespace: false }); let originalHtml = '';
         diff.forEach((part, index) => {
             const escapedValue = part.value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;").replace(/\n/g, '<br>');
             if (part.removed) { originalHtml += `<span class="diff-removed">${escapedValue}</span>`;
-                 if (!isRephraseResult) { const nextPart = diff[index + 1]; if (!nextPart?.added) { const item=document.createElement('div');item.className='correction-item p-2 border-l-2 border-red-400 dark:border-red-600 mb-1 bg-red-50 dark:bg-red-900/20';item.innerHTML=`<div><span class="correction-original text-red-600 dark:text-red-400 line-through">${part.value}</span></div><div class="correction-explanation text-xs text-gray-500 dark:text-gray-400 mt-1">Testo rimosso.</div>`; correctionsListDiv.appendChild(item); correctionCount++; } } }
+                 if (!isRephraseResult) { const nextPart = diff[index + 1]; if (!nextPart?.added) { const item=document.createElement('div');item.className='correction-item p-2 border-l-2 border-red-400 dark:border-red-600 mb-1 bg-red-50 dark:bg-red-900/20';item.innerHTML=DOMPurify.sanitize(`<div><span class="correction-original text-red-600 dark:text-red-400 line-through">${part.value}</span></div><div class="correction-explanation text-xs text-gray-500 dark:text-gray-400 mt-1">Testo rimosso.</div>`); correctionsListDiv.appendChild(item); correctionCount++; } } }
             else if (part.added) { originalHtml += `<span class="diff-added" style="background-color: rgba(16, 185, 129, 0.1); padding: 1px 0; border-bottom: 1px dashed #10B981;">${escapedValue}</span>`;
-                 if (!isRephraseResult) { const prevPart = diff[index - 1]; let expTxt="Testo aggiunto."; let origSeg=''; if (prevPart?.removed){expTxt=generateExplanation(prevPart.value,part.value,language);origSeg=`<span class="correction-original text-red-600 dark:text-red-400 line-through">${prevPart.value}</span> → `;} const item=document.createElement('div');item.className='correction-item p-2 border-l-2 border-green-400 dark:border-green-600 mb-1 bg-green-50 dark:bg-green-900/20';item.innerHTML=`<div>${origSeg}<span class="correction-corrected text-green-700 dark:text-green-400 font-medium">${part.value}</span></div><div class="correction-explanation text-xs text-gray-500 dark:text-gray-400 mt-1">${expTxt}</div>`; correctionsListDiv.appendChild(item); correctionCount++; } }
+                 if (!isRephraseResult) { const prevPart = diff[index - 1]; let expTxt="Testo aggiunto."; let origSeg=''; if (prevPart?.removed){expTxt=generateExplanation(prevPart.value,part.value,language);origSeg=`<span class="correction-original text-red-600 dark:text-red-400 line-through">${prevPart.value}</span> → `;} const item=document.createElement('div');item.className='correction-item p-2 border-l-2 border-green-400 dark:border-green-600 mb-1 bg-green-50 dark:bg-green-900/20';item.innerHTML=DOMPurify.sanitize(`<div>${origSeg}<span class="correction-corrected text-green-700 dark:text-green-400 font-medium">${part.value}</span></div><div class="correction-explanation text-xs text-gray-500 dark:text-gray-400 mt-1">${expTxt}</div>`); correctionsListDiv.appendChild(item); correctionCount++; } }
             else { originalHtml += escapedValue; }
         });
-        originalHighlightDiv.innerHTML = originalHtml;
+        originalHighlightDiv.innerHTML = DOMPurify.sanitize(originalHtml);
         if (!isRephraseResult && correctionCount > 0 && toggleButton) { toggleButton.classList.remove('hidden'); }
     }
 
@@ -997,7 +1003,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const historyListDiv = document.getElementById('history-list'); const noHistoryMsg = document.getElementById('no-history-message');
             if (!historyListDiv) { console.error("#history-list non trovato!"); return; }
             let history = []; try { history = JSON.parse(localStorage.getItem('textai-history') || '[]'); } catch { console.error("Errore parsing crono"); } if (!Array.isArray(history)) history = [];
-            historyListDiv.innerHTML = '';
+            historyListDiv.textContent = '';
             if (history.length === 0) { console.log("Crono vuota."); if (noHistoryMsg) { noHistoryMsg.style.display = 'block'; if (!noHistoryMsg.parentNode) historyListDiv.appendChild(noHistoryMsg); } else { const p=document.createElement('p'); p.className='text-gray-500 dark:text-gray-400 text-sm italic px-4 py-2'; p.textContent='Nessuna correzione.'; historyListDiv.appendChild(p); } }
             else { console.log(`Carico ${history.length} el. crono.`); if (noHistoryMsg) noHistoryMsg.style.display = 'none';
                 history.forEach(item => { const itemDiv = document.createElement('div'); itemDiv.className = 'history-item p-3 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer'; itemDiv.dataset.id = item.id;
@@ -1036,7 +1042,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     async function fetchSynonyms(word, language) {
-        if (!API_KEY || API_KEY.includes("YOUR_API")) { throw new Error("API Key non valida."); }
         if (!word || !language || !SUPPORTED_LANGS.includes(language)) { throw new Error("Parola/lingua non valida."); }
         const langName = getLanguageName(language);
         const prompt = `Sei un lessicografo esperto in ${langName}. Trova max 5 sinonimi comuni per "${word}" in ${langName}. Per ognuno, fornisci breve esempio d'uso in ${langName}. Rispondi SOLO con array JSON: [{"synonym": "s1", "usage": "e1."}, ...]. Se non trovi nulla, rispondi con: []`;
@@ -1054,7 +1059,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     async function processTextWithAI(text, language, useProofreading, useRephrasing) {
-        if (!API_KEY || API_KEY.includes("YOUR_API") || API_KEY.length < 20) { throw new Error("Chiave API non valida."); }
         const isStyleMatch=useRephrasing&&styleMatchCheck?.checked; const styleDesc=useRephrasing&&writingStyleInput?writingStyleInput.value.trim():''; const styleSample=useRephrasing&&sampleTextInput?sampleTextInput.value.trim():''; const tone=useRephrasing&&defaultToneSelect?defaultToneSelect.value:'neutral'; const intensity=useRephrasing&&toneIntensitySelect?toneIntensitySelect.value:'normal'; const cefrLevel=useRephrasing&&cefrLevelSelect&&cefrLevelSelect.value!=='none'?cefrLevelSelect.value:null; const langName=getLanguageName(language);
         console.log("Prompt Opts:",{useProofreading,useRephrasing,isStyleMatch,tone,intensity,cefrLevel}); let promptBase=`Sei un esperto linguista ${langName}.\n\n`; let expectedFormat=""; let genCfg={};
         if(useRephrasing){ promptBase+=`COMPITO: 1) CORREGGI errori, POI 2) RIFORMULA testo CORRETTO in SOLO ${langName}(${language}).\nISTRUZIONI:\n1. LINGUA: Output ${langName.toUpperCase()}.\n2. CORREGGI PRIMA.\n3. RIFORMULA+TONO(${tone.toUpperCase()})+INTENSITÀ(${getIntensityDisplayName(intensity).toUpperCase()}): Applica tono/intensità. Riscrivi.\n`; let i=4; promptBase+=`${i++}. DEF INTENSITÀ: Leggera=sottile, Normale=equilibrato, Forte=marcato.\n`; if(cefrLevel){promptBase+=`${i++}. LIVELLO(CEFR ${cefrLevel.toUpperCase()}): Adatta a livello ${cefrLevel}.\n`;} promptBase+=`${i++}. SIGNIFICATO: Preserva.\n`; promptBase+=`${i++}. DEF TONI: Formal=elevato, Friendly=colloquiale, Professional=conciso, Casual=informale, Sarcastic=ironia, Neutral=oggettivo.\n`; if(isStyleMatch&&(styleDesc||styleSample)){promptBase+=`${i++}. STILE PERSONALE(Prioritario): Adatta a stile("${styleDesc}"/"${styleSample}"). COMBINA.\n\n`;}else{promptBase+="\n";} expectedFormat=`\nFORMATO(SEPARATORI):\n---TESTO_RIFORMULATO_START---\n[Testo T:${tone}/I:${intensity}${cefrLevel?`/L:${cefrLevel}`:''}. NO ETICHETTE.]\n---TESTO_RIFORMULATO_END---\n---SPIEGAZIONE_START---\n[Breve spiegazione.]\n---SPIEGAZIONE_END---\n---ALTERNATIVE_START---\n[3 alt CONCISE T:${tone}/I:${intensity}${cefrLevel?`/L:${cefrLevel}`:''}. USA SINONIMI. Numera 1.2.3. NO ETICHETTE.]\n1.[Alt1]\n2.[Alt2]\n3.[Alt3]\n---ALTERNATIVE_END---`; genCfg={temperature:(tone==='sarcastic'?0.95:0.90),topP:0.95,topK:50};}
@@ -1071,7 +1075,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Funzione Principale ---
     async function handleProcessClick() {
         console.log("+++++ handleProcessClick v14.2 avviato +++++");
-        if (!API_KEY || API_KEY.includes("YOUR_API") || API_KEY.length < 20) { handleError("init", new Error("Chiave API non valida."), true); return; }
         const isAny = proofreadingCheck.checked || rephraseCheck.checked; if (!isAny) { showToast(getTranslation('noActionError'), 'bg-yellow-500'); return; }
         try {
             const txtIn = inputText.value.trim(); if (!txtIn) { showToast('Inserisci testo', 'bg-yellow-500'); return; }
@@ -1120,7 +1123,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (initialLangSetting === 'auto') {
              if(detectedLang) detectedLang.textContent = "Automatico";
              const currentInputText = inputText?.value;
-             if (currentInputText && API_KEY && !API_KEY.includes("YOUR_API")) {
+             if (currentInputText) {
                  try {
                      const detected = await detectLanguageWithGeminiAPI(currentInputText.substring(0, 200));
                      if (detected && SUPPORTED_LANGS.includes(detected)) { langToSet = detected; }
