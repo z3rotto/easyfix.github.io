@@ -1,6 +1,6 @@
 # easyfix.github.io
 
-This project now includes a small Node.js proxy to keep your API key secure.
+This project now includes a small Node.js proxy to keep your API key secure. You can also provide your own Google API key directly in the app settings for testing.
 
 ## Development setup
 
@@ -12,4 +12,4 @@ This project now includes a small Node.js proxy to keep your API key secure.
    ```
 3. Start the server with `npm start` and open `http://localhost:3000` in your browser.
 
-The client will call `/api/generateContent`, which the proxy forwards to the official API adding the key from `.env`.
+The client will call `/api/generateContent`, which the proxy forwards to the official API adding the key from `.env` or the one saved in your browser settings.

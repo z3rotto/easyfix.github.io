@@ -347,7 +347,14 @@
                         </div>
                         <!-- FINE Selettore Livello Linguistico CEFR -->
 
-                        
+                        <!-- Campo API Key Google -->
+                        <div class="flex flex-col mt-4">
+                            <label for="api-key" class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">API Key Google</label>
+                            <input id="api-key" type="text" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 bg-white dark:bg-gray-700" placeholder="Inserisci la tua API Key">
+                            <span class="text-xs text-gray-500 dark:text-gray-400 mt-1">La chiave viene salvata solo localmente.</span>
+                        </div>
+
+
                     </div>
                 </div>
 
@@ -515,6 +522,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const sampleTextInput = document.getElementById('sample-text');
     const cefrLevelSelect = document.getElementById('cefr-level');
     const toneIntensitySelect = document.getElementById('tone-intensity');
+    const apiKeyInput = document.getElementById('api-key');
     const correctedText = document.getElementById('corrected-text');
     const originalTextHighlighted = document.getElementById('original-text-highlighted');
 
@@ -534,7 +542,7 @@ document.addEventListener('DOMContentLoaded', function() {
         processBtn, inputText, resultsSection, correctedText, textTab, settingsTab,
         textContent, settingsContent, historyToggleBtn, historyPanel, preferredLangSelect,
         defaultToneSelect, proofreadingCheck, rephraseCheck, styleMatchCheck, writingStyleInput,
-        sampleTextInput, cefrLevelSelect, toneIntensitySelect, originalTextHighlighted,
+        sampleTextInput, cefrLevelSelect, toneIntensitySelect, apiKeyInput, originalTextHighlighted,
         synonymPopup, synonymOverlay, synonymPopupTitle, synonymWordSpan, synonymPopupCloseBtn,
         synonymPopupContent, synonymLoading, synonymResults, synonymError, synonymNotFound
     };
@@ -596,6 +604,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function getLanguageName(c) { return {it:'Italiano', en:'Inglese', es:'Spagnolo', fr:'Francese', de:'Tedesco', ru:'Russo', pt:'Portoghese', ar:'Arabo'}[c] || 'Sconosciuta'; }
     function detectLanguageLocalSimple(t) { if (!t) return 'und'; const tl = t.toLowerCase(); if (/[\u0600-\u06FF]/.test(tl)) return 'ar'; if (/[\u0400-\u04FF]/.test(tl)) return 'ru'; if (/[äöüß]/i.test(tl)) return 'de'; if (/[ãõâçêôú]/i.test(tl)) return 'pt'; if (/[ñ¡¿]/i.test(tl)) return 'es'; if (/[àâæçéèêëîïôùûüÿ]/i.test(tl)) return 'fr'; const itM = (tl.match(/\b(il|la|lo|gli|le|del|che|non|sono|hanno|è|per|con|una|si|ciò)\b/g) || []).length; const enM = (tl.match(/\b(the|and|is|are|was|were|have|has|not|for|with|you|that|this|it|of)\b/g) || []).length; if (itM > enM + 2 && itM >= 3) return 'it'; if (enM > itM + 2 && enM >= 3) return 'en'; return 'und'; }
     function calculateWordOverlap(t1, t2) { if (!t1 || !t2) return 0; const n = (t) => t.toLowerCase().match(/[\p{L}\p{N}]+/gu) || []; const w1 = new Set(n(t1)); const w2 = new Set(n(t2)); if (w1.size === 0) return w2.size === 0 ? 1 : 0; const i = new Set([...w1].filter(x => w2.has(x))); return w1.size > 0 ? i.size / w1.size : (w2.size === 0 ? 1 : 0); }
+function getApiKey() { return apiKeyInput?.value.trim() || localStorage.getItem('textai-api-key') || ''; }
     function generateExplanation(original, corrected, language) { const rules = { 'it': { "qual'è": "qual è", "po'": "po’", "perchè": "perché", "sé stesso": "sé stesso", "avvolte":"a volte", "propietario":"proprietario" }, 'ru': { "делаеш": "делаешь", "привет мир":"Привет, мир!", "как дила":"как дела?", "этат":"этот", "ашибками":"ошибками" }, 'en': { "its": "it's", "it's":"its", "your":"you're", "you're":"your", "their":"there", "there":"their", "they're":"their", "helo":"hello", "mistaks":"mistakes", "exemples":"examples"}, 'es': { "ola":"hola", "estas":"estás", "texo":"texto", "herrores":"errores", "como estas":"cómo estás" }, 'fr': { "bonjur":"bonjour", "ca va":"ça va", "érreurs":"erreurs"}, 'de': { "wie gehts":"wie geht's", "feler":"fehler" }, 'pt': { "voce":"você", "esta":"está", "contem":"contém" }, 'ar': {} }; const langRules = rules[language] || {}; const ot = original.trim(); const ct = corrected.trim(); const on = ot.toLowerCase(); const cn = ct.toLowerCase(); for (const [e, f] of Object.entries(langRules)) { if (on === e.toLowerCase() && cn === f.toLowerCase()) { return `Corretto: '${ot}' → '${ct}'.`; } } const ov = calculateWordOverlap(ot, ct); if (on !== cn && Math.abs(ot.length - ct.length) <= 2 && ov > 0.6) return "Correzione ortografica."; if (ot.replace(/\s+/g, '') !== ct.replace(/\s+/g, '')) { const co = on.replace(/[\P{L}\P{N}\s]+/gu, ''); const cc = cn.replace(/[\P{L}\P{N}\s]+/gu, ''); if (co === cc) return "Correzione punteggiatura/spazi."; } if (ov < 0.8 && ov > 0.2) return "Correzione grammaticale / Modifica struttura."; return "Correzione grammaticale/Miglioramento generico."; }
     function getTranslation(key){let cl=preferredLangSelect?preferredLangSelect.value:'auto';if(cl==='auto'){const lcd=Object.keys(uiTranslations).find(c=>getLanguageName(c)===detectedLang?.textContent?.split(' ')[0]);cl=lcd||'it';}return uiTranslations[cl]?.[key]||uiTranslations['it']?.[key]||key;}
 
@@ -868,6 +877,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     matchStyle: styleMatchCheck?.checked
                 };
                 localStorage.setItem('textai-prefs', JSON.stringify(p));
+                const key = apiKeyInput?.value.trim();
+                if (key) localStorage.setItem('textai-api-key', key);
+                else localStorage.removeItem('textai-api-key');
                 showToast('Impostazioni salvate!');
             } catch (e) { handleError("saveSettings", new Error("Impossibile salvare preferenze."), false); }
             if (textTab && settingsTab && textContent && settingsContent) { switchTab(textTab, settingsTab, textContent, settingsContent); }
@@ -928,7 +940,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const prompt = `Identify the main language (ISO 639-1 code) from [${SUPPORTED_LANGS.join(', ')}] for: "${text.substring(0,500)}"... Respond ONLY with the 2-letter code or 'und'.`;
         const request = { contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.0, maxOutputTokens: 5, stopSequences: ["\n"] } };
         try {
-            const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(request) });
+            const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...request, apiKey: getApiKey() }) });
             if (!response.ok) { let eD=''; try{const d=await response.json();eD=d?.error?.message||JSON.stringify(d);}catch{eD=await response.text();} console.warn(`Warn API rilevamento (${response.status}): ${eD}. Uso fallback: ${preferredLang}`); return preferredLang; }
             const data = await response.json();
             const code = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim().toLowerCase().match(/^[a-z]{2}$/)?.[0];
@@ -1048,7 +1060,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const requestBody = { contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.4, maxOutputTokens: 500, responseMimeType: "application/json" } };
         console.log("API Sinonimi:", word, language);
         try {
-            const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(requestBody) });
+            const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...requestBody, apiKey: getApiKey() }) });
             if (!response.ok) { let eD=`Status:${response.status}. `; try{const d=await response.json(); eD+=d?.error?.message||JSON.stringify(d);}catch{try{eD+=await response.text();}catch{}} console.error("API Err Sinonimi:", eD); throw new Error(`Errore API Sinonimi. ${eD}`); }
             const data = await response.json(); const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
             if (typeof rawText !== 'string') { if (typeof data.candidates?.[0]?.content?.parts?.[0]?.jsonObject === 'object') { console.log("API ha ritornato JSON obj."); const jObj = data.candidates?.[0]?.content?.parts?.[0]?.jsonObject; if (Array.isArray(jObj)) return jObj; console.warn("JSON obj non è array:", jObj); return []; } throw new Error("Risposta API sinonimi vuota/inattesa."); }
@@ -1066,7 +1078,7 @@ document.addEventListener('DOMContentLoaded', function() {
         else{throw new Error("Nessuna azione specificata.");}
         promptBase+=`TESTO ORIGINALE(${langName}):\n\`\`\`\n${text}\n\`\`\`${expectedFormat}`;
         const systemPrompt=promptBase; console.log("Prompt(500):",systemPrompt.substring(0,500)+"..."); const tkBase=350,tkMult=useRephrasing?3.8:1.2,tkIn=Math.floor(text.length/3); const maxTk=Math.min(8000,Math.max(450,Math.floor(tkBase+tkIn*tkMult))); const reqBody={contents:[{parts:[{text:systemPrompt}]}],generationConfig:{...genCfg,maxOutputTokens:maxTk}}; console.log("Gen Cfg:",reqBody.generationConfig);
-        try{ const resp=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(reqBody)}); if(!resp.ok){let eD=`Status:${resp.status}. `;try{const d=await resp.json();eD+=d?.error?.message||JSON.stringify(d);}catch{try{eD+=await resp.text();}catch{}} console.error("API Err:",eD);throw new Error(`Errore API. ${eD}`);} const data=await resp.json(); const cand=data.candidates?.[0]; const finR=cand?.finishReason, blkR=data.promptFeedback?.blockReason; const safeR=JSON.stringify(cand?.safetyRatings||data.promptFeedback?.safetyRatings||{}); if(blkR)throw new Error(`Bloccato(${blkR}). R:${safeR}`); if(finR&&finR!=="STOP"&&!(finR==="MAX_TOKENS"&&cand?.content?.parts?.[0]?.text)){throw new Error(`Interrotto(${finR}). R:${safeR}`);} let genTxt=cand?.content?.parts?.[0]?.text?.trim(); if(!genTxt)throw new Error("Risposta API vuota."); console.log("AI Raw:",genTxt.substring(0,500)+"...");
+        try{ const resp=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ ...reqBody, apiKey: getApiKey() })}); if(!resp.ok){let eD=`Status:${resp.status}. `;try{const d=await resp.json();eD+=d?.error?.message||JSON.stringify(d);}catch{try{eD+=await resp.text();}catch{}} console.error("API Err:",eD);throw new Error(`Errore API. ${eD}`);} const data=await resp.json(); const cand=data.candidates?.[0]; const finR=cand?.finishReason, blkR=data.promptFeedback?.blockReason; const safeR=JSON.stringify(cand?.safetyRatings||data.promptFeedback?.safetyRatings||{}); if(blkR)throw new Error(`Bloccato(${blkR}). R:${safeR}`); if(finR&&finR!=="STOP"&&!(finR==="MAX_TOKENS"&&cand?.content?.parts?.[0]?.text)){throw new Error(`Interrotto(${finR}). R:${safeR}`);} let genTxt=cand?.content?.parts?.[0]?.text?.trim(); if(!genTxt)throw new Error("Risposta API vuota."); console.log("AI Raw:",genTxt.substring(0,500)+"...");
             if(useRephrasing){ let txt='',expl='',alts=[]; const txtM=genTxt.match(/---TESTO_RIFORMULATO_START---([\s\S]*?)---TESTO_RIFORMULATO_END---/im); const lblRgx=/^\s*(\*\*?)?(TONO|TONE|FORMAL|FRIENDLY|PROFESSIONAL|CASUAL|SARCASTIC|NEUTRAL|INTENSIT[AÀ]|INTENSITY|LEGGERA|LIGHT|NORMALE|NORMAL|FORTE|STRONG|LIVELLO|LEVEL|CEFR|A1|A2|B1|B2|C1|C2)(\*\*?)?\s*[:\(\)-]?\s*\n?/i; if(txtM?.[1]){txt=txtM[1].trim().replace(lblRgx,'');}else{console.warn("Sep TESTO mancante.Fallback.");const endM=/---SPIEGAZIONE_START---|---ALTERNATIVE_START---/im;const endI=genTxt.search(endM);txt=(endI!==-1?genTxt.substring(0,endI):genTxt).trim().replace(lblRgx,'');if(!txt)txt="[Err parsing]";} const expM=genTxt.match(/---SPIEGAZIONE_START---([\s\S]*?)---SPIEGAZIONE_END---/im); expl=expM?.[1]?.trim()??"N/A."; const altM=genTxt.match(/---ALTERNATIVE_START---([\s\S]*?)---ALTERNATIVE_END---/im); if(altM?.[1]){alts=altM[1].trim().split('\n').map(l=>l.replace(/^\s*[\d-*•]+\.?\s*/,'').trim().replace(lblRgx,'')).filter(l=>l.length>3&&!/^\s*$/.test(l)&&!/^(---|\bSPIEGAZIONE\b|\bALTERNATIVE\b|\[\s*Alternativa)/i.test(l));}else{console.warn("Sep ALT mancante.");alts=[];} while(alts.length<3)alts.push("N/A"); alts=alts.slice(0,3); console.log("Parsed Rephrase:",{txt:txt.substring(0,100)+"...",expl,alts}); return{text:txt,isRephrase:true,tone,intensity,explanation:expl,alternatives:alts,cefrLevel};}
             else{ console.log("Parsed Correction:",{text:genTxt.substring(0,100)+"..."}); if(/---[A-Z_]+---|\bSPIEGAZIONE:|\bALTERNATIVE:/i.test(genTxt)){console.warn("Formato correz inatteso, pulisco...");genTxt=genTxt.split(/---[A-Z_]+---|\bSPIEGAZIONE:|\bALTERNATIVE:/i)[0].trim();} return{text:genTxt,isRephrase:false,tone:null,intensity:null,explanation:null,alternatives:null,cefrLevel:null};}
         }catch(error){console.error("Err API call/parse:",error);throw error;}
@@ -1106,6 +1118,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (p.intensity && toneIntensitySelect && [...toneIntensitySelect.options].some(o => o.value === p.intensity)) { toneIntensitySelect.value = p.intensity; }
             if (p.cefr && cefrLevelSelect && [...cefrLevelSelect.options].some(o => o.value === p.cefr)) { cefrLevelSelect.value = p.cefr; }
             if (typeof p.matchStyle === 'boolean' && styleMatchCheck) styleMatchCheck.checked = p.matchStyle;
+            const storedKey = localStorage.getItem('textai-api-key');
+            if (storedKey && apiKeyInput) apiKeyInput.value = storedKey;
         } catch(e) {
             console.warn("Impossibile leggere preferenze, uso default:", e);
             localStorage.removeItem('textai-prefs');
