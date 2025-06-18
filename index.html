@@ -55,6 +55,7 @@
                 <div class="mb-6">
                     <label for="input-text" class="block text-sm font-medium text-gray-700 mb-2">Inserisci il tuo testo</label>
                     <textarea id="input-text" class="text-area w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200" placeholder="Scrivi o incolla qui il testo da correggere..."></textarea>
+                    <button id="paste-btn" class="btn-secondary mt-2 text-sm flex items-center"><i class="fas fa-clipboard mr-2"></i>Incolla testo</button>
                 </div>
 
                 <div class="mb-6">
@@ -256,8 +257,12 @@
         </div>
 
         <!-- Info Section -->
-        <div class="mt-8 bg-white rounded-xl shadow-lg overflow-hidden">
-             <div class="p-6">
+        <div class="mt-8 bg-white rounded-xl shadow-lg overflow-hidden" id="info-section">
+            <button id="info-toggle" class="w-full flex items-center justify-between p-4 bg-purple-50 text-gray-800 md:hidden">
+                <span class="font-medium">Informazioni su EasyFix</span>
+                <i class="fas fa-chevron-down transition-transform" id="info-toggle-icon"></i>
+            </button>
+            <div id="info-content" class="p-6 hidden md:block">
                 <h2 class="text-xl font-bold text-gray-800 mb-4">Informazioni su EasyFix</h2>
                 <div class="prose prose-sm max-w-none text-gray-600">
                     <p>EasyFix utilizza modelli di linguaggio avanzati di Google AI per aiutarti a perfezionare i tuoi testi. Ecco cosa puoi fare:</p>
@@ -268,12 +273,13 @@
                     </ul>
                     <p class="mt-4">EasyFix è progettato per essere semplice e intuitivo, con un'interfaccia pulita che funziona perfettamente su dispositivi mobili e desktop.</p>
                 </div>
-                <div class="mt-6 text-sm text-gray-500">
-                    <span>Creato da Mauro Col - 2025 © <br> versione 0.1 </span>
-                </div>
             </div>
         </div>
     </div>
+
+    <footer class="text-center py-4 text-sm text-gray-500 bg-white">
+        Creato da Mauro Col - 2025 ©<br>versione 0.8
+    </footer>
 
     <!-- Toast Notification -->
     <div id="toast" class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-10 opacity-0 transition-all duration-300 flex items-center">
@@ -317,6 +323,15 @@
         <!-- Overlay per chiusura su click esterno (facoltativo ma migliora UX) -->
         <div id="synonym-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
         <!-- FINE NUOVO: Popup Sinonimi -->
+
+        <div id="delete-confirm" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 rounded-lg shadow-lg p-4 z-50 hidden">
+            <p class="text-sm mb-4">Eliminare questa correzione dalla cronologia?</p>
+            <div class="flex justify-end space-x-2">
+                <button id="delete-yes" class="btn-primary py-1 px-4 text-sm text-white">Sì</button>
+                <button id="delete-no" class="btn-secondary py-1 px-4 text-sm">No</button>
+            </div>
+        </div>
+        <div id="confirm-overlay" class="fixed inset-0 bg-black bg-opacity-30 hidden z-40"></div>
     
         <!-- Toast Notification (invariato) -->
         <div id="toast" class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-10 opacity-0 transition-all duration-300 flex items-center">
@@ -337,6 +352,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const settingsContent = document.getElementById('settings-content');
     const processBtn = document.getElementById('process-btn');
     const inputText = document.getElementById('input-text');
+    const pasteBtn = document.getElementById('paste-btn');
     const resultsSection = document.getElementById('results-section');
     const historyToggleBtn = document.getElementById('history-toggle');
     const historyPanel = document.getElementById('history-panel');
@@ -352,6 +368,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const apiKeyInput = document.getElementById('api-key');
     const correctedText = document.getElementById('corrected-text');
     const originalTextHighlighted = document.getElementById('original-text-highlighted');
+    const infoToggle = document.getElementById('info-toggle');
+    const infoContent = document.getElementById('info-content');
+    const infoToggleIcon = document.getElementById('info-toggle-icon');
+    const deleteConfirm = document.getElementById('delete-confirm');
+    const deleteYes = document.getElementById('delete-yes');
+    const deleteNo = document.getElementById('delete-no');
+    const confirmOverlay = document.getElementById('confirm-overlay');
 
     // Elementi Popup Sinonimi
     const synonymPopup = document.getElementById('synonym-popup');
@@ -370,6 +393,7 @@ document.addEventListener('DOMContentLoaded', function() {
         textContent, settingsContent, historyToggleBtn, historyPanel, preferredLangSelect,
         defaultToneSelect, proofreadingCheck, rephraseCheck, styleMatchCheck, writingStyleInput,
         sampleTextInput, cefrLevelSelect, toneIntensitySelect, apiKeyInput, originalTextHighlighted,
+        pasteBtn, infoToggle, infoContent, infoToggleIcon, deleteConfirm, deleteYes, deleteNo, confirmOverlay,
         synonymPopup, synonymOverlay, synonymPopupTitle, synonymWordSpan, synonymPopupCloseBtn,
         synonymPopupContent, synonymLoading, synonymResults, synonymError, synonymNotFound
     };
@@ -701,6 +725,7 @@ async function callGeminiAPI(body) {
     if (processBtn) { processBtn.addEventListener('click', handleProcessClick); }
     if (clearBtn) { clearBtn.addEventListener('click', () => { if(inputText) inputText.value = ''; if(resultsSection) resultsSection.classList.add('hidden'); if(originalTextHighlighted) originalTextHighlighted.textContent = ''; if(correctedText) correctedText.textContent = ''; if(originalCount) originalCount.textContent = '0 parole'; if(correctedCount) correctedCount.textContent = '0 parole'; hideExpandablePanels(); updateProcessButtonState(); }); }
     if (newTextBtn) { newTextBtn.addEventListener('click', () => { if(inputText) inputText.value = ''; if(resultsSection) resultsSection.classList.add('hidden'); if(originalTextHighlighted) originalTextHighlighted.textContent = ''; if(correctedText) correctedText.textContent = ''; if(originalCount) originalCount.textContent = '0 parole'; if(correctedCount) correctedCount.textContent = '0 parole'; hideExpandablePanels(); inputText?.focus(); updateProcessButtonState(); }); }
+    if (pasteBtn) { pasteBtn.addEventListener('click', async () => { try { const txt = await navigator.clipboard.readText(); inputText.value = txt; inputText.focus(); showToast('Testo incollato'); updateProcessButtonState(); } catch(e){ handleError('pasteClipboard', e); } }); }
     function copyTextToClipboard(t){if(!t){showToast('Nessun testo da copiare','bg-yellow-500');return;}if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(t).then(()=>showToast('Testo copiato!')).catch(e=>{console.error("Err Clipboard API:",e);fallbackCopyMethod(t);});}else{fallbackCopyMethod(t);}} function fallbackCopyMethod(t){try{const ta=document.createElement("textarea");ta.value=t;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.focus();ta.select();const ok=document.execCommand('copy');document.body.removeChild(ta);if(ok)showToast('Testo copiato!');else showToast('Copia fallita','bg-red-500');}catch(e){handleError("fallbackCopy",e);}} if(copyBtn){copyBtn.addEventListener('click',()=>copyTextToClipboard(correctedText?.textContent||''));}
     if(saveSettings) {
         saveSettings.addEventListener('click', () => {
@@ -725,6 +750,16 @@ async function callGeminiAPI(body) {
             if (textTab && settingsTab && textContent && settingsContent) { switchTab(textTab, settingsTab, textContent, settingsContent); }
         });
     }
+    if (infoToggle && infoContent && infoToggleIcon) {
+        infoToggle.addEventListener('click', () => {
+            const hidden = infoContent.classList.toggle('hidden');
+            infoToggleIcon.classList.toggle('rotate-icon');
+            if(!hidden){ infoContent.scrollIntoView({behavior:'smooth'}); }
+        });
+    }
+    if (deleteYes) { deleteYes.addEventListener('click', () => { const id=deleteConfirm?.dataset.id; if(id) deleteHistoryItem(Number(id)); closeDeleteConfirm(); }); }
+    if (deleteNo) { deleteNo.addEventListener('click', closeDeleteConfirm); }
+    if (confirmOverlay) { confirmOverlay.addEventListener('click', closeDeleteConfirm); }
 
     // Listener doppio click per Sinonimi
     const addSynonymListener = (element, elementName) => {
@@ -858,11 +893,43 @@ async function callGeminiAPI(body) {
             historyListDiv.textContent = '';
             if (history.length === 0) { console.log("Crono vuota."); if (noHistoryMsg) { noHistoryMsg.style.display = 'block'; if (!noHistoryMsg.parentNode) historyListDiv.appendChild(noHistoryMsg); } else { const p=document.createElement('p'); p.className='text-gray-500 dark:text-gray-400 text-sm italic px-4 py-2'; p.textContent='Nessuna correzione.'; historyListDiv.appendChild(p); } }
             else { console.log(`Carico ${history.length} el. crono.`); if (noHistoryMsg) noHistoryMsg.style.display = 'none';
-                history.forEach(item => { const itemDiv = document.createElement('div'); itemDiv.className = 'history-item p-3 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer'; itemDiv.dataset.id = item.id;
-                    let tag = ''; if (item.isRephrase) { tag += `[${getToneDisplayName(item.tone)}`; if (item.intensity && item.intensity !== 'normal') tag += ` ${getIntensityDisplayName(item.intensity)}`; if (item.cefrLevel && item.cefrLevel !== 'none') tag += ` / ${item.cefrLevel.toUpperCase()}`; tag += '] '; }
-                    const dateDiv = document.createElement('div'); dateDiv.className = 'text-xs text-gray-500 dark:text-gray-400 mb-1'; dateDiv.textContent = item.date;
-                    const previewDiv = document.createElement('div'); previewDiv.className = 'text-sm font-medium text-gray-800 dark:text-gray-200 truncate'; if (tag) { const tagSpan = document.createElement('span'); tagSpan.className = 'text-blue-500 font-semibold'; tagSpan.textContent = tag; previewDiv.appendChild(tagSpan); } previewDiv.appendChild(document.createTextNode(item.preview));
-                    itemDiv.appendChild(dateDiv); itemDiv.appendChild(previewDiv); itemDiv.onclick = () => loadHistoryItem(item.id); historyListDiv.appendChild(itemDiv); });
+                history.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'history-item p-3 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer';
+                    itemDiv.dataset.id = item.id;
+                    let tag = '';
+                    if (item.isRephrase) {
+                        tag += `[${getToneDisplayName(item.tone)}`;
+                        if (item.intensity && item.intensity !== 'normal') tag += ` ${getIntensityDisplayName(item.intensity)}`;
+                        if (item.cefrLevel && item.cefrLevel !== 'none') tag += ` / ${item.cefrLevel.toUpperCase()}`;
+                        tag += '] ';
+                    }
+                    const dateDiv = document.createElement('div');
+                    dateDiv.className = 'text-xs text-gray-500 dark:text-gray-400 mb-1';
+                    dateDiv.textContent = item.date;
+                    const previewDiv = document.createElement('div');
+                    previewDiv.className = 'text-sm font-medium text-gray-800 dark:text-gray-200 truncate';
+                    if (tag) {
+                        const tagSpan = document.createElement('span');
+                        tagSpan.className = 'text-blue-500 font-semibold';
+                        tagSpan.textContent = tag;
+                        previewDiv.appendChild(tagSpan);
+                    }
+                    previewDiv.appendChild(document.createTextNode(item.preview));
+                    itemDiv.appendChild(dateDiv);
+                    itemDiv.appendChild(previewDiv);
+                    let startX = null;
+                    itemDiv.addEventListener('touchstart', e => { startX = e.changedTouches[0].clientX; });
+                    itemDiv.addEventListener('touchend', e => {
+                        if (startX !== null) {
+                            const diff = e.changedTouches[0].clientX - startX;
+                            if (diff < -50) { openDeleteConfirm(item.id); return; }
+                        }
+                        loadHistoryItem(item.id);
+                    });
+                    itemDiv.addEventListener('click', () => loadHistoryItem(item.id));
+                    historyListDiv.appendChild(itemDiv);
+                });
             }
         } catch (error) { handleError("loadHistoryItems", error); }
     }
@@ -891,6 +958,29 @@ async function callGeminiAPI(body) {
             if (ir) { displayRephraseAnalysis(tn, inte, ex, al); hideCorrectionsPanel(); }
             else { if (analysisBox) analysisBox.classList.add('hidden'); const correctionsList = document.getElementById('corrections-list'); if (!correctionsList || correctionsList.children.length === 0) hideCorrectionsPanel(); /* Diff gestisce visualizzazione bottone */ }
         } catch (error) { handleError("handleHistorySelection", error); }
+    }
+
+    function openDeleteConfirm(id) {
+        if (!deleteConfirm) return;
+        deleteConfirm.dataset.id = id;
+        deleteConfirm.classList.remove('hidden');
+        confirmOverlay?.classList.remove('hidden');
+    }
+
+    function closeDeleteConfirm() {
+        deleteConfirm?.classList.add('hidden');
+        confirmOverlay?.classList.add('hidden');
+        deleteConfirm?.removeAttribute('data-id');
+    }
+
+    function deleteHistoryItem(id) {
+        try {
+            let h = JSON.parse(localStorage.getItem('textai-history') || '[]');
+            h = h.filter(it => it.id != id);
+            localStorage.setItem('textai-history', JSON.stringify(h));
+            loadHistoryItems();
+            showToast('Voce eliminata', 'bg-green-500');
+        } catch (error) { handleError('deleteHistoryItem', error); }
     }
 
     async function fetchSynonyms(word, language) {
