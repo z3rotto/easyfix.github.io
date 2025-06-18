@@ -14,9 +14,7 @@
     <div class="container mx-auto px-4 py-8 max-w-3xl">
         <!-- Header -->
         <header class="mb-8 text-center">
-            <div class="gradient-bg rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
-                <i class="fas fa-magic text-white text-3xl"></i>
-            </div>
+            <img src="logo.png" alt="Logo EasyFix" class="w-20 h-20 mx-auto mb-4">
             <h1 class="text-3xl font-bold text-gray-800 mb-2">EasyFix (Beta)</h1>
             <p class="text-gray-600">✨ Correggi e riformula i tuoi testi grazie all'intelligenza artificiale</p>
         </header>
@@ -186,13 +184,14 @@
                     </div>
                 </div>
 
-                <div class="flex justify-end">
+                <div class="flex justify-between items-center">
+                    <button id="show-onboarding" class="btn-secondary py-2 px-4 rounded-lg">Rivedi tutorial</button>
                     <button id="save-settings" class="btn-accent py-2 px-6 rounded-lg text-white font-medium">
                         <i class="fas fa-save mr-2"></i>Salva impostazioni
                     </button>
                 </div>
+                </div>
             </div>
-        </div>
 
         <!-- Results Section -->
         <div id="results-section" class="bg-white rounded-xl shadow-lg overflow-hidden hidden slide-in">
@@ -332,11 +331,37 @@
             </div>
         </div>
         <div id="confirm-overlay" class="fixed inset-0 bg-black bg-opacity-30 hidden z-40"></div>
-    
+
         <!-- Toast Notification (invariato) -->
         <div id="toast" class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-10 opacity-0 transition-all duration-300 flex items-center">
             <i class="fas fa-check-circle mr-2"></i>
             <span id="toast-message">Operazione completata!</span>
+        </div>
+
+        <!-- Onboarding Modal -->
+        <div id="onboarding-modal" class="fixed inset-0 bg-black bg-opacity-40 z-50 hidden flex items-center justify-center">
+            <div class="bg-white rounded-lg w-11/12 max-w-md p-6">
+                <div class="onboard-slide" id="onboard-slide-1">
+                    <h2 class="text-lg font-bold mb-2">Benvenuto in EasyFix!</h2>
+                    <p class="text-gray-600">Correggi e riformula i testi con un click.</p>
+                </div>
+                <div class="onboard-slide hidden" id="onboard-slide-2">
+                    <h2 class="text-lg font-bold mb-2">Imposta le opzioni</h2>
+                    <p class="text-gray-600">Scegli correzione o riformulazione e il tono preferito.</p>
+                </div>
+                <div class="onboard-slide hidden" id="onboard-slide-3">
+                    <h2 class="text-lg font-bold mb-2">Consulta la cronologia</h2>
+                    <p class="text-gray-600">Rivedi le correzioni passate dalla sezione dedicata.</p>
+                </div>
+                <div class="flex items-center justify-between mt-4">
+                    <label class="text-sm"><input type="checkbox" id="skip-onboarding" class="mr-2">Non mostrare più</label>
+                    <div>
+                        <button id="onboard-prev" class="btn-secondary py-2 px-4 rounded-lg hidden mr-2">Indietro</button>
+                        <button id="onboard-next" class="btn-primary py-2 px-4 rounded-lg text-white mr-2">Avanti</button>
+                        <button id="onboard-finish" class="btn-primary py-2 px-4 rounded-lg text-white hidden">Chiudi</button>
+                    </div>
+                </div>
+            </div>
         </div>
     
     <script>
@@ -388,6 +413,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const synonymError = document.getElementById('synonym-error');
     const synonymNotFound = document.getElementById('synonym-not-found');
 
+    // Elementi Onboarding
+    const onboardingModal = document.getElementById('onboarding-modal');
+    const onboardPrev = document.getElementById('onboard-prev');
+    const onboardNext = document.getElementById('onboard-next');
+    const onboardFinish = document.getElementById('onboard-finish');
+    const skipOnboardingCheckbox = document.getElementById('skip-onboarding');
+    const showOnboardingBtn = document.getElementById('show-onboarding');
+
     const essentialUI = {
         processBtn, inputText, resultsSection, correctedText, textTab, settingsTab,
         textContent, settingsContent, historyToggleBtn, historyPanel, preferredLangSelect,
@@ -395,7 +428,8 @@ document.addEventListener('DOMContentLoaded', function() {
         sampleTextInput, cefrLevelSelect, toneIntensitySelect, apiKeyInput, originalTextHighlighted,
         pasteBtn, infoToggle, infoContent, infoToggleIcon, deleteConfirm, deleteYes, deleteNo, confirmOverlay,
         synonymPopup, synonymOverlay, synonymPopupTitle, synonymWordSpan, synonymPopupCloseBtn,
-        synonymPopupContent, synonymLoading, synonymResults, synonymError, synonymNotFound
+        synonymPopupContent, synonymLoading, synonymResults, synonymError, synonymNotFound,
+        onboardingModal, onboardPrev, onboardNext, onboardFinish, skipOnboardingCheckbox, showOnboardingBtn
     };
 
      let missingElements = [];
@@ -983,6 +1017,33 @@ async function callGeminiAPI(body) {
         } catch (error) { handleError('deleteHistoryItem', error); }
     }
 
+    // --- Onboarding Functions ---
+    let onboardIndex = 0;
+    const onboardingSlides = onboardingModal ? onboardingModal.querySelectorAll('.onboard-slide') : [];
+    function updateOnboardingUI(idx) {
+        if (!onboardingSlides.length) return;
+        onboardingSlides.forEach((s, i) => s.classList.toggle('hidden', i !== idx));
+        onboardPrev?.classList.toggle('hidden', idx === 0);
+        onboardNext?.classList.toggle('hidden', idx === onboardingSlides.length - 1);
+        onboardFinish?.classList.toggle('hidden', idx !== onboardingSlides.length - 1);
+    }
+    function openOnboarding() {
+        if (!onboardingModal) return;
+        onboardingModal.classList.remove('hidden');
+        onboardIndex = 0;
+        updateOnboardingUI(0);
+    }
+    function closeOnboarding() {
+        onboardingModal?.classList.add('hidden');
+        if (skipOnboardingCheckbox?.checked) {
+            localStorage.setItem('easyfix-onboarding-skip', '1');
+        }
+    }
+    onboardPrev?.addEventListener('click', () => { if (onboardIndex > 0) { onboardIndex--; updateOnboardingUI(onboardIndex); } });
+    onboardNext?.addEventListener('click', () => { if (onboardIndex < onboardingSlides.length - 1) { onboardIndex++; updateOnboardingUI(onboardIndex); } });
+    onboardFinish?.addEventListener('click', closeOnboarding);
+    showOnboardingBtn?.addEventListener('click', openOnboarding);
+
     async function fetchSynonyms(word, language) {
         if (!word || !language || !SUPPORTED_LANGS.includes(language)) { throw new Error("Parola/lingua non valida."); }
         const langName = getLanguageName(language);
@@ -1102,7 +1163,11 @@ async function callGeminiAPI(body) {
     }
 
     // Avvia l'applicazione
-    initializeApp().catch(err => handleError("initializeApp Global", err, true));
+    initializeApp().catch(err => handleError("initializeApp Global", err, true)).finally(() => {
+        if (!localStorage.getItem('easyfix-onboarding-skip')) {
+            openOnboarding();
+        }
+    });
 
 }); // Fine DOMContentLoaded
 
