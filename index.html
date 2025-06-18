@@ -99,6 +99,11 @@
                     <div class="mb-4">
                         <label for="writing-style" class="block text-sm font-medium text-gray-700 mb-2">Descrizione del tuo stile</label>
                         <textarea id="writing-style" class="text-area w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200" placeholder="Es: Uso un tono formale ma amichevole, con frasi brevi e dirette..."></textarea>
+                        <ul id="style-tips" class="mt-2 text-xs text-gray-500 space-y-1">
+                            <li><button type="button" class="style-tip-btn underline text-blue-600" data-text="Uso un tono [scrivi tono] ma [aggiungi tono], con frasi [durata frasi] e [tipologia di frasi]...">Es. Uso un tono [scrivi tono] ma [aggiungi tono], con frasi [durata frasi] e [tipologia di frasi]...</button></li>
+                            <li><button type="button" class="style-tip-btn underline text-blue-600" data-text="Prediligo uno stile [aggettivo 1] e [aggettivo 2], con frasi [lunghezza] e linguaggio [descrizione]">Prediligo uno stile [aggettivo 1] e [aggettivo 2], con frasi [lunghezza] e linguaggio [descrizione]</button></li>
+                            <li><button type="button" class="style-tip-btn underline text-blue-600" data-text="Il mio stile è [descrizione], uso [elementi caratteristici] e frasi [struttura]">Il mio stile è [descrizione], uso [elementi caratteristici] e frasi [struttura]</button></li>
+                        </ul>
                     </div>
                     <div class="mb-4">
                         <label for="sample-text" class="block text-sm font-medium text-gray-700 mb-2">Testo di esempio del tuo stile</label>
@@ -387,6 +392,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const synonymResults = document.getElementById('synonym-results');
     const synonymError = document.getElementById('synonym-error');
     const synonymNotFound = document.getElementById('synonym-not-found');
+    const styleTipButtons = document.querySelectorAll('.style-tip-btn');
 
     const essentialUI = {
         processBtn, inputText, resultsSection, correctedText, textTab, settingsTab,
@@ -405,10 +411,20 @@ document.addEventListener('DOMContentLoaded', function() {
                missingElements.push(name);
          }
      }
-     if (missingElements.length > 0) {
-         alert(`Errore grave: Impossibile trovare elementi UI essenziali (${missingElements.join(', ')}). L'applicazione potrebbe non funzionare.`);
-         return;
-     }
+    if (missingElements.length > 0) {
+        alert(`Errore grave: Impossibile trovare elementi UI essenziali (${missingElements.join(', ')}). L'applicazione potrebbe non funzionare.`);
+        return;
+    }
+
+    styleTipButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const t = btn.dataset.text || '';
+            if (!t) return;
+            if (confirm('Vuoi inserire questo testo nella descrizione del tuo stile?')) {
+                if (writingStyleInput) writingStyleInput.value = t;
+            }
+        });
+    });
 
     // Elementi secondari
     const processingSpinner = document.getElementById('processing-spinner');
