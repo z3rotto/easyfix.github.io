@@ -2,6 +2,8 @@
 
 This project now includes a small Node.js proxy to keep your API key secure. You can also provide your own Google API key directly in the app settings for testing.
 
+The interface shows a short onboarding on first launch explaining the main features. A button in the settings tab allows you to view the tutorial again.
+
 ## Development setup
 
 1. Install dependencies with `npm install`.
