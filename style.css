@@ -138,3 +138,35 @@
             border-left-color: var(--primary);
             background-color: rgba(59, 130, 246, 0.15);
         }
+
+/* Tooltip styles */
+.tooltip-popup {
+  position: absolute;
+  background-color: #333;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.25rem; /* 20px */
+  z-index: 100;
+  width: max-content;
+  max-width: 250px;
+  text-align: center;
+  display: none; /* Hidden by default */
+  transform: translateX(-50%); /* Center it horizontally */
+}
+
+.tooltip-popup.show {
+    display: block;
+}
+
+.tooltip-popup::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #333 transparent transparent transparent;
+}
