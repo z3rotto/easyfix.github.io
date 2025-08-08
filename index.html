@@ -74,7 +74,10 @@
                             </label>
                         </div>
                         <div class="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
-                            <label for="style-match" class="font-medium text-gray-700">Adatta al mio stile</label>
+                            <div class="flex items-center">
+                                <label for="style-match" class="font-medium text-gray-700">Adatta al mio stile</label>
+                                <i class="fas fa-question-circle text-gray-400 ml-2 cursor-pointer tooltip-icon" data-tooltip="Se selezionato, l'AI proverà ad analizzare lo stile dei testi di esempio forniti nelle Impostazioni per adattare la riformulazione."></i>
+                            </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" id="style-match" class="sr-only peer">
                                 <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-400 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
@@ -148,7 +151,10 @@
                                                 <!-- NUOVO: Selettore Intensità Tono -->
                                                 <div class="flex items-center justify-between">
                                                     <span class="flex-grow flex flex-col">
-                                                        <span class="text-sm font-medium text-gray-700">Intensità Tono</span>
+                                                        <span class="flex items-center">
+                                                            <span class="text-sm font-medium text-gray-700">Intensità Tono</span>
+                                                            <i class="fas fa-question-circle text-gray-400 ml-2 cursor-pointer tooltip-icon" data-tooltip="Definisce quanto marcatamente il tono selezionato debba influenzare il testo. 'Leggera' per un tocco sottile, 'Forte' per un cambiamento evidente."></i>
+                                                        </span>
                                                         <span class="text-xs text-gray-500">Per Riformulazione</span>
                                                     </span>
                                                     <select id="tone-intensity" class="ml-4 block pl-3 pr-10 py-2 text-base border-transparent focus:outline-none focus:ring-2 focus:ring-blue-400 sm:text-sm rounded-lg disabled:opacity-50 disabled:cursor-not-allowed bg-gray-200" disabled>
@@ -162,7 +168,10 @@
                                                                         <!-- Selettore Livello Linguistico CEFR (con classi dark aggiunte per coerenza) -->
                         <div class="flex items-center justify-between">
                             <span class="flex-grow flex flex-col">
-                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Livello Linguistico (CEFR)</span>
+                                <span class="flex items-center">
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Livello Linguistico (CEFR)</span>
+                                    <i class="fas fa-question-circle text-gray-400 ml-2 cursor-pointer tooltip-icon" data-tooltip="Adatta il testo a un livello di competenza linguistica secondo il Quadro Comune Europeo di Riferimento. Utile per semplificare o arricchire il linguaggio."></i>
+                                </span>
                                 <span class="text-xs text-gray-500 dark:text-gray-400">Per Riformulazione/Adatta stile</span>
                             </span>
                             <select id="cefr-level" class="ml-4 block pl-3 pr-10 py-2 text-base border-transparent focus:outline-none focus:ring-2 focus:ring-blue-400 sm:text-sm rounded-lg disabled:opacity-50 disabled:cursor-not-allowed bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100" disabled>
@@ -716,6 +725,126 @@ async function callGeminiAPI(body) {
         } catch(e) { console.error("Errore durante hideExpandablePanels in handleError:", e); }
     }
 
+    // --- Tooltip Logic (v2: Pinned on Click) ---
+    let activeTooltip = null;
+    let tooltipTimeout = null;
+    let isTooltipPinned = false;
+
+    function showTooltip(icon) {
+        // Clear any pending hide actions
+        if (tooltipTimeout) {
+            clearTimeout(tooltipTimeout);
+            tooltipTimeout = null;
+        }
+
+        // If the requested tooltip is already active and pinned, do nothing.
+        if (isTooltipPinned && activeTooltip && activeTooltip.dataset.ownerIcon === icon.id) {
+            return;
+        }
+
+        // If there's any active tooltip (pinned or not), remove it before showing a new one.
+        if (activeTooltip) {
+            activeTooltip.remove();
+        }
+
+        const tooltipText = icon.getAttribute('data-tooltip');
+        if (!tooltipText) return;
+
+        // Assign a unique ID to the icon if it doesn't have one, for tracking.
+        if (!icon.id) {
+            icon.id = `tooltip-icon-${Math.random().toString(36).substr(2, 9)}`;
+        }
+
+        const tooltip = document.createElement('div');
+        tooltip.dataset.ownerIcon = icon.id;
+        tooltip.className = 'tooltip-popup';
+        tooltip.innerHTML = DOMPurify.sanitize(tooltipText);
+        document.body.appendChild(tooltip);
+        activeTooltip = tooltip;
+
+        const iconRect = icon.getBoundingClientRect();
+        const top = iconRect.top - 10;
+        const left = iconRect.left + (iconRect.width / 2);
+        tooltip.style.left = left + 'px';
+        tooltip.style.top = top + 'px';
+        tooltip.style.transform = 'translate(-50%, -100%)';
+        tooltip.classList.add('show');
+    }
+
+    function hideTooltip(force = false) {
+        // Don't hide if it's pinned, unless we are forcing it (e.g., by clicking outside).
+        if (isTooltipPinned && !force) {
+            return;
+        }
+        if (activeTooltip) {
+            activeTooltip.remove();
+            activeTooltip = null;
+            isTooltipPinned = false; // Always reset pin state when hiding.
+        }
+    }
+
+    // Main event handler on the body for delegation
+    document.body.addEventListener('click', function(event) {
+        const icon = event.target.closest('.tooltip-icon');
+
+        if (icon) {
+            event.stopPropagation();
+            // If we click the icon of an already pinned tooltip, we unpin and hide it.
+            if (isTooltipPinned && activeTooltip && activeTooltip.dataset.ownerIcon === icon.id) {
+                hideTooltip(true); // Force hide
+            } else {
+                // Otherwise, we show the tooltip and pin it.
+                isTooltipPinned = true;
+                showTooltip(icon);
+            }
+        } else {
+            // A click anywhere else on the body should hide any pinned tooltip.
+            if (!event.target.closest('.tooltip-popup')) {
+                hideTooltip(true); // Force hide
+            }
+        }
+    });
+
+    // Use mouseover/mouseout for hover effect on desktop
+    document.body.addEventListener('mouseover', function(event) {
+        const icon = event.target.closest('.tooltip-icon');
+        if (icon) {
+            // Only show on hover if nothing is currently pinned.
+            if (!isTooltipPinned) {
+                showTooltip(icon);
+            }
+        }
+    });
+
+    document.body.addEventListener('mouseout', function(event) {
+        const icon = event.target.closest('.tooltip-icon');
+        if (icon) {
+            // Use a small delay to prevent flickering when moving the mouse between the icon and the tooltip.
+            tooltipTimeout = setTimeout(() => {
+                hideTooltip(false); // Use the standard hide logic (respects pinning)
+            }, 200);
+        }
+    });
+
+    // If the mouse enters the tooltip itself, cancel any pending hide action.
+    document.body.addEventListener('mouseover', function(event) {
+        if (event.target.closest('.tooltip-popup')) {
+             if (tooltipTimeout) {
+                clearTimeout(tooltipTimeout);
+                tooltipTimeout = null;
+            }
+        }
+    });
+
+    // If the mouse leaves the tooltip, hide it (respecting the pin).
+    document.body.addEventListener('mouseout', function(event) {
+        if (event.target.closest('.tooltip-popup')) {
+            tooltipTimeout = setTimeout(() => {
+                hideTooltip(false);
+            }, 200);
+        }
+    });
+
     // --- Event Listeners ---
     if (textTab && settingsTab && textContent && settingsContent) {
         textTab.addEventListener('click', () => switchTab(textTab, settingsTab, textContent, settingsContent));
@@ -751,7 +880,7 @@ async function callGeminiAPI(body) {
             }
         });
         console.log("Listener History Toggle aggiunto.");
-    } else { console.error("Errore critico: Elementi History Toggle mancanti!"); }
+    } else { console.error("Errore critico: Elementi Tab mancanti!"); }
 
     function handleHistoryOutsideClick(event) {
         if (historyPanel?.classList.contains('hidden') || !isHistoryPanelListenerActive) return;
@@ -1170,7 +1299,7 @@ async function callGeminiAPI(body) {
                  case 'es': dT = "Ola mundo! Como estas? Este texo contiene alcuni herrores."; break;
                  case 'fr': dT = "Bonjur le monde! Comment ca va? Ce texte contient des érreurs."; break;
                  case 'de': dT = "Hallo Welt! Wie gehts? Dieser Text enthält einige Feler."; break;
-                 case 'pt': dT = "Ola mundo! Como voce esta? Este texto contem alguns erros."; break;
+                 case 'pt': dT = "Ola mundo! Como voce esta? Este texto contem alcuni erros."; break;
                  case 'ar': dT = "مرحباً بالعالم! كيف حالك؟ هذا النص يحتوي على بعض الأخطاء كمثال."; break;
                  case 'it': default: dT = "Qual'è il propiettario di questa casa? Sembra molto bella e avvolte penso di comprarla perchè mi piace.";
               }
