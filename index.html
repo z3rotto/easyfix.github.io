@@ -277,7 +277,11 @@
     </div>
 
     <footer class="text-center py-4 text-sm text-gray-500 bg-white">
-        Creato da Mauro Col - 2025 ©<br>versione 0.8
+        <div class="flex justify-center items-center flex-wrap gap-x-2">
+            <span>Creato da Mauro Col - 2025 ©</span>
+            <span class="hidden sm:inline">|</span>
+            <span>versione 0.8</span>
+        </div>
     </footer>
 
     <!-- Toast Notification -->
@@ -789,6 +793,16 @@ async function callGeminiAPI(body) {
             const hidden = infoContent.classList.toggle('hidden');
             infoToggleIcon.classList.toggle('rotate-icon');
             if(!hidden){ infoContent.scrollIntoView({behavior:'smooth'}); }
+        });
+
+        // Add a resize listener to handle responsive state changes
+        window.addEventListener('resize', () => {
+            // Tailwind's 'md' breakpoint is 768px
+            if (window.innerWidth >= 768) {
+                // On larger screens, the content should be visible and the icon reset
+                infoContent.classList.remove('hidden');
+                infoToggleIcon.classList.remove('rotate-icon');
+            }
         });
     }
     if (deleteYes) { deleteYes.addEventListener('click', () => { const id=deleteConfirm?.dataset.id; if(id) deleteHistoryItem(Number(id)); closeDeleteConfirm(); }); }
