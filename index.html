@@ -20,7 +20,7 @@
         </header>
 
         <!-- Main Card -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
+        <div class="bg-white/75 backdrop-blur-md rounded-xl shadow-lg overflow-hidden mb-8">
             <!-- Tabs -->
             <div class="flex border-b">
                 <button id="text-tab" class="flex-1 py-4 px-6 text-center font-medium text-gray-700 border-b-2 border-blue-500">
@@ -53,38 +53,42 @@
                 <div class="mb-6">
                     <label for="input-text" class="block text-sm font-medium text-gray-700 mb-2">Inserisci il tuo testo</label>
                     <textarea id="input-text" class="text-area w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200" placeholder="Scrivi o incolla qui il testo da correggere..."></textarea>
-                    <button id="paste-btn" class="btn-secondary mt-2 text-sm flex items-center"><i class="fas fa-clipboard mr-2"></i>Incolla testo</button>
+                    <button id="paste-btn" class="transition-colors bg-gray-200 hover:bg-gray-300 mt-2 text-sm flex items-center py-2 px-4 rounded-full text-gray-800 font-medium"><i class="fas fa-clipboard mr-2"></i>Incolla testo</button>
                 </div>
 
                 <div class="mb-6">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Opzioni</label>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <!-- Removed detect-lang as API doesn't directly return it easily -->
-                        <!-- <div class="flex items-center">
-                            <input type="checkbox" id="detect-lang" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" checked>
-                            <label for="detect-lang" class="ml-2 block text-sm text-gray-700">Riconoscimento lingua</label>
-                        </div> -->
-                        <div class="flex items-center">
-                            <input type="checkbox" id="proofreading" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" checked>
-                            <label for="proofreading" class="ml-2 block text-sm text-gray-700">Correzione grammaticale</label>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
+                            <label for="proofreading" class="font-medium text-gray-700">Correzione grammaticale</label>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="proofreading" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-400 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                            </label>
                         </div>
-                        <div class="flex items-center">
-                            <input type="checkbox" id="rephrase" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                            <label for="rephrase" class="ml-2 block text-sm text-gray-700">Riformulazione</label>
+                        <div class="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
+                            <label for="rephrase" class="font-medium text-gray-700">Riformulazione</label>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="rephrase" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-400 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                            </label>
                         </div>
-                        <div class="flex items-center">
-                            <input type="checkbox" id="style-match" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                            <label for="style-match" class="ml-2 block text-sm text-gray-700">Adatta al mio stile</label>
+                        <div class="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
+                            <label for="style-match" class="font-medium text-gray-700">Adatta al mio stile</label>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="style-match" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-400 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                            </label>
                         </div>
                     </div>
                 </div>
 
                 <div class="flex flex-col sm:flex-row gap-4">
-                    <button id="process-btn" class="btn-primary flex-1 py-3 px-6 rounded-lg text-white font-medium flex items-center justify-center">
+                    <button id="process-btn" class="transition-colors bg-blue-500 hover:bg-blue-600 flex-1 py-3 px-6 rounded-full text-white font-medium flex items-center justify-center">
                         <i class="fas fa-spinner fa-spin hidden mr-2" id="processing-spinner"></i>
                         <span id="process-text">Ottimizza il testo</span>
                     </button>
-                    <button id="clear-btn" class="btn-secondary py-3 px-6 rounded-lg text-gray-800 font-medium">
+                    <button id="clear-btn" class="transition-colors bg-gray-200 hover:bg-gray-300 py-3 px-6 rounded-full text-gray-800 font-medium">
                         <i class="fas fa-trash-alt mr-2"></i>Pulisci
                     </button>
                 </div>
@@ -113,7 +117,7 @@
                                 <span class="text-xs text-gray-500 dark:text-gray-400">'Automatico' rileva la lingua ad ogni processo</span>
                             </span>
                              <!-- AGGIUNTO 'auto' come PRIMA opzione -->
-                            <select id="preferred-lang" class="ml-4 block pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                            <select id="preferred-lang" class="ml-4 block pl-3 pr-10 py-2 text-base border-transparent focus:outline-none focus:ring-2 focus:ring-blue-400 sm:text-sm rounded-lg bg-gray-200 text-gray-900 dark:bg-gray-700 dark:text-gray-100">
                                 <option value="auto" selected>Automatico</option>
                                 <option value="it">Italiano</option>
                                 <option value="en">Inglese</option>
@@ -132,7 +136,7 @@
                                 <span class="text-sm font-medium text-gray-700">Tono desiderato</span>
                                 <span class="text-xs text-gray-500">Per la riformulazione</span>
                             </span>
-                            <select id="default-tone" class="ml-4 block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                            <select id="default-tone" class="ml-4 block pl-3 pr-10 py-2 text-base border-transparent focus:outline-none focus:ring-2 focus:ring-blue-400 sm:text-sm rounded-lg bg-gray-200">
                                 <option value="neutral">Neutrale</option>
                                 <option value="formal">Formale</option>
                                 <option value="friendly">Amichevole</option>
@@ -147,7 +151,7 @@
                                                         <span class="text-sm font-medium text-gray-700">Intensità Tono</span>
                                                         <span class="text-xs text-gray-500">Per Riformulazione</span>
                                                     </span>
-                                                    <select id="tone-intensity" class="ml-4 block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md disabled:opacity-50 disabled:cursor-not-allowed bg-white" disabled>
+                                                    <select id="tone-intensity" class="ml-4 block pl-3 pr-10 py-2 text-base border-transparent focus:outline-none focus:ring-2 focus:ring-blue-400 sm:text-sm rounded-lg disabled:opacity-50 disabled:cursor-not-allowed bg-gray-200" disabled>
                                                         <option value="normal" selected>Normale</option>
                                                         <option value="light">Leggera</option>
                                                         <option value="strong">Forte</option>
@@ -161,7 +165,7 @@
                                 <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Livello Linguistico (CEFR)</span>
                                 <span class="text-xs text-gray-500 dark:text-gray-400">Per Riformulazione/Adatta stile</span>
                             </span>
-                            <select id="cefr-level" class="ml-4 block pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md disabled:opacity-50 disabled:cursor-not-allowed bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" disabled>
+                            <select id="cefr-level" class="ml-4 block pl-3 pr-10 py-2 text-base border-transparent focus:outline-none focus:ring-2 focus:ring-blue-400 sm:text-sm rounded-lg disabled:opacity-50 disabled:cursor-not-allowed bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100" disabled>
                                 <option value="none" selected>Nessuno</option>
                                 <option value="A1">A1 (Principiante)</option>
                                 <option value="A2">A2 (Elementare)</option>
@@ -185,8 +189,8 @@
                 </div>
 
                 <div class="flex justify-between items-center">
-                    <button id="show-onboarding" class="btn-secondary py-2 px-4 rounded-lg">Rivedi tutorial</button>
-                    <button id="save-settings" class="btn-accent py-2 px-6 rounded-lg text-white font-medium">
+                    <button id="show-onboarding" class="transition-colors bg-gray-200 hover:bg-gray-300 py-2 px-4 rounded-full text-gray-800 font-medium">Rivedi tutorial</button>
+                    <button id="save-settings" class="transition-colors bg-blue-500 hover:bg-blue-600 py-2 px-6 rounded-full text-white font-medium">
                         <i class="fas fa-save mr-2"></i>Salva impostazioni
                     </button>
                 </div>
@@ -194,7 +198,7 @@
             </div>
 
         <!-- Results Section -->
-        <div id="results-section" class="bg-white rounded-xl shadow-lg overflow-hidden hidden slide-in">
+        <div id="results-section" class="bg-white/75 backdrop-blur-md rounded-xl shadow-lg overflow-hidden hidden slide-in">
             <div class="p-6">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-bold text-gray-800">Risultati</h2>
@@ -245,10 +249,10 @@
                 </div> -->
 
                 <div class="flex flex-col sm:flex-row gap-4 mt-6">
-                    <button id="copy-btn" class="btn-primary flex-1 py-3 px-6 rounded-lg text-white font-medium">
+                    <button id="copy-btn" class="transition-colors bg-blue-500 hover:bg-blue-600 flex-1 py-3 px-6 rounded-full text-white font-medium">
                         <i class="far fa-copy mr-2"></i>Copia testo elaborato
                     </button>
-                    <button id="new-text-btn" class="btn-secondary py-3 px-6 rounded-lg text-gray-800 font-medium">
+                    <button id="new-text-btn" class="transition-colors bg-gray-200 hover:bg-gray-300 py-3 px-6 rounded-full text-gray-800 font-medium">
                         <i class="fas fa-redo mr-2"></i>Nuovo testo
                     </button>
                 </div>
@@ -256,8 +260,8 @@
         </div>
 
         <!-- Info Section -->
-        <div class="mt-8 bg-white rounded-xl shadow-lg overflow-hidden" id="info-section">
-            <button id="info-toggle" class="w-full flex items-center justify-between p-4 bg-purple-50 text-gray-800 md:hidden">
+        <div class="mt-8 bg-white/75 backdrop-blur-md rounded-xl shadow-lg overflow-hidden" id="info-section">
+            <button id="info-toggle" class="w-full flex items-center justify-between p-4 bg-gray-100 text-gray-800 md:hidden">
                 <span class="font-medium">Informazioni su EasyFix</span>
                 <i class="fas fa-chevron-down transition-transform" id="info-toggle-icon"></i>
             </button>
@@ -290,7 +294,7 @@
         <span id="toast-message">Operazione completata!</span>
     </div>
         <!-- NUOVO: Popup Sinonimi -->
-        <div id="synonym-popup" class="fixed inset-x-0 bottom-0 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 z-50 w-full md:max-w-md max-h-[35vh] md:max-h-[60vh] bg-white dark:bg-gray-800 rounded-t-lg md:rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 hidden flex flex-col overflow-hidden">
+        <div id="synonym-popup" class="fixed inset-x-0 bottom-0 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 z-50 w-full md:max-w-md max-h-[35vh] md:max-h-[60vh] backdrop-blur-md bg-white/75 dark:bg-gray-800/75 rounded-t-lg md:rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 hidden flex flex-col overflow-hidden">
             <!-- Header Popup -->
             <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-600">
                 <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200" id="synonym-popup-title">Sinonimi per: "<span id="synonym-word" class="font-bold">parola</span>"</h3>
@@ -330,8 +334,8 @@
         <div id="delete-confirm" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 rounded-lg shadow-lg p-4 z-50 hidden">
             <p class="text-sm mb-4">Eliminare questa correzione dalla cronologia?</p>
             <div class="flex justify-end space-x-2">
-                <button id="delete-yes" class="btn-primary py-1 px-4 text-sm text-white">Sì</button>
-                <button id="delete-no" class="btn-secondary py-1 px-4 text-sm">No</button>
+                <button id="delete-yes" class="transition-colors bg-blue-500 hover:bg-blue-600 py-1 px-4 text-sm text-white rounded-full">Sì</button>
+                <button id="delete-no" class="transition-colors bg-gray-200 hover:bg-gray-300 py-1 px-4 text-sm rounded-full">No</button>
             </div>
         </div>
         <div id="confirm-overlay" class="fixed inset-0 bg-black bg-opacity-30 hidden z-40"></div>
@@ -344,7 +348,7 @@
 
         <!-- Onboarding Modal -->
         <div id="onboarding-modal" class="fixed inset-0 bg-black bg-opacity-40 z-50 hidden flex items-center justify-center">
-            <div class="bg-white rounded-lg w-11/12 max-w-md p-6">
+            <div class="bg-white/75 backdrop-blur-md rounded-lg w-11/12 max-w-md p-6">
                 <div class="onboard-slide" id="onboard-slide-1">
                     <h2 class="text-lg font-bold mb-2">Benvenuto in EasyFix!</h2>
                     <p class="text-gray-600">Correggi e riformula i testi con un click.</p>
@@ -360,9 +364,9 @@
                 <div class="flex items-center justify-between mt-4">
                     <label class="text-sm"><input type="checkbox" id="skip-onboarding" class="mr-2">Non mostrare più</label>
                     <div>
-                        <button id="onboard-prev" class="btn-secondary py-2 px-4 rounded-lg hidden mr-2">Indietro</button>
-                        <button id="onboard-next" class="btn-primary py-2 px-4 rounded-lg text-white mr-2">Avanti</button>
-                        <button id="onboard-finish" class="btn-primary py-2 px-4 rounded-lg text-white hidden">Chiudi</button>
+                        <button id="onboard-prev" class="transition-colors bg-gray-200 hover:bg-gray-300 py-2 px-4 rounded-full text-gray-800 font-medium hidden mr-2">Indietro</button>
+                        <button id="onboard-next" class="transition-colors bg-blue-500 hover:bg-blue-600 py-2 px-4 rounded-full text-white mr-2">Avanti</button>
+                        <button id="onboard-finish" class="transition-colors bg-blue-500 hover:bg-blue-600 py-2 px-4 rounded-full text-white hidden">Chiudi</button>
                     </div>
                 </div>
             </div>

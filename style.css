@@ -1,15 +1,14 @@
-        /* ... (keep all your existing CSS) ... */
+/* iOS Style Color Palette */
         :root {
-            --primary: #A5D8FF;
-            --secondary: #FFD6A5;
-            --accent: #D8A5FF;
-            --text: #4A5568;
-            --light: #F7FAFC;
+            --primary: #3B82F6;   /* blue-500 */
+            --secondary: #E5E7EB; /* gray-200 */
+            --accent: #3B82F6;    /* blue-500 */
+            --text: #1F2937;      /* gray-800 */
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #F0F9FF;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            background-color: #F2F2F7; /* iOS-like light gray background */
             color: var(--text);
         }
 
@@ -23,37 +22,7 @@
         }
 
         .text-area:focus {
-            box-shadow: 0 0 0 3px rgba(165, 216, 255, 0.5);
-        }
-
-        .btn-primary {
-            background-color: var(--primary);
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            background-color: #8BC7FF;
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background-color: var(--secondary);
-            transition: all 0.3s ease;
-        }
-
-        .btn-secondary:hover {
-            background-color: #FFC68C;
-            transform: translateY(-2px);
-        }
-
-        .btn-accent {
-            background-color: var(--accent);
-            transition: all 0.3s ease;
-        }
-
-        .btn-accent:hover {
-            background-color: #CA8CFF;
-            transform: translateY(-2px);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
         }
 
         .loading-dots::after {
@@ -80,93 +49,92 @@
         /* NOTE: The diff styles might not be applicable anymore
            as the API won't return structured changes easily */
         .diff-added {
-            background-color: rgba(166, 226, 45, 0.3);
-            text-decoration: underline;
+            background-color: rgba(16, 185, 129, 0.2); /* Softer Green */
+            text-decoration: none;
+            border-bottom: 1px dashed #10B981;
         }
 
         .diff-removed {
-            background-color: rgba(255, 129, 130, 0.3);
+            background-color: rgba(239, 68, 68, 0.2); /* Softer Red */
             text-decoration: line-through;
         }
         .correction-item {
-    padding: 8px;
-    border-left: 3px solid #FFB86C;
-    background-color: rgba(255, 184, 108, 0.1);
-    margin-bottom: 8px;
-}
+            padding: 8px;
+            border-left: 3px solid #F59E0B; /* Amber color for warnings */
+            background-color: rgba(245, 158, 11, 0.1);
+            margin-bottom: 8px;
+        }
 
-.correction-original {
-    color: #E53E3E;
-    text-decoration: line-through;
-    font-weight: 500;
-}
+        .correction-original {
+            color: #EF4444; /* red-500 */
+            text-decoration: line-through;
+            font-weight: 500;
+        }
 
-.correction-corrected {
-    color: #38A169;
-    font-weight: 500;
-}
+        .correction-corrected {
+            color: #22C55E; /* green-500 */
+            font-weight: 500;
+        }
 
-.correction-explanation {
-    margin-top: 4px;
-    font-style: italic;
-    color: #4A5568;
-}
+        .correction-explanation {
+            margin-top: 4px;
+            font-style: italic;
+            color: #4B5563; /* gray-600 */
+        }
 
-/* Animazione per l'icona del toggle */
-.rotate-icon {
-    transform: rotate(180deg);
-}
+        /* Animazione per l'icona del toggle */
+        .rotate-icon {
+            transform: rotate(180deg);
+        }
 
-/* Animazione per il pannello */
-.slide-down {
-    max-height: 500px;
-    transition: max-height 0.3s ease-in-out;
-}
+        /* Animazione per il pannello */
+        .slide-down {
+            max-height: 500px;
+            transition: max-height 0.3s ease-in-out;
+        }
 
-.slide-up {
-    max-height: 0;
-    transition: max-height 0.3s ease-in-out;
-}
-.language-detected {
-    animation: flash-detection 1s ease-in-out;
-}
+        .slide-up {
+            max-height: 0;
+            transition: max-height 0.3s ease-in-out;
+        }
+        .language-detected {
+            animation: flash-detection 1s ease-in-out;
+        }
 
-@keyframes flash-detection {
-    0% { background-color: rgba(165, 216, 255, 0); }
-    50% { background-color: rgba(165, 216, 255, 0.5); }
-    100% { background-color: rgba(165, 216, 255, 0); }
-}
+        @keyframes flash-detection {
+            0% { background-color: rgba(59, 130, 246, 0); }
+            50% { background-color: rgba(59, 130, 246, 0.3); }
+            100% { background-color: rgba(59, 130, 246, 0); }
+        }
 
-.history-item {
-    padding: 10px;
-    border-left: 3px solid #D8A5FF;
-    background-color: rgba(216, 165, 255, 0.1);
-    margin-bottom: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
+        .history-item {
+            padding: 10px;
+            border-left: 3px solid var(--accent);
+            background-color: rgba(59, 130, 246, 0.05);
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
 
-.history-item:hover {
-    background-color: rgba(216, 165, 255, 0.2);
-    transform: translateX(3px);
-}
+        .history-item:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+            transform: translateX(3px);
+        }
 
-.history-date {
-    font-size: 0.8rem;
-    color: #6B7280;
-    margin-bottom: 4px;
-}
+        .history-date {
+            font-size: 0.8rem;
+            color: #6B7280;
+            margin-bottom: 4px;
+        }
 
-.history-preview {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-size: 0.9rem;
-}
+        .history-preview {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 0.9rem;
+        }
 
-.history-selected {
-    border-left-color: #8B5CF6;
-    background-color: rgba(139, 92, 246, 0.15);
-}
-
-
+        .history-selected {
+            border-left-color: var(--primary);
+            background-color: rgba(59, 130, 246, 0.15);
+        }
