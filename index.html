@@ -32,12 +32,12 @@
             </div>
 
             <div class="mb-6 mt-4">
-                <button id="history-toggle" class="w-full flex items-center justify-between p-3 bg-purple-50 text-gray-800 rounded-lg border border-purple-200 hover:bg-purple-100 transition-all">
+                <button id="history-toggle" class="w-full flex items-center justify-between p-3 bg-gray-100 text-gray-800 rounded-lg border border-gray-200 hover:bg-gray-200 transition-all">
                     <span class="font-medium">Cronologia correzioni</span>
                     <i class="fas fa-history mr-2"></i>
                     <i class="fas fa-chevron-down transition-transform" id="history-toggle-icon"></i>
                 </button>
-                <div id="history-panel" class="bg-white p-4 rounded-lg border border-purple-200 mt-2 hidden overflow-hidden">
+                <div id="history-panel" class="bg-white p-4 rounded-lg border border-gray-200 mt-2 hidden overflow-hidden">
                     <div class="mb-3 text-sm text-gray-600">
                         <p>Seleziona una correzione precedente per visualizzarla:</p>
                     </div>
@@ -52,7 +52,7 @@
             <div id="text-content" class="p-6">
                 <div class="mb-6">
                     <label for="input-text" class="block text-sm font-medium text-gray-700 mb-2">Inserisci il tuo testo</label>
-                    <textarea id="input-text" class="text-area w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200" placeholder="Scrivi o incolla qui il testo da correggere..."></textarea>
+                    <textarea id="input-text" class="text-area w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Scrivi o incolla qui il testo da correggere..."></textarea>
                     <button id="paste-btn" class="transition-colors bg-gray-200 hover:bg-gray-300 mt-2 text-sm flex items-center py-2 px-4 rounded-full text-gray-800 font-medium"><i class="fas fa-clipboard mr-2"></i>Incolla testo</button>
                 </div>
 
@@ -92,7 +92,7 @@
                         <i class="fas fa-trash-alt mr-2"></i>Pulisci
                     </button>
                 </div>
-            </div>            
+            </div>
 
             <!-- Settings Tab Content -->
             <div id="settings-content" class="p-6 hidden">
@@ -100,11 +100,11 @@
                     <h3 class="text-lg font-medium text-gray-900 mb-4">Profilo di scrittura</h3>
                     <div class="mb-4">
                         <label for="writing-style" class="block text-sm font-medium text-gray-700 mb-2">Descrizione del tuo stile</label>
-                        <textarea id="writing-style" class="text-area w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200" placeholder="Es: Uso un tono formale ma amichevole, con frasi brevi e dirette..."></textarea>
+                        <textarea id="writing-style" class="text-area w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Es: Uso un tono formale ma amichevole, con frasi brevi e dirette..."></textarea>
                     </div>
                     <div class="mb-4">
                         <label for="sample-text" class="block text-sm font-medium text-gray-700 mb-2">Testo di esempio del tuo stile</label>
-                        <textarea id="sample-text" class="text-area w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200" placeholder="Incolla un testo scritto da te che rappresenta il tuo stile..."></textarea>
+                        <textarea id="sample-text" class="text-area w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Incolla un testo scritto da te che rappresenta il tuo stile..."></textarea>
                     </div>
                 </div>
 
@@ -127,9 +127,9 @@
                                 <option value="ru">Russo</option>
                                 <option value="pt">Portoghese</option>
                                 <option value="ar">Arabo</option> <!-- AGGIUNTA LINGUA ARABO -->
-                            </select>                                                        
+                            </select>
                         </div>
-                        
+
 
                         <div class="flex items-center justify-between">
                             <span class="flex-grow flex flex-col">
@@ -158,7 +158,7 @@
                                                     </select>
                                                 </div>
                                                 <!-- FINE NUOVO: Selettore Intensità Tono -->
-                        
+
                                                                         <!-- Selettore Livello Linguistico CEFR (con classi dark aggiunte per coerenza) -->
                         <div class="flex items-center justify-between">
                             <span class="flex-grow flex flex-col">
@@ -219,7 +219,7 @@
                         </div>
                     </div>
                 </div>
-                
+
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
@@ -371,7 +371,7 @@
                 </div>
             </div>
         </div>
-    
+
     <script>
         // Inserisci questo codice DENTRO il tag <script> alla fine del tuo body HTML
 
@@ -481,7 +481,7 @@ document.addEventListener('DOMContentLoaded', function() {
         'ru': { processBtn: 'Оптимизировать текст', loading: 'Определение языка...', success: 'Успех!', error: 'Ошибка', langDetectError: 'Ошибка опр. языка', processing: 'Обработка...', langMismatchError: 'Ошибка: Неверный язык результата!', apiKeyError: 'Ошибка: Неверный или отсутствующий ключ API', networkError: 'Сетевая ошибка', unknownError: 'Неизвестная ошибка', noActionError: 'Выберите хотя бы Исправление или Перефразирование' },
         'pt': { processBtn: 'Otimizar texto', loading: 'Detectando idioma...', success: 'Sucesso!', error: 'Erro', langDetectError: 'Erro det. idioma', processing: 'Processando...', langMismatchError: 'Erro: Idioma do resultado inválido!', apiKeyError: 'Erro: Chave de API inválida ou ausente', networkError: 'Erro de Rede', unknownError: 'Erro Desconhecido', noActionError: 'Selecione pelo menos Revisão ou Reformulação' },
         'de': { processBtn: 'Text optimieren', loading: 'Sprache erkennen...', success: 'Erfolg!', error: 'Fehler', langDetectError: 'Spracherk. Fehler', processing: 'Verarbeitung...', langMismatchError: 'Fehler: Ungültige Ergebnissprache!', apiKeyError: 'Fehler: Ungültiger oder fehlender API-Schlüssel', networkError: 'Netzwerkfehler', unknownError: 'Unbekannter Fehler', noActionError: 'Wählen Sie mindestens Korrekturlesen oder Umformulieren' },
-        'fr': { processBtn: 'Optimiser le texte', loading: 'Détection langue...', success: 'Succès!', error: 'Erreur', langDetectError: 'Err détec. langue', processing: 'Traitement...', langMismatchError: 'Erreur : Langue du résultat invalide !', apiKeyError: 'Erreur : Clé API invalide ou manquante', networkError: 'Erreur Réseau', unknownError: 'Erreur Inconnue', noActionError: 'Sélectionnez au moins Correction ou Reformulation' },
+        'fr': { processBtn: 'Optimiser le texte', loading: 'Détection langue...', success: 'Succès!', error: 'Erreur', langDetectError: 'Err détec. langue', processing: 'Traitement...', langMismatchError: 'Erreur : Langue du risultato invalide !', apiKeyError: 'Erreur : Clé API invalide ou manquante', networkError: 'Erreur Réseau', unknownError: 'Erreur Inconnue', noActionError: 'Sélectionnez au moins Correction ou Reformulation' },
         'es': { processBtn: 'Optimizar texto', loading: 'Detectando idioma...', success: '¡Éxito!', error: 'Error', langDetectError: 'Error det. idioma', processing: 'Procesando...', langMismatchError: 'Error: ¡Idioma del resultado inválido!', apiKeyError: 'Error: Clave API inválida o faltante', networkError: 'Error de Red', unknownError: 'Error Desconocido', noActionError: 'Seleccione al menos Corrección o Reformulación' },
         'ar': { processBtn: 'تحسين النص', loading: 'اكتشاف اللغة...', success: 'نجاح!', error: 'خطأ', langDetectError: 'خطأ في اكتشاف اللغة', processing: 'معالجة...', langMismatchError: 'خطأ: لغة النتيجة غير صالحة!', apiKeyError: 'خطأ: مفتاح API غير صالح أو مفقود', networkError: 'خطأ في الشبكة', unknownError: 'خطأ غير معروف', noActionError: 'حدد التدقيق اللغوي أو إعادة الصياغة على الأقل' }
     };
@@ -1167,7 +1167,7 @@ async function callGeminiAPI(body) {
              switch (langForDefault) {
                  case 'ru': dT = "Привет мир! Как дила? Этот текст содержит ашибки для примера."; break;
                  case 'en': dT = "Helo world! How are you doing? This examples contains some mistaks."; break;
-                 case 'es': dT = "Ola mundo! Como estas? Este texo contiene algunos herrores."; break;
+                 case 'es': dT = "Ola mundo! Como estas? Este texo contiene alcuni herrores."; break;
                  case 'fr': dT = "Bonjur le monde! Comment ca va? Ce texte contient des érreurs."; break;
                  case 'de': dT = "Hallo Welt! Wie gehts? Dieser Text enthält einige Feler."; break;
                  case 'pt': dT = "Ola mundo! Como voce esta? Este texto contem alguns erros."; break;
@@ -1191,6 +1191,6 @@ async function callGeminiAPI(body) {
 
 
 
-    </script>            
+    </script>
 </body>
 </html>
