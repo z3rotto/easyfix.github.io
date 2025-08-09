@@ -10,77 +10,79 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="min-h-screen">
+<body class="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
     <div class="container mx-auto px-4 py-8 max-w-3xl">
         <!-- Header -->
         <header class="mb-8 text-center">
             <img src="logo.webp" alt="Logo EasyFix" class="w-20 h-20 mx-auto mb-4">
-            <h1 class="text-3xl font-bold text-gray-800 mb-2">EasyFix (Beta)</h1>
-            <p class="text-gray-600">✨ Correggi e riformula i tuoi testi grazie all'intelligenza artificiale</p>
+            <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">EasyFix (Beta)</h1>
+            <p class="text-gray-600 dark:text-gray-400">✨ Correggi e riformula i tuoi testi grazie all'intelligenza artificiale</p>
         </header>
 
         <!-- Main Card -->
-        <div class="bg-white/75 backdrop-blur-md rounded-xl shadow-lg overflow-hidden mb-8">
+        <div class="bg-white/75 dark:bg-gray-800/75 backdrop-blur-md rounded-xl shadow-lg overflow-hidden mb-8 border border-gray-200 dark:border-gray-700">
             <!-- Tabs -->
-            <div class="flex border-b">
-                <button id="text-tab" class="flex-1 py-4 px-6 text-center font-medium text-gray-700 border-b-2 border-blue-500">
+            <div class="flex border-b border-gray-200 dark:border-gray-700">
+                <button id="text-tab" class="flex-1 py-4 px-6 text-center font-medium text-blue-500 border-b-2 border-blue-500">
                     <i class="fas fa-edit mr-2"></i>Testo
                 </button>
-                <button id="settings-tab" class="flex-1 py-4 px-6 text-center font-medium text-gray-500">
+                <button id="settings-tab" class="flex-1 py-4 px-6 text-center font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50">
                     <i class="fas fa-cog mr-2"></i>Impostazioni
                 </button>
             </div>
 
-            <div class="mb-6 mt-4">
-                <button id="history-toggle" class="w-full flex items-center justify-between p-3 bg-gray-100 text-gray-800 rounded-lg border border-gray-200 hover:bg-gray-200 transition-all">
+            <div class="p-6">
+                <button id="history-toggle" class="w-full flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700/50 text-gray-800 dark:text-gray-200 rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all">
                     <span class="font-medium">Cronologia correzioni</span>
-                    <i class="fas fa-history mr-2"></i>
-                    <i class="fas fa-chevron-down transition-transform" id="history-toggle-icon"></i>
+                    <div class="flex items-center">
+                        <i class="fas fa-history mr-2"></i>
+                        <i class="fas fa-chevron-down transition-transform" id="history-toggle-icon"></i>
+                    </div>
                 </button>
-                <div id="history-panel" class="bg-white p-4 rounded-lg border border-gray-200 mt-2 hidden overflow-hidden">
-                    <div class="mb-3 text-sm text-gray-600">
+                <div id="history-panel" class="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-600 mt-2 hidden overflow-hidden">
+                    <div class="mb-3 text-sm text-gray-600 dark:text-gray-400">
                         <p>Seleziona una correzione precedente per visualizzarla:</p>
                     </div>
                     <div id="history-list" class="max-h-60 overflow-y-auto">
                         <!-- Gli elementi della cronologia verranno inseriti qui dinamicamente -->
-                        <p class="text-gray-500 text-sm italic" id="no-history-message">Nessuna correzione precedente disponibile.</p>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm italic" id="no-history-message">Nessuna correzione precedente disponibile.</p>
                     </div>
                 </div>
             </div>
 
             <!-- Text Tab Content -->
-            <div id="text-content" class="p-6">
+            <div id="text-content" class="p-6 pt-0">
                 <div class="mb-6">
-                    <label for="input-text" class="block text-sm font-medium text-gray-700 mb-2">Inserisci il tuo testo</label>
-                    <textarea id="input-text" class="text-area w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Scrivi o incolla qui il testo da correggere..."></textarea>
-                    <button id="paste-btn" class="transition-colors bg-gray-200 hover:bg-gray-300 mt-2 text-sm flex items-center py-2 px-4 rounded-full text-gray-800 font-medium"><i class="fas fa-clipboard mr-2"></i>Incolla testo</button>
+                    <label for="input-text" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Inserisci il tuo testo</label>
+                    <textarea id="input-text" class="text-area w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white dark:bg-gray-900/50 text-gray-800 dark:text-gray-200" placeholder="Scrivi o incolla qui il testo da correggere..."></textarea>
+                    <button id="paste-btn" class="transition-colors bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 mt-2 text-sm flex items-center py-2 px-4 rounded-full text-gray-800 dark:text-gray-200 font-medium"><i class="fas fa-clipboard mr-2"></i>Incolla testo</button>
                 </div>
 
                 <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Opzioni</label>
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
-                            <label for="proofreading" class="font-medium text-gray-700">Correzione grammaticale</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Opzioni</label>
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
+                            <label for="proofreading" class="font-medium text-gray-700 dark:text-gray-300">Correzione grammaticale</label>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" id="proofreading" class="sr-only peer" checked>
-                                <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-400 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                                <div class="w-11 h-6 bg-gray-300 dark:bg-gray-600 rounded-full peer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-400 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
                             </label>
                         </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
-                            <label for="rephrase" class="font-medium text-gray-700">Riformulazione</label>
+                        <div class="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
+                            <label for="rephrase" class="font-medium text-gray-700 dark:text-gray-300">Riformulazione</label>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" id="rephrase" class="sr-only peer">
-                                <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-400 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                                <div class="w-11 h-6 bg-gray-300 dark:bg-gray-600 rounded-full peer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-400 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
                             </label>
                         </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
+                        <div class="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
                             <div class="flex items-center">
-                                <label for="style-match" class="font-medium text-gray-700">Adatta al mio stile</label>
-                                <i class="fas fa-question-circle text-gray-400 ml-2 cursor-pointer tooltip-icon" data-tooltip="Se selezionato, l'AI proverà ad analizzare lo stile dei testi di esempio forniti nelle Impostazioni per adattare la riformulazione."></i>
+                                <label for="style-match" class="font-medium text-gray-700 dark:text-gray-300">Adatta al mio stile</label>
+                                <i class="fas fa-question-circle text-gray-400 dark:text-gray-500 ml-2 cursor-pointer tooltip-icon" data-tooltip="Se selezionato, l'AI proverà ad analizzare lo stile dei testi di esempio forniti nelle Impostazioni per adattare la riformulazione."></i>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" id="style-match" class="sr-only peer">
-                                <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-400 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                                <div class="w-11 h-6 bg-gray-300 dark:bg-gray-600 rounded-full peer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-400 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
                             </label>
                         </div>
                     </div>
@@ -91,7 +93,7 @@
                         <i class="fas fa-spinner fa-spin hidden mr-2" id="processing-spinner"></i>
                         <span id="process-text">Ottimizza il testo</span>
                     </button>
-                    <button id="clear-btn" class="transition-colors bg-gray-200 hover:bg-gray-300 py-3 px-6 rounded-full text-gray-800 font-medium">
+                    <button id="clear-btn" class="transition-colors bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 py-3 px-6 rounded-full text-gray-800 dark:text-gray-200 font-medium">
                         <i class="fas fa-trash-alt mr-2"></i>Pulisci
                     </button>
                 </div>
@@ -100,27 +102,35 @@
             <!-- Settings Tab Content -->
             <div id="settings-content" class="p-6 hidden">
                 <div class="mb-6">
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">Profilo di scrittura</h3>
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Profilo di scrittura</h3>
                     <div class="mb-4">
-                        <label for="writing-style" class="block text-sm font-medium text-gray-700 mb-2">Descrizione del tuo stile</label>
-                        <textarea id="writing-style" class="text-area w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Es: Uso un tono formale ma amichevole, con frasi brevi e dirette..."></textarea>
+                        <label for="writing-style" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Descrizione del tuo stile</label>
+                        <textarea id="writing-style" class="text-area w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white dark:bg-gray-900/50 text-gray-800 dark:text-gray-200" placeholder="Es: Uso un tono formale ma amichevole, con frasi brevi e dirette..."></textarea>
                     </div>
                     <div class="mb-4">
-                        <label for="sample-text" class="block text-sm font-medium text-gray-700 mb-2">Testo di esempio del tuo stile</label>
-                        <textarea id="sample-text" class="text-area w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Incolla un testo scritto da te che rappresenta il tuo stile..."></textarea>
+                        <label for="sample-text" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Testo di esempio del tuo stile</label>
+                        <textarea id="sample-text" class="text-area w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white dark:bg-gray-900/50 text-gray-800 dark:text-gray-200" placeholder="Incolla un testo scritto da te che rappresenta il tuo stile..."></textarea>
                     </div>
                 </div>
 
                 <div class="mb-6">
                     <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Preferenze</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between">
+                    <div class="space-y-2">
+                        <!-- Dark Mode Toggle -->
+                        <div class="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
+                            <label for="dark-mode-toggle" class="font-medium text-gray-700 dark:text-gray-300">Modalità Scura</label>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="dark-mode-toggle" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-300 dark:bg-gray-600 rounded-full peer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-400 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                            </label>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
                             <span class="flex-grow flex flex-col">
                                 <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Lingua preferita</span>
                                 <span class="text-xs text-gray-500 dark:text-gray-400">'Automatico' rileva la lingua ad ogni processo</span>
                             </span>
                              <!-- AGGIUNTO 'auto' come PRIMA opzione -->
-                            <select id="preferred-lang" class="ml-4 block pl-3 pr-10 py-2 text-base border-transparent focus:outline-none focus:ring-2 focus:ring-blue-400 sm:text-sm rounded-lg bg-gray-200 text-gray-900 dark:bg-gray-700 dark:text-gray-100">
+                            <select id="preferred-lang" class="ml-4 block pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 sm:text-sm rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100">
                                 <option value="auto" selected>Automatico</option>
                                 <option value="it">Italiano</option>
                                 <option value="en">Inglese</option>
@@ -134,12 +144,12 @@
                         </div>
 
 
-                        <div class="flex items-center justify-between">
+                        <div class="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
                             <span class="flex-grow flex flex-col">
-                                <span class="text-sm font-medium text-gray-700">Tono desiderato</span>
-                                <span class="text-xs text-gray-500">Per la riformulazione</span>
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Tono desiderato</span>
+                                <span class="text-xs text-gray-500 dark:text-gray-400">Per la riformulazione</span>
                             </span>
-                            <select id="default-tone" class="ml-4 block pl-3 pr-10 py-2 text-base border-transparent focus:outline-none focus:ring-2 focus:ring-blue-400 sm:text-sm rounded-lg bg-gray-200">
+                            <select id="default-tone" class="ml-4 block pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 sm:text-sm rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100">
                                 <option value="neutral">Neutrale</option>
                                 <option value="formal">Formale</option>
                                 <option value="friendly">Amichevole</option>
@@ -149,15 +159,15 @@
                             </select>
                         </div>
                                                 <!-- NUOVO: Selettore Intensità Tono -->
-                                                <div class="flex items-center justify-between">
+                                                <div class="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
                                                     <span class="flex-grow flex flex-col">
                                                         <span class="flex items-center">
-                                                            <span class="text-sm font-medium text-gray-700">Intensità Tono</span>
-                                                            <i class="fas fa-question-circle text-gray-400 ml-2 cursor-pointer tooltip-icon" data-tooltip="Definisce quanto marcatamente il tono selezionato debba influenzare il testo. 'Leggera' per un tocco sottile, 'Forte' per un cambiamento evidente."></i>
+                                                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Intensità Tono</span>
+                                                            <i class="fas fa-question-circle text-gray-400 dark:text-gray-500 ml-2 cursor-pointer tooltip-icon" data-tooltip="Definisce quanto marcatamente il tono selezionato debba influenzare il testo. 'Leggera' per un tocco sottile, 'Forte' per un cambiamento evidente."></i>
                                                         </span>
-                                                        <span class="text-xs text-gray-500">Per Riformulazione</span>
+                                                        <span class="text-xs text-gray-500 dark:text-gray-400">Per Riformulazione</span>
                                                     </span>
-                                                    <select id="tone-intensity" class="ml-4 block pl-3 pr-10 py-2 text-base border-transparent focus:outline-none focus:ring-2 focus:ring-blue-400 sm:text-sm rounded-lg disabled:opacity-50 disabled:cursor-not-allowed bg-gray-200" disabled>
+                                                    <select id="tone-intensity" class="ml-4 block pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 sm:text-sm rounded-lg disabled:opacity-50 disabled:cursor-not-allowed bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100" disabled>
                                                         <option value="normal" selected>Normale</option>
                                                         <option value="light">Leggera</option>
                                                         <option value="strong">Forte</option>
@@ -166,15 +176,15 @@
                                                 <!-- FINE NUOVO: Selettore Intensità Tono -->
 
                                                                         <!-- Selettore Livello Linguistico CEFR (con classi dark aggiunte per coerenza) -->
-                        <div class="flex items-center justify-between">
+                        <div class="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
                             <span class="flex-grow flex flex-col">
                                 <span class="flex items-center">
                                     <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Livello Linguistico (CEFR)</span>
-                                    <i class="fas fa-question-circle text-gray-400 ml-2 cursor-pointer tooltip-icon" data-tooltip="Adatta il testo a un livello di competenza linguistica secondo il Quadro Comune Europeo di Riferimento. Utile per semplificare o arricchire il linguaggio."></i>
+                                    <i class="fas fa-question-circle text-gray-400 dark:text-gray-500 ml-2 cursor-pointer tooltip-icon" data-tooltip="Adatta il testo a un livello di competenza linguistica secondo il Quadro Comune Europeo di Riferimento. Utile per semplificare o arricchire il linguaggio."></i>
                                 </span>
                                 <span class="text-xs text-gray-500 dark:text-gray-400">Per Riformulazione/Adatta stile</span>
                             </span>
-                            <select id="cefr-level" class="ml-4 block pl-3 pr-10 py-2 text-base border-transparent focus:outline-none focus:ring-2 focus:ring-blue-400 sm:text-sm rounded-lg disabled:opacity-50 disabled:cursor-not-allowed bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100" disabled>
+                            <select id="cefr-level" class="ml-4 block pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 sm:text-sm rounded-lg disabled:opacity-50 disabled:cursor-not-allowed bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100" disabled>
                                 <option value="none" selected>Nessuno</option>
                                 <option value="A1">A1 (Principiante)</option>
                                 <option value="A2">A2 (Elementare)</option>
@@ -187,9 +197,9 @@
                         <!-- FINE Selettore Livello Linguistico CEFR -->
 
                         <!-- Campo API Key Google -->
-                        <div class="flex flex-col mt-4">
+                        <div class="flex flex-col mt-4 p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
                             <label for="api-key" class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">API Key Google</label>
-                            <input id="api-key" type="text" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 bg-white dark:bg-gray-700" placeholder="Inserisci la tua API Key">
+                            <input id="api-key" type="text" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white dark:bg-gray-800" placeholder="Inserisci la tua API Key">
                             <span class="text-xs text-gray-500 dark:text-gray-400 mt-1">La chiave viene salvata solo localmente.</span>
                         </div>
 
@@ -197,8 +207,8 @@
                     </div>
                 </div>
 
-                <div class="flex justify-between items-center">
-                    <button id="show-onboarding" class="transition-colors bg-gray-200 hover:bg-gray-300 py-2 px-4 rounded-full text-gray-800 font-medium">Rivedi tutorial</button>
+                <div class="flex justify-between items-center mt-6">
+                    <button id="show-onboarding" class="transition-colors bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 py-2 px-4 rounded-full text-gray-800 dark:text-gray-200 font-medium">Rivedi tutorial</button>
                     <button id="save-settings" class="transition-colors bg-blue-500 hover:bg-blue-600 py-2 px-6 rounded-full text-white font-medium">
                         <i class="fas fa-save mr-2"></i>Salva impostazioni
                     </button>
@@ -207,22 +217,22 @@
             </div>
 
         <!-- Results Section -->
-        <div id="results-section" class="bg-white/75 backdrop-blur-md rounded-xl shadow-lg overflow-hidden hidden slide-in">
+        <div id="results-section" class="bg-white/75 dark:bg-gray-800/75 backdrop-blur-md rounded-xl shadow-lg overflow-hidden hidden slide-in border border-gray-200 dark:border-gray-700">
             <div class="p-6">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold text-gray-800">Risultati</h2>
+                    <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100">Risultati</h2>
                     <div class="flex items-center">
-                        <span class="text-sm text-gray-500 mr-2">Lingua (impostata):</span>
-                        <span id="detected-lang" class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Italiano</span>
+                        <span class="text-sm text-gray-500 dark:text-gray-400 mr-2">Lingua (impostata):</span>
+                        <span id="detected-lang" class="px-2 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 text-xs font-medium rounded">Italiano</span>
                     </div>
                 </div>
 
                 <div class="mb-6">
-                    <button id="corrections-toggle" class="w-full flex items-center justify-between p-3 bg-blue-50 text-gray-800 rounded-lg border border-blue-200 hover:bg-blue-100 transition-all">
+                    <button id="corrections-toggle" class="w-full flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/30 text-gray-800 dark:text-gray-200 rounded-lg border border-blue-200 dark:border-blue-700 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-all">
                         <span class="font-medium">Spiegazione delle correzioni</span>
                         <i class="fas fa-chevron-down transition-transform" id="toggle-icon"></i>
                     </button>
-                    <div id="corrections-explanation" class="bg-yellow-50 p-4 rounded-lg border border-yellow-200 mt-2 hidden overflow-hidden">
+                    <div id="corrections-explanation" class="bg-yellow-50 dark:bg-yellow-900/30 p-4 rounded-lg border border-yellow-200 dark:border-yellow-700 mt-2 hidden overflow-hidden">
                         <div id="corrections-list" class="space-y-2 max-h-60 overflow-y-auto text-sm">
                             <!-- Le spiegazioni verranno inserite qui dinamicamente -->
                         </div>
@@ -233,35 +243,27 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
                         <div class="flex items-center justify-between mb-2">
-                            <label class="block text-sm font-medium text-gray-700">Originale (con modifiche evidenziate)</label>
-                            <span id="original-count" class="text-xs text-gray-500">0 parole</span>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Originale (con modifiche evidenziate)</label>
+                            <span id="original-count" class="text-xs text-gray-500 dark:text-gray-400">0 parole</span>
                         </div>
                         <!-- Modificato per usare innerHTML per l'evidenziazione -->
-                        <div id="original-text-highlighted" class="bg-gray-50 p-4 rounded-lg border border-gray-200 h-64 overflow-y-auto whitespace-pre-wrap"></div>
+                        <div id="original-text-highlighted" class="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg border border-gray-200 dark:border-gray-700 h-64 overflow-y-auto whitespace-pre-wrap"></div>
                     </div>
 
                     <div>
                         <div class="flex items-center justify-between mb-2">
-                            <label class="block text-sm font-medium text-gray-700">Elaborato dall'AI</label>
-                            <span id="corrected-count" class="text-xs text-gray-500">0 parole</span>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Elaborato dall'AI</label>
+                            <span id="corrected-count" class="text-xs text-gray-500 dark:text-gray-400">0 parole</span>
                         </div>
-                        <div id="corrected-text" class="bg-blue-50 p-4 rounded-lg border border-blue-200 h-64 overflow-y-auto whitespace-pre-wrap"></div>
+                        <div id="corrected-text" class="bg-blue-50 dark:bg-blue-900/30 p-4 rounded-lg border border-blue-200 dark:border-blue-700 h-64 overflow-y-auto whitespace-pre-wrap"></div>
                     </div>
                 </div>
-
-                <!-- Removed Changes List as it's hard to get structured diffs from the API -->
-                <!-- <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Modifiche apportate</label>
-                    <div id="changes-list" class="space-y-2 max-h-60 overflow-y-auto">
-                         <p class="text-gray-500">La visualizzazione dettagliata delle modifiche non è disponibile con l'API diretta.</p>
-                    </div>
-                </div> -->
 
                 <div class="flex flex-col sm:flex-row gap-4 mt-6">
                     <button id="copy-btn" class="transition-colors bg-blue-500 hover:bg-blue-600 flex-1 py-3 px-6 rounded-full text-white font-medium">
                         <i class="far fa-copy mr-2"></i>Copia testo elaborato
                     </button>
-                    <button id="new-text-btn" class="transition-colors bg-gray-200 hover:bg-gray-300 py-3 px-6 rounded-full text-gray-800 font-medium">
+                    <button id="new-text-btn" class="transition-colors bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 py-3 px-6 rounded-full text-gray-800 dark:text-gray-200 font-medium">
                         <i class="fas fa-redo mr-2"></i>Nuovo testo
                     </button>
                 </div>
@@ -269,14 +271,14 @@
         </div>
 
         <!-- Info Section -->
-        <div class="mt-8 bg-white/75 backdrop-blur-md rounded-xl shadow-lg overflow-hidden" id="info-section">
-            <button id="info-toggle" class="w-full flex items-center justify-between p-4 bg-gray-100 text-gray-800 md:hidden">
+        <div class="mt-8 bg-white/75 dark:bg-gray-800/75 backdrop-blur-md rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700" id="info-section">
+            <button id="info-toggle" class="w-full flex items-center justify-between p-4 bg-gray-100 dark:bg-gray-700/50 text-gray-800 dark:text-gray-200 md:hidden">
                 <span class="font-medium">Informazioni su EasyFix</span>
                 <i class="fas fa-chevron-down transition-transform" id="info-toggle-icon"></i>
             </button>
             <div id="info-content" class="p-6 hidden md:block">
-                <h2 class="text-xl font-bold text-gray-800 mb-4">Informazioni su EasyFix</h2>
-                <div class="prose prose-sm max-w-none text-gray-600">
+                <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Informazioni su EasyFix</h2>
+                <div class="prose prose-sm max-w-none text-gray-600 dark:text-gray-300">
                     <p>EasyFix utilizza modelli di linguaggio avanzati di Google AI per aiutarti a perfezionare i tuoi testi. Ecco cosa puoi fare:</p>
                     <ul class="list-disc pl-5 mt-2 space-y-1">
                         <li><strong>Correzione grammaticale e ortografica</strong> - Trova e corregge errori nel testo</li>
@@ -289,7 +291,7 @@
         </div>
     </div>
 
-    <footer class="text-center py-4 text-sm text-gray-500 bg-white">
+    <footer class="text-center py-4 text-sm text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700">
         <div class="flex justify-center items-center flex-wrap gap-x-2">
             <span>Creato da Mauro Col - 2025 ©</span>
             <span class="hidden sm:inline">|</span>
@@ -437,6 +439,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const onboardFinish = document.getElementById('onboard-finish');
     const skipOnboardingCheckbox = document.getElementById('skip-onboarding');
     const showOnboardingBtn = document.getElementById('show-onboarding');
+    const darkModeToggle = document.getElementById('dark-mode-toggle'); // Dark Mode Toggle
 
     const essentialUI = {
         processBtn, inputText, resultsSection, correctedText, textTab, settingsTab,
@@ -446,7 +449,8 @@ document.addEventListener('DOMContentLoaded', function() {
         pasteBtn, infoToggle, infoContent, infoToggleIcon, deleteConfirm, deleteYes, deleteNo, confirmOverlay,
         synonymPopup, synonymOverlay, synonymPopupTitle, synonymWordSpan, synonymPopupCloseBtn,
         synonymPopupContent, synonymLoading, synonymResults, synonymError, synonymNotFound,
-        onboardingModal, onboardPrev, onboardNext, onboardFinish, skipOnboardingCheckbox, showOnboardingBtn
+        onboardingModal, onboardPrev, onboardNext, onboardFinish, skipOnboardingCheckbox, showOnboardingBtn,
+        darkModeToggle
     };
 
      let missingElements = [];
@@ -1242,9 +1246,38 @@ async function callGeminiAPI(body) {
         } catch (error) { handleError('handleProcessClick', error, error.message.includes("Chiave API")); } finally { setLoadingState(false); }
     }
 
+    // --- Dark Mode Logic ---
+    function applyTheme(isDark) {
+        if (isDark) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        darkModeToggle.checked = isDark;
+    }
+
+    function setupTheme() {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            applyTheme(savedTheme === 'dark');
+        } else {
+            // Fallback to system preference if no theme is saved
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            applyTheme(systemPrefersDark);
+        }
+
+        darkModeToggle.addEventListener('change', (e) => {
+            const isDark = e.target.checked;
+            applyTheme(isDark);
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+    }
+
+
     // --- Inizializzazione App ---
     async function initializeApp() {
         console.log("Inizializzazione v14.2...");
+        setupTheme(); // Setup theme on app start
         let initialLangSetting = 'auto';
         try {
             const prefsString = localStorage.getItem('textai-prefs');
