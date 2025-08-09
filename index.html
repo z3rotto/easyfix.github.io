@@ -213,6 +213,7 @@
                                     <option value="de">Tedesco</option>
                                     <option value="ru">Russo</option>
                                     <option value="pt">Portoghese</option>
+                                <option value="ja">Giapponese</option>
                                     <option value="ar">Arabo</option>
                                 </select>
                             </div>
@@ -511,7 +512,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- API Configuration ---
     const USE_PROXY = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
     const API_URL = USE_PROXY ? '/api/generateContent' : 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent';
-    const SUPPORTED_LANGS = ['it', 'en', 'es', 'fr', 'de', 'ru', 'pt', 'ar'];
+    const SUPPORTED_LANGS = ['it', 'en', 'es', 'fr', 'de', 'ru', 'pt', 'ar', 'ja'];
 
     // --- UI Translations ---
     const uiTranslations = {
@@ -522,7 +523,8 @@ document.addEventListener('DOMContentLoaded', function() {
         'de': { processBtn: 'Text optimieren', loading: 'Sprache erkennen...', success: 'Erfolg!', error: 'Fehler', langDetectError: 'Spracherk. Fehler', processing: 'Verarbeitung...', langMismatchError: 'Fehler: Ungültige Ergebnissprache!', apiKeyError: 'Fehler: Ungültiger oder fehlender API-Schlüssel', networkError: 'Netzwerkfehler', unknownError: 'Unbekannter Fehler', noActionError: 'Wählen Sie mindestens Korrekturlesen oder Umformulieren' },
         'fr': { processBtn: 'Optimiser le texte', loading: 'Détection langue...', success: 'Succès!', error: 'Erreur', langDetectError: 'Err détec. langue', processing: 'Traitement...', langMismatchError: 'Erreur : Langue du risultato invalide !', apiKeyError: 'Erreur : Clé API invalide ou manquante', networkError: 'Erreur Réseau', unknownError: 'Erreur Inconnue', noActionError: 'Sélectionnez au moins Correction ou Reformulation' },
         'es': { processBtn: 'Optimizar texto', loading: 'Detectando idioma...', success: '¡Éxito!', error: 'Error', langDetectError: 'Error det. idioma', processing: 'Procesando...', langMismatchError: 'Error: ¡Idioma del resultado inválido!', apiKeyError: 'Error: Clave API inválida o faltante', networkError: 'Error de Red', unknownError: 'Error Desconocido', noActionError: 'Seleccione al menos Corrección o Reformulación' },
-        'ar': { processBtn: 'تحسين النص', loading: 'اكتشاف اللغة...', success: 'نجاح!', error: 'خطأ', langDetectError: 'خطأ في اكتشاف اللغة', processing: 'معالجة...', langMismatchError: 'خطأ: لغة النتيجة غير صالحة!', apiKeyError: 'خطأ: مفتاح API غير صالح أو مفقود', networkError: 'خطأ في الشبكة', unknownError: 'خطأ غير معروف', noActionError: 'حدد التدقيق اللغوي أو إعادة الصياغة على الأقل' }
+        'ar': { processBtn: 'تحسين النص', loading: 'اكتشاف اللغة...', success: 'نجاح!', error: 'خطأ', langDetectError: 'خطأ في اكتشاف اللغة', processing: 'معالجة...', langMismatchError: 'خطأ: لغة النتيجة غير صالحة!', apiKeyError: 'خطأ: مفتاح API غير صالح أو مفقود', networkError: 'خطأ في الشبكة', unknownError: 'خطأ غير معروف', noActionError: 'حدد التدقيق اللغوي أو إعادة الصياغة على الأقل' },
+        'ja': { processBtn: 'テキストを最適化', loading: '言語を検出しています...', success: '成功', error: 'エラー', langDetectError: '言語検出エラー', processing: '処理中...', langMismatchError: 'エラー：無効な結果言語', apiKeyError: 'エラー：APIキーが無効またはありません', networkError: 'ネットワークエラー', unknownError: '不明なエラー', noActionError: '少なくとも校正または言い換えを選択してください' }
     };
 
     // --- Variabili Globali di Stato ---
@@ -534,7 +536,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function countWords(t){ return t?.trim()===''?0:t.trim().split(/\s+/).length; }
     function getToneDisplayName(c) { return {formal:'Formale', friendly:'Amichevole', professional:'Professionale', casual:'Informale', sarcastic:'Sarcastico'}[c] || 'Neutrale'; }
     function getIntensityDisplayName(c) { return {light:'Leggera', normal:'Normale', strong:'Forte'}[c] || 'Normale'; }
-    function getLanguageName(c) { return {it:'Italiano', en:'Inglese', es:'Spagnolo', fr:'Francese', de:'Tedesco', ru:'Russo', pt:'Portoghese', ar:'Arabo'}[c] || 'Sconosciuta'; }
+    function getLanguageName(c) { return {it:'Italiano', en:'Inglese', es:'Spagnolo', fr:'Francese', de:'Tedesco', ru:'Russo', pt:'Portoghese', ar:'Arabo', ja:'Giapponese'}[c] || 'Sconosciuta'; }
     function detectLanguageLocalSimple(t) { if (!t) return 'und'; const tl = t.toLowerCase(); if (/[\u0600-\u06FF]/.test(tl)) return 'ar'; if (/[\u0400-\u04FF]/.test(tl)) return 'ru'; if (/[äöüß]/i.test(tl)) return 'de'; if (/[ãõâçêôú]/i.test(tl)) return 'pt'; if (/[ñ¡¿]/i.test(tl)) return 'es'; if (/[àâæçéèêëîïôùûüÿ]/i.test(tl)) return 'fr'; const itM = (tl.match(/\b(il|la|lo|gli|le|del|che|non|sono|hanno|è|per|con|una|si|ciò)\b/g) || []).length; const enM = (tl.match(/\b(the|and|is|are|was|were|have|has|not|for|with|you|that|this|it|of)\b/g) || []).length; if (itM > enM + 2 && itM >= 3) return 'it'; if (enM > itM + 2 && enM >= 3) return 'en'; return 'und'; }
     function calculateWordOverlap(t1, t2) { if (!t1 || !t2) return 0; const n = (t) => t.toLowerCase().match(/[\p{L}\p{N}]+/gu) || []; const w1 = new Set(n(t1)); const w2 = new Set(n(t2)); if (w1.size === 0) return w2.size === 0 ? 1 : 0; const i = new Set([...w1].filter(x => w2.has(x))); return w1.size > 0 ? i.size / w1.size : (w2.size === 0 ? 1 : 0); }
 function getApiKey() { return apiKeyInput?.value.trim() || localStorage.getItem('textai-api-key') || ''; }
@@ -949,6 +951,15 @@ async function callGeminiAPI(body) {
     // Listeners Checkbox, Bottoni Azione, Copia, Salva
     if (rephraseCheck) { rephraseCheck.addEventListener('change', updateStyleOptionsState); }
     if (proofreadingCheck && rephraseCheck && processBtn) { proofreadingCheck.addEventListener('change', updateProcessButtonState); rephraseCheck.addEventListener('change', updateProcessButtonState); }
+
+    if (preferredLangSelect) {
+        preferredLangSelect.addEventListener('change', () => {
+            const processTextSpan = document.getElementById('process-text');
+            if (processTextSpan) {
+                processTextSpan.textContent = getTranslation('processBtn');
+            }
+        });
+    }
     if (processBtn) { processBtn.addEventListener('click', handleProcessClick); }
     if (clearBtn) { clearBtn.addEventListener('click', () => { if(inputText) inputText.value = ''; if(resultsSection) resultsSection.classList.add('hidden'); if(originalTextHighlighted) originalTextHighlighted.textContent = ''; if(correctedText) correctedText.textContent = ''; if(originalCount) originalCount.textContent = '0 parole'; if(correctedCount) correctedCount.textContent = '0 parole'; hideExpandablePanels(); updateProcessButtonState(); }); }
     if (newTextBtn) { newTextBtn.addEventListener('click', () => { if(inputText) inputText.value = ''; if(resultsSection) resultsSection.classList.add('hidden'); if(originalTextHighlighted) originalTextHighlighted.textContent = ''; if(correctedText) correctedText.textContent = ''; if(originalCount) originalCount.textContent = '0 parole'; if(correctedCount) correctedCount.textContent = '0 parole'; hideExpandablePanels(); inputText?.focus(); updateProcessButtonState(); }); }
