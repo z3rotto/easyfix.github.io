@@ -101,118 +101,136 @@
 
             <!-- Settings Tab Content -->
             <div id="settings-content" class="p-6 hidden">
-                <div class="mb-6">
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Profilo di scrittura</h3>
-                    <div class="mb-4">
-                        <label for="writing-style" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Descrizione del tuo stile</label>
-                        <textarea id="writing-style" class="text-area w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white dark:bg-gray-900/50 text-gray-800 dark:text-gray-200" placeholder="Es: Uso un tono formale ma amichevole, con frasi brevi e dirette..."></textarea>
-                    </div>
-                    <div class="mb-4">
-                        <label for="sample-text" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Testo di esempio del tuo stile</label>
-                        <textarea id="sample-text" class="text-area w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white dark:bg-gray-900/50 text-gray-800 dark:text-gray-200" placeholder="Incolla un testo scritto da te che rappresenta il tuo stile..."></textarea>
-                    </div>
+                <!-- Sub-tabs -->
+                <div class="mb-6 border-b border-gray-200 dark:border-gray-700">
+                    <nav class="flex -mb-px space-x-6" aria-label="Tabs">
+                        <button id="profile-subtab" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-blue-500 border-blue-500">
+                            Profilo e Stile
+                        </button>
+                        <button id="app-subtab" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 dark:hover:border-gray-500">
+                            Applicazione
+                        </button>
+                    </nav>
                 </div>
 
-                <div class="mb-6">
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Preferenze</h3>
-                    <div class="space-y-2">
-                        <!-- Dark Mode Toggle -->
-                        <div class="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
-                            <label for="dark-mode-toggle" class="font-medium text-gray-700 dark:text-gray-300">Modalità Scura</label>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" id="dark-mode-toggle" class="sr-only peer">
-                                <div class="w-11 h-6 bg-gray-300 dark:bg-gray-600 rounded-full peer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-400 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
-                            </label>
+                <!-- Sub-tab Panels -->
+                <div id="profile-subtab-panel">
+                    <div class="mb-6">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Profilo di scrittura</h3>
+                        <div class="space-y-4">
+                            <div class="mb-4">
+                                <label for="writing-style" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Descrizione del tuo stile</label>
+                                <textarea id="writing-style" class="text-area w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white dark:bg-gray-900/50 text-gray-800 dark:text-gray-200" placeholder="Es: Uso un tono formale ma amichevole, con frasi brevi e dirette..."></textarea>
+                            </div>
+                            <div>
+                                <label for="sample-text" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Testo di esempio del tuo stile</label>
+                                <textarea id="sample-text" class="text-area w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white dark:bg-gray-900/50 text-gray-800 dark:text-gray-200" placeholder="Incolla un testo scritto da te che rappresenta il tuo stile..."></textarea>
+                            </div>
                         </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
-                            <span class="flex-grow flex flex-col">
-                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Lingua preferita</span>
-                                <span class="text-xs text-gray-500 dark:text-gray-400">'Automatico' rileva la lingua ad ogni processo</span>
-                            </span>
-                             <!-- AGGIUNTO 'auto' come PRIMA opzione -->
-                            <select id="preferred-lang" class="ml-4 block pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 sm:text-sm rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100">
-                                <option value="auto" selected>Automatico</option>
-                                <option value="it">Italiano</option>
-                                <option value="en">Inglese</option>
-                                <option value="es">Spagnolo</option>
-                                <option value="fr">Francese</option>
-                                <option value="de">Tedesco</option>
-                                <option value="ru">Russo</option>
-                                <option value="pt">Portoghese</option>
-                                <option value="ar">Arabo</option> <!-- AGGIUNTA LINGUA ARABO -->
-                            </select>
-                        </div>
-
-
-                        <div class="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
-                            <span class="flex-grow flex flex-col">
-                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Tono desiderato</span>
-                                <span class="text-xs text-gray-500 dark:text-gray-400">Per la riformulazione</span>
-                            </span>
-                            <select id="default-tone" class="ml-4 block pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 sm:text-sm rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100">
-                                <option value="neutral">Neutrale</option>
-                                <option value="formal">Formale</option>
-                                <option value="friendly">Amichevole</option>
-                                <option value="professional">Professionale</option>
-                                <option value="casual">Informale</option>
-                                <option value="sarcastic">Sarcastico</option>
-                            </select>
-                        </div>
-                                                <!-- NUOVO: Selettore Intensità Tono -->
-                                                <div class="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
-                                                    <span class="flex-grow flex flex-col">
-                                                        <span class="flex items-center">
-                                                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Intensità Tono</span>
-                                                            <i class="fas fa-question-circle text-gray-400 dark:text-gray-500 ml-2 cursor-pointer tooltip-icon" data-tooltip="Definisce quanto marcatamente il tono selezionato debba influenzare il testo. 'Leggera' per un tocco sottile, 'Forte' per un cambiamento evidente."></i>
-                                                        </span>
-                                                        <span class="text-xs text-gray-500 dark:text-gray-400">Per Riformulazione</span>
-                                                    </span>
-                                                    <select id="tone-intensity" class="ml-4 block pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 sm:text-sm rounded-lg disabled:opacity-50 disabled:cursor-not-allowed bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100" disabled>
-                                                        <option value="normal" selected>Normale</option>
-                                                        <option value="light">Leggera</option>
-                                                        <option value="strong">Forte</option>
-                                                    </select>
-                                                </div>
-                                                <!-- FINE NUOVO: Selettore Intensità Tono -->
-
-                                                                        <!-- Selettore Livello Linguistico CEFR (con classi dark aggiunte per coerenza) -->
-                        <div class="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
-                            <span class="flex-grow flex flex-col">
-                                <span class="flex items-center">
-                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Livello Linguistico (CEFR)</span>
-                                    <i class="fas fa-question-circle text-gray-400 dark:text-gray-500 ml-2 cursor-pointer tooltip-icon" data-tooltip="Adatta il testo a un livello di competenza linguistica secondo il Quadro Comune Europeo di Riferimento. Utile per semplificare o arricchire il linguaggio."></i>
+                    </div>
+                    <div class="mb-6">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Preferenze di Riformulazione</h3>
+                        <div class="space-y-2">
+                             <div class="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
+                                <div class="flex items-center">
+                                    <label for="style-match" class="font-medium text-gray-700 dark:text-gray-300">Adatta al mio stile</label>
+                                    <i class="fas fa-question-circle text-gray-400 dark:text-gray-500 ml-2 cursor-pointer tooltip-icon" data-tooltip="Se selezionato, l'AI proverà ad analizzare lo stile dei testi di esempio forniti nelle Impostazioni per adattare la riformulazione."></i>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="style-match" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-300 dark:bg-gray-600 rounded-full peer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-400 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                                </label>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
+                                <span class="flex-grow flex flex-col">
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Tono desiderato</span>
                                 </span>
-                                <span class="text-xs text-gray-500 dark:text-gray-400">Per Riformulazione/Adatta stile</span>
-                            </span>
-                            <select id="cefr-level" class="ml-4 block pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 sm:text-sm rounded-lg disabled:opacity-50 disabled:cursor-not-allowed bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100" disabled>
-                                <option value="none" selected>Nessuno</option>
-                                <option value="A1">A1 (Principiante)</option>
-                                <option value="A2">A2 (Elementare)</option>
-                                <option value="B1">B1 (Intermedio)</option>
-                                <option value="B2">B2 (Intermedio Sup.)</option>
-                                <option value="C1">C1 (Avanzato)</option>
-                                <option value="C2">C2 (Padronanza)</option>
-                            </select>
+                                <select id="default-tone" class="ml-4 block pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 sm:text-sm rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                                    <option value="neutral">Neutrale</option>
+                                    <option value="formal">Formale</option>
+                                    <option value="friendly">Amichevole</option>
+                                    <option value="professional">Professionale</option>
+                                    <option value="casual">Informale</option>
+                                    <option value="sarcastic">Sarcastico</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
+                                <span class="flex-grow flex flex-col">
+                                    <span class="flex items-center">
+                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Intensità Tono</span>
+                                        <i class="fas fa-question-circle text-gray-400 dark:text-gray-500 ml-2 cursor-pointer tooltip-icon" data-tooltip="Definisce quanto marcatamente il tono selezionato debba influenzare il testo. 'Leggera' per un tocco sottile, 'Forte' per un cambiamento evidente."></i>
+                                    </span>
+                                </span>
+                                <select id="tone-intensity" class="ml-4 block pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 sm:text-sm rounded-lg disabled:opacity-50 disabled:cursor-not-allowed bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100" disabled>
+                                    <option value="normal" selected>Normale</option>
+                                    <option value="light">Leggera</option>
+                                    <option value="strong">Forte</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
+                                <span class="flex-grow flex flex-col">
+                                    <span class="flex items-center">
+                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Livello Linguistico (CEFR)</span>
+                                        <i class="fas fa-question-circle text-gray-400 dark:text-gray-500 ml-2 cursor-pointer tooltip-icon" data-tooltip="Adatta il testo a un livello di competenza linguistica secondo il Quadro Comune Europeo di Riferimento. Utile per semplificare o arricchire il linguaggio."></i>
+                                    </span>
+                                </span>
+                                <select id="cefr-level" class="ml-4 block pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 sm:text-sm rounded-lg disabled:opacity-50 disabled:cursor-not-allowed bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100" disabled>
+                                    <option value="none" selected>Nessuno</option>
+                                    <option value="A1">A1 (Principiante)</option>
+                                    <option value="A2">A2 (Elementare)</option>
+                                    <option value="B1">B1 (Intermedio)</option>
+                                    <option value="B2">B2 (Intermedio Sup.)</option>
+                                    <option value="C1">C1 (Avanzato)</option>
+                                    <option value="C2">C2 (Padronanza)</option>
+                                </select>
+                            </div>
                         </div>
-                        <!-- FINE Selettore Livello Linguistico CEFR -->
-
-                        <!-- Campo API Key Google -->
-                        <div class="flex flex-col mt-4 p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
-                            <label for="api-key" class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">API Key Google</label>
-                            <input id="api-key" type="text" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white dark:bg-gray-800" placeholder="Inserisci la tua API Key">
-                            <span class="text-xs text-gray-500 dark:text-gray-400 mt-1">La chiave viene salvata solo localmente.</span>
-                        </div>
-
-
                     </div>
                 </div>
 
-                <div class="flex justify-between items-center mt-6">
+                <div id="app-subtab-panel" class="hidden">
+                     <div class="mb-6">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Impostazioni Applicazione</h3>
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
+                                <label for="dark-mode-toggle" class="font-medium text-gray-700 dark:text-gray-300">Modalità Scura</label>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="dark-mode-toggle" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-300 dark:bg-gray-600 rounded-full peer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-400 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                                </label>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
+                                <span class="flex-grow flex flex-col">
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Lingua preferita</span>
+                                    <span class="text-xs text-gray-500 dark:text-gray-400">'Automatico' rileva la lingua ad ogni processo</span>
+                                </span>
+                                <select id="preferred-lang" class="ml-4 block pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 sm:text-sm rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                                    <option value="auto" selected>Automatico</option>
+                                    <option value="it">Italiano</option>
+                                    <option value="en">Inglese</option>
+                                    <option value="es">Spagnolo</option>
+                                    <option value="fr">Francese</option>
+                                    <option value="de">Tedesco</option>
+                                    <option value="ru">Russo</option>
+                                    <option value="pt">Portoghese</option>
+                                    <option value="ar">Arabo</option>
+                                </select>
+                            </div>
+                             <div class="flex flex-col mt-4 p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
+                                <label for="api-key" class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">API Key Google</label>
+                                <input id="api-key" type="text" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white dark:bg-gray-800" placeholder="Inserisci la tua API Key">
+                                <span class="text-xs text-gray-500 dark:text-gray-400 mt-1">La chiave viene salvata solo localmente.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Global Buttons -->
+                <div class="flex justify-between items-center mt-6 border-t border-gray-200 dark:border-gray-700 pt-6">
                     <button id="show-onboarding" class="transition-colors bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 py-2 px-4 rounded-full text-gray-800 dark:text-gray-200 font-medium">Rivedi tutorial</button>
                     <button id="save-settings" class="transition-colors bg-blue-500 hover:bg-blue-600 py-2 px-6 rounded-full text-white font-medium">
                         <i class="fas fa-save mr-2"></i>Salva impostazioni
                     </button>
-                </div>
                 </div>
             </div>
 
@@ -441,6 +459,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const showOnboardingBtn = document.getElementById('show-onboarding');
     const darkModeToggle = document.getElementById('dark-mode-toggle'); // Dark Mode Toggle
 
+    // Sub-tab elements
+    const profileSubtab = document.getElementById('profile-subtab');
+    const appSubtab = document.getElementById('app-subtab');
+    const profileSubtabPanel = document.getElementById('profile-subtab-panel');
+    const appSubtabPanel = document.getElementById('app-subtab-panel');
+
+
     const essentialUI = {
         processBtn, inputText, resultsSection, correctedText, textTab, settingsTab,
         textContent, settingsContent, historyToggleBtn, historyPanel, preferredLangSelect,
@@ -450,7 +475,8 @@ document.addEventListener('DOMContentLoaded', function() {
         synonymPopup, synonymOverlay, synonymPopupTitle, synonymWordSpan, synonymPopupCloseBtn,
         synonymPopupContent, synonymLoading, synonymResults, synonymError, synonymNotFound,
         onboardingModal, onboardPrev, onboardNext, onboardFinish, skipOnboardingCheckbox, showOnboardingBtn,
-        darkModeToggle
+        darkModeToggle,
+        profileSubtab, appSubtab, profileSubtabPanel, appSubtabPanel // Add sub-tab elements
     };
 
      let missingElements = [];
@@ -855,6 +881,32 @@ async function callGeminiAPI(body) {
         settingsTab.addEventListener('click', () => { closeHistoryPanel(); switchTab(settingsTab, textTab, settingsContent, textContent); });
         console.log("Listeners Tab aggiunti.");
     } else { console.error("Errore critico: Elementi Tab mancanti!"); }
+
+    // Sub-tab switching logic
+    if (profileSubtab && appSubtab && profileSubtabPanel && appSubtabPanel) {
+        profileSubtab.addEventListener('click', () => {
+            appSubtabPanel.classList.add('hidden');
+            profileSubtabPanel.classList.remove('hidden');
+
+            profileSubtab.classList.add('text-blue-500', 'border-blue-500');
+            profileSubtab.classList.remove('text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300', 'dark:text-gray-400', 'dark:hover:text-gray-300', 'dark:hover:border-gray-500');
+
+            appSubtab.classList.add('text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300', 'dark:text-gray-400', 'dark:hover:text-gray-300', 'dark:hover:border-gray-500');
+            appSubtab.classList.remove('text-blue-500', 'border-blue-500');
+        });
+
+        appSubtab.addEventListener('click', () => {
+            profileSubtabPanel.classList.add('hidden');
+            appSubtabPanel.classList.remove('hidden');
+
+            appSubtab.classList.add('text-blue-500', 'border-blue-500');
+            appSubtab.classList.remove('text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300', 'dark:text-gray-400', 'dark:hover:text-gray-300', 'dark:hover:border-gray-500');
+
+            profileSubtab.classList.add('text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300', 'dark:text-gray-400', 'dark:hover:text-gray-300', 'dark:hover:border-gray-500');
+            profileSubtab.classList.remove('text-blue-500', 'border-blue-500');
+        });
+        console.log("Listeners Sub-Tab aggiunti.");
+    } else { console.error("Errore critico: Elementi Sub-Tab mancanti!"); }
 
     if (correctionsToggleBtn && correctionsExplanationBox && correctionsToggleIcon) {
         correctionsToggleBtn.addEventListener('click', function() {
